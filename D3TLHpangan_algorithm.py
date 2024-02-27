@@ -133,21 +133,24 @@ class calcenergyAlgorithm(QgsProcessingAlgorithm):
         # transform coordinates to epsg 4326
         feedback.setProgressText('Reproject All layer to EPSG 4326...')
         epsg4326 = QgsCoordinateReferenceSystem("EPSG:4326")
-        pop_crs = pop_layer.sourceCrs()
 
-        if pop_crs != epsg4326:
-            QgsCoordinateTransform(pop_crs, epsg4326, QgsProject.instance())
+        reproject = processing.run("native:reprojectlayer",
+                                        {'INPUT':parameters['popgrid'],
+                                        'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
+                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
 
         #progress set to 1
         feedback.setCurrentStep(1)
         if feedback.isCanceled():
             return {}
         
+
+        
         #calculate total weigth for each grid
         feedback.setProgressText('Calculate grid AKE for each year... ')
 
         AKE_Count = processing.run("native:fieldcalculator", 
-                                      {'INPUT':parameters['popgrid'],
+                                      {'INPUT':reproject['OUTPUT'],
                                        'FIELD_NAME':'AKEGrid',
                                        'FIELD_TYPE':0,
                                        'FIELD_LENGTH':20,
@@ -310,21 +313,23 @@ class distavailabilityAlgorithm(QgsProcessingAlgorithm):
         feedback.setProgressText('Reproject All layer to EPSG 4326...')
 
         epsg4326 = QgsCoordinateReferenceSystem("EPSG:4326")
-        grid_crs = grid_layer.sourceCrs()
-        ESP_crs = ESP_layer.sourceCrs()
-        adm_crs = adm_layer.sourceCrs()
 
-        if grid_crs != epsg4326:
-            QgsCoordinateTransform(grid_crs, epsg4326, QgsProject.instance())
+        grid_rep = processing.run("native:reprojectlayer",
+                                        {'INPUT':parameters['grid'],
+                                        'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
+                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
 
-        if ESP_crs != epsg4326:
-            QgsCoordinateTransform(ESP_crs, epsg4326, QgsProject.instance())
-
-
-        if adm_crs != epsg4326:
-            QgsCoordinateTransform(adm_crs, epsg4326, QgsProject.instance())
-
+ 
+        adm_rep = processing.run("native:reprojectlayer",
+                                        {'INPUT':parameters['admlay'],
+                                        'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
+                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})  
         
+        ESP_rep = processing.run("native:reprojectlayer",
+                                        {'INPUT':parameters['ESPlay'],
+                                        'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
+                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})              
+
         #progress set to 1
         feedback.setCurrentStep(1)
         if feedback.isCanceled():
@@ -334,9 +339,9 @@ class distavailabilityAlgorithm(QgsProcessingAlgorithm):
         feedback.setProgressText('Intersections')
 
         intr = processing.run("native:multiintersection", 
-                       {'INPUT':parameters['ESPlay'],
-                        'OVERLAYS':[parameters['grid'],
-                                    parameters['admlay']],
+                       {'INPUT':ESP_rep['OUTPUT'],
+                        'OVERLAYS':[grid_rep['OUTPUT'],
+                                    adm_rep['OUTPUT']],
                         'OVERLAY_FIELDS_PREFIX':'',
                         'OUTPUT':'TEMPORARY_OUTPUT'})
         
@@ -616,33 +621,13 @@ class carcapAlgorithm(QgsProcessingAlgorithm):
         feedback = QgsProcessingMultiStepFeedback(22, feedback)
         
  # ==================== algoritm =====================================  
-
-# transform coordinates to epsg 4326
-        feedback.setProgressText('Reproject All layer to EPSG 4326...')
-
-        epsg4326 = QgsCoordinateReferenceSystem("EPSG:4326")
-        need_crs = need_layer.sourceCrs()
-        ava_crs = ava_layer.sourceCrs()
-        popul_crs = popul_layer.sourceCrs()
-
-        if need_crs != epsg4326:
-            QgsCoordinateTransform(need_crs, epsg4326, QgsProject.instance())
-
-        if ava_crs != epsg4326:
-            QgsCoordinateTransform(ava_crs, epsg4326, QgsProject.instance())
-
-        if popul_crs != epsg4326:
-            QgsCoordinateTransform(popul_crs, epsg4326, QgsProject.instance())
-
-        #progress set to 1
-        feedback.setCurrentStep(1)
-        if feedback.isCanceled():
-            return {}
         
+        epsg4326 = QgsCoordinateReferenceSystem("EPSG:4326")
 
 # join attributes to grid layer 
 
         feedback.setProgressText('join attribute table to grid layer ... ')
+
 
         joinn = processing.run("native:joinattributestable", {'INPUT_2': parameters['needgrid'],
                                                       'FIELD_2':'IMGSID',
@@ -650,7 +635,7 @@ class carcapAlgorithm(QgsProcessingAlgorithm):
                                                       'FIELD':'IMGSID',
                                                       'FIELDS_TO_COPY':[],
                                                       'METHOD':1,
-                                                      'DISCARD_NONMATCHING':False,
+                                                      'DISCARD_NONMATCHING':True,
                                                       'PREFIX':'',
                                                       'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
 
@@ -660,7 +645,7 @@ class carcapAlgorithm(QgsProcessingAlgorithm):
                                                       'FIELD':'IMGSID',
                                                       'FIELDS_TO_COPY':[],
                                                       'METHOD':1,
-                                                      'DISCARD_NONMATCHING':False,
+                                                      'DISCARD_NONMATCHING':True,
                                                       'PREFIX':'',
                                                       'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
         
