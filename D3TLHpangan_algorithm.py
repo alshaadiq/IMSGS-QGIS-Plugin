@@ -704,6 +704,20 @@ class carcapAlgorithm(QgsProcessingAlgorithm):
         if feedback.isCanceled():
             return {}
 
+# Status string
+        stat = processing.run("native:fieldcalculator", 
+                                      {'INPUT':status['OUTPUT'],
+                                       'FIELD_NAME':'Stats',
+                                       'FIELD_TYPE':2,
+                                       'FIELD_LENGTH':10,
+                                       'FIELD_PRECISION':0,
+                                       'FORMULA':"if(diff<=0, title('Not'),title('Exceed'))",
+                                       'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+        #progress set to 3
+        feedback.setCurrentStep(3)
+        if feedback.isCanceled():
+            return {}
+
 
 
 
@@ -716,19 +730,21 @@ class carcapAlgorithm(QgsProcessingAlgorithm):
         fields.append(QgsField('Diff', QVariant.Double, '', 50))
         fields.append(QgsField('Thres', QVariant.Double,'', 50))
         fields.append(QgsField('Status', QVariant.Double,'', 50))
+        fields.append(QgsField('Stats', QVariant.String, '', 50))
 
         # Output parameter
         (sink, dest_id) = self.parameterAsSink(parameters, self.OUTPUT, context, fields, QgsWkbTypes.Polygon, epsg4326)
 
-        for feat in status['OUTPUT'].getFeatures():
+        for feat in stat['OUTPUT'].getFeatures():
             IMGSID = feat['IMGSID']
             Diff = feat['Diff']
             Thres = feat['Thres']
             Status = feat['Status']
+            Stat = feat['Stats']
             
 
             new_feat = QgsFeature(feat)
-            new_feat.setAttributes([IMGSID,Diff,Thres,Status])
+            new_feat.setAttributes([IMGSID,Diff,Thres,Status,Stat])
             
             sink.addFeature(new_feat, QgsFeatureSink.FastInsert)
         

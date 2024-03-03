@@ -193,7 +193,7 @@ class calcneedAlgorithm(QgsProcessingAlgorithm):
         w_veg = self.parameterAsDouble(parameters, self.STD_VEG, context)
 
         # initialize progress bar
-        feedback = QgsProcessingMultiStepFeedback(20,model_feedback)    
+        feedback = QgsProcessingMultiStepFeedback(8,model_feedback)    
 
  # ==================== algoritm =====================================  
        
@@ -476,7 +476,7 @@ class distavailability2Algorithm(QgsProcessingAlgorithm):
         WAS_Value = self.parameterAsString(parameters, self.WAS_V, context)
 
         # initialize progress bar
-        feedback =  QgsProcessingMultiStepFeedback(22, model_feedback)
+        feedback =  QgsProcessingMultiStepFeedback(9, model_feedback)
 
  # ==================== algoritm =====================================  
         
@@ -739,22 +739,22 @@ class carcap2Algorithm(QgsProcessingAlgorithm):
 # ==================== Define Parameter =====================================  
 
         # input parameters water need layer 
-        wn_layer = self.parameterAsSource(parameters, self.NEED, context, model_feedback)
+        wn_layer = self.parameterAsSource(parameters, self.NEED, context)
 
         #input water need value 
-        wn_val = self.parameterAsString(parameters, self.NEED_VAL, context, model_feedback)
+        wn_val = self.parameterAsString(parameters, self.NEED_VAL, context)
 
         #input water availability layer 
-        ava_layer = self.parameterAsSource(parameters, self.AVAIL, context, model_feedback)
+        ava_layer = self.parameterAsSource(parameters, self.AVAIL, context)
 
         #input water availability value 
-        ava_val = self.parameterAsString(parameters, self.AVAIL_VAL, context, model_feedback)
+        ava_val = self.parameterAsString(parameters, self.AVAIL_VAL, context)
 
         #input water usage standard 
-        wn_stad = self.parameterAsDouble(parameters, self.WN_STD, context, model_feedback)
+        wn_stad = self.parameterAsDouble(parameters, self.WN_STD, context)
 
         #initialize progress bar
-        feedback = QgsProcessingMultiStepFeedback(3, model_feedback)    
+        feedback = QgsProcessingMultiStepFeedback(4, model_feedback)    
 
 
  # ==================== algoritm ===================================== 
@@ -812,10 +812,10 @@ class carcap2Algorithm(QgsProcessingAlgorithm):
         stat = processing.run("native:fieldcalculator", 
                                       {'INPUT':diff['OUTPUT'],
                                        'FIELD_NAME':'Statues',
-                                       'FIELD_TYPE':3,
-                                       'FIELD_LENGTH':30,
+                                       'FIELD_TYPE':2,
+                                       'FIELD_LENGTH':10,
                                        'FIELD_PRECISION':0,
-                                       'FORMULA':f'if(diff<=0,"Not","Exceed")',
+                                       'FORMULA':"if(diff<=0, title('Not'),title('Exceed'))",
                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
         #progress set to 3
         feedback.setCurrentStep(3)
@@ -831,7 +831,7 @@ class carcap2Algorithm(QgsProcessingAlgorithm):
                                        'FIELD_TYPE':0,
                                        'FIELD_LENGTH':20,
                                        'FIELD_PRECISION':15,
-                                       'FORMULA':f'(({ava_val-wn_val})/{wn_stad})*Population',
+                                       'FORMULA':f'(diff/{wn_stad})+Population',
                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
         
         #progress set to 4
@@ -846,6 +846,7 @@ class carcap2Algorithm(QgsProcessingAlgorithm):
         fields.append(QgsField('Population', QVariant.Int,'', 50))
         fields.append(QgsField('K_Grid', QVariant.Double, '', 50, 5))
         fields.append(QgsField('T_Grid', QVariant.Double, '', 50, 5)) 
+        fields.append(QgsField("Difference", QVariant.Double, '', 50,5))
         fields.append(QgsField('Statues', QVariant.String, '', 50))
         fields.append(QgsField('Threshold', QVariant.Int,'', 50))
 
@@ -853,16 +854,17 @@ class carcap2Algorithm(QgsProcessingAlgorithm):
         output_crs = QgsCoordinateReferenceSystem('EPSG:4326')
         (sink, dest_id) = self.parameterAsSink(parameters, self.OUTPUT, context, fields, QgsWkbTypes.Polygon, output_crs)
 
-        for feat in thres['OUTPUT']:
+        for feat in thres['OUTPUT'].getFeatures():
             grid_id = feat['IMGSID']
             popul = feat['Population']
             k = feat[f'{ava_val}']
             t = feat[f'{wn_val}']
+            diff_1 = feat['diff']
             status = feat['Statues']
             threshold_1 = feat['Threshold']
 
             new_feat = QgsFeature(feat)
-            new_feat.setAttributes([grid_id,popul,k,t,status,threshold_1])
+            new_feat.setAttributes([grid_id,popul,k,t,diff_1,status,threshold_1])
             
             sink.addFeature(new_feat, QgsFeatureSink.FastInsert)
         
