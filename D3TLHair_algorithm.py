@@ -204,23 +204,28 @@ class calcneedAlgorithm(QgsProcessingAlgorithm):
         grid_crs = grid_layer.sourceCrs()
         veg_crs = veg_layer.sourceCrs()
 
-        if grid_crs != epsg4326:
-            QgsCoordinateTransform(grid_crs, epsg4326, QgsProject.instance())
+        grid_rep = processing.run("native:reprojectlayer",
+                                        {'INPUT':parameters['POPUL_GRID'],
+                                        'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
+                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})  
 
-        if veg_crs != epsg4326:
-            QgsCoordinateTransform(veg_crs, epsg4326, QgsProject.instance())
+        veg_rep = processing.run("native:reprojectlayer",
+                                        {'INPUT':parameters['VEG'],
+                                        'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
+                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})  
+
 
         #progress set to 1
         feedback.setCurrentStep(1)
         if feedback.isCanceled():
-            return {}
+            return{}
         
         # calculate population water need per grid
 
         feedback.setProgressText('Calculate household water requirements per grid')
 
         D_grid =  processing.run("native:fieldcalculator", 
-                                {'INPUT':parameters['POPUL_GRID'],
+                                {'INPUT':grid_rep['OUTPUT'],
                                 'FIELD_NAME': "Dgrid",
                                 'FIELD_TYPE':0,
                                 'FIELD_LENGTH':30,
@@ -237,7 +242,7 @@ class calcneedAlgorithm(QgsProcessingAlgorithm):
         feedback.setProgressText('Intersect Vegetation with Grid Layer...')
 
         intr_veg = processing.run("native:intersection", 
-                                  {'INPUT':parameters['VEG'], 
+                                  {'INPUT':veg_rep['OUTPUT'], 
                                    'OVERLAY': parameters['POPUL_GRID'],
                                    'INPUT_FIELDS':[],
                                    'OVERLAY_FIELDS':[],
@@ -484,34 +489,38 @@ class distavailability2Algorithm(QgsProcessingAlgorithm):
         feedback.setProgressText('Reproject All layer to EPSG 4326...')
 
         epsg4326 = QgsCoordinateReferenceSystem("EPSG:4326")
-        grid_crs = grid_layer.sourceCrs()
-        IJH_crs = IJH_Layer.sourceCrs()
-        WAS_crs = WAS_layer.sourceCrs()
-
-        if grid_crs != epsg4326:
-            QgsCoordinateTransform(grid_crs, epsg4326, QgsProject.instance())
 
 
-        if IJH_crs != epsg4326:
-            QgsCoordinateTransform(IJH_crs, epsg4326, QgsProject.instance())
+        grid_rep = processing.run("native:reprojectlayer",
+                                        {'INPUT':parameters['Grid'],
+                                        'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
+                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
 
+ 
+        IJH_rep = processing.run("native:reprojectlayer",
+                                        {'INPUT':parameters['IJH'],
+                                        'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
+                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})  
 
-        if WAS_crs != epsg4326:
-            QgsCoordinateTransform(WAS_crs, epsg4326, QgsProject.instance())
+        WAS_rep = processing.run("native:reprojectlayer",
+                                        {'INPUT':parameters['WAS'],
+                                        'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
+                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})  
+
 
         #progress set to 1
         feedback.setCurrentStep(1)
         if feedback.isCanceled():
-            return {}
+            return{}
         
         # Intersect All Layer
 
         feedback.setProgressText('Intersect all layer ....')
 
         intr = processing.run("native:multiintersection", 
-                       {'INPUT':parameters['IJH'],
-                        'OVERLAYS':[parameters['Grid'],
-                                    parameters['WAS']],
+                       {'INPUT':IJH_rep['OUTPUT'],
+                        'OVERLAYS':[grid_rep['OUTPUT'],
+                                    WAS_rep['OUTPUT']],
                         'OVERLAY_FIELDS_PREFIX':'',
                         'OUTPUT':'TEMPORARY_OUTPUT'})
         
@@ -773,18 +782,31 @@ class carcap2Algorithm(QgsProcessingAlgorithm):
         if ava_crs != epsg4326:
             QgsCoordinateTransform(ava_crs, epsg4326, QgsProject.instance())
 
+# transform coordinates to epsg 4326
+        
+        feedback.setProgressText('Reproject All layer to EPSG 4326...')
+
+        epsg4326 = QgsCoordinateReferenceSystem("EPSG:4326")
+
+        need_rep = processing.run("native:reprojectlayer",
+                                        {'INPUT':parameters['NEED'],
+                                        'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
+                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+
+ 
+        ava_rep = processing.run("native:reprojectlayer",
+                                        {'INPUT':parameters['avagrid'],
+                                        'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
+                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})  
+
         #progress set to 1
         feedback.setCurrentStep(1)
         if feedback.isCanceled():
-            return {}
-        
-        # join attribute values 
+            return{}
 
-        feedback.setProgressText('Join attribute values by IMGSID...')
-
-        join = processing.run("native:joinattributestable", {'INPUT_2':parameters['AVAIL'],
+        join = processing.run("native:joinattributestable", {'INPUT_2':ava_rep['OUTPUT'],
                                                       'FIELD_2':'IMGSID',
-                                                      'INPUT':parameters['NEED'],
+                                                      'INPUT':need_rep['OUTPUT'],
                                                       'FIELD':'IMGSID',
                                                       'FIELDS_TO_COPY':[],
                                                       'METHOD':1,

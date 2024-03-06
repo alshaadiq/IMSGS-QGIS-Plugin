@@ -135,12 +135,12 @@ class calcenergyAlgorithm(QgsProcessingAlgorithm):
         feedback.setProgressText('Reproject All layer to EPSG 4326...')
 
         epsg4326 = QgsCoordinateReferenceSystem("EPSG:4326")
-        pop_crs = pop_layer.sourceCrs()
 
-        if pop_crs != epsg4326:
-            QgsCoordinateTransform(pop_crs, epsg4326, QgsProject.instance())
-
-
+        
+        pop_rep = processing.run("native:reprojectlayer",
+                                        {'INPUT':parameters['popgrid'],
+                                        'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
+                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})   
         #progress set to 1
         feedback.setCurrentStep(1)
         if feedback.isCanceled():
@@ -153,7 +153,7 @@ class calcenergyAlgorithm(QgsProcessingAlgorithm):
         feedback.setProgressText('Calculate grid AKE for each year... ')
 
         AKE_Count = processing.run("native:fieldcalculator", 
-                                      {'INPUT':parameters['popgrid'],
+                                      {'INPUT':pop_rep['OUTPUT'],
                                        'FIELD_NAME':'AKEGrid',
                                        'FIELD_TYPE':0,
                                        'FIELD_LENGTH':20,
@@ -625,16 +625,41 @@ class carcapAlgorithm(QgsProcessingAlgorithm):
         
  # ==================== algoritm =====================================  
         
+
+# transform coordinates to epsg 4326
+        
+        feedback.setProgressText('Reproject All layer to EPSG 4326...')
+
         epsg4326 = QgsCoordinateReferenceSystem("EPSG:4326")
+
+        need_rep = processing.run("native:reprojectlayer",
+                                        {'INPUT':parameters['needgrid'],
+                                        'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
+                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+
+ 
+        ava_rep = processing.run("native:reprojectlayer",
+                                        {'INPUT':parameters['avagrid'],
+                                        'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
+                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})  
+        
+        popul_rep = processing.run("native:reprojectlayer",
+                                        {'INPUT':parameters['populgrid'],
+                                        'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
+                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})   
+        
+        feedback.setCurrentStep(1)
+        if feedback.isCanceled():
+            return{}
 
 # join attributes to grid layer 
 
         feedback.setProgressText('join attribute table to grid layer ... ')
 
 
-        joinn = processing.run("native:joinattributestable", {'INPUT_2': parameters['needgrid'],
+        joinn = processing.run("native:joinattributestable", {'INPUT_2': need_rep['OUTPUT'],
                                                       'FIELD_2':'IMGSID',
-                                                      'INPUT':parameters['avagrid'],
+                                                      'INPUT':ava_rep['OUTPUT'],
                                                       'FIELD':'IMGSID',
                                                       'FIELDS_TO_COPY':[],
                                                       'METHOD':1,
@@ -644,7 +669,7 @@ class carcapAlgorithm(QgsProcessingAlgorithm):
 
         join = processing.run("native:joinattributestable", {'INPUT_2': joinn['OUTPUT'],
                                                       'FIELD_2':'IMGSID',
-                                                      'INPUT':parameters['populgrid'],
+                                                      'INPUT':popul_rep['OUTPUT'],
                                                       'FIELD':'IMGSID',
                                                       'FIELDS_TO_COPY':[],
                                                       'METHOD':1,

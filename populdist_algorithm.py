@@ -219,22 +219,32 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
         rt_crs = rt.sourceCrs()
         admin_crs = admin_layer.sourceCrs() 
 
-        if grid_crs != epsg4326:
-            QgsCoordinateTransform(grid_crs, epsg4326, QgsProject.instance())
 
+        grid_rep = processing.run("native:reprojectlayer",
+                                        {'INPUT':parameters['INPUT'],
+                                        'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
+                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})  
 
-        if lc_crs != epsg4326:
-            QgsCoordinateTransform(lc_crs, epsg4326, QgsProject.instance())
-
-
-        if rt_crs != epsg4326:
-            QgsCoordinateTransform(rt_crs, epsg4326, QgsProject.instance())
-
-
-        if admin_crs != epsg4326:
-            QgsCoordinateTransform(admin_crs, epsg4326, QgsProject.instance())
-
+        lc_rep = processing.run("native:reprojectlayer",
+                                        {'INPUT':parameters['lc_layer'],
+                                        'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
+                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})  
         
+        rt_rep = processing.run("native:reprojectlayer",
+                                        {'INPUT':parameters['rt_layer'],
+                                        'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
+                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})  
+
+        admin_rep = processing.run("native:reprojectlayer",
+                                        {'INPUT':parameters['INPUTA'],
+                                        'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
+                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})  
+
+
+        #progress set to 1
+        feedback.setCurrentStep(1)
+        if feedback.isCanceled():
+            return{}
         #progress set to 1
         feedback.setCurrentStep(1)
         if feedback.isCanceled():
@@ -244,8 +254,8 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
         feedback.setProgressText('Intersect Road with Grid Layer...')
 
         intr_road = processing.run("native:intersection", 
-                                  {'INPUT':parameters['RT_LAYER'], 
-                                   'OVERLAY':parameters['INPUT'],
+                                  {'INPUT':rt_rep['OUTPUT'], 
+                                   'OVERLAY':grid_rep['OUTPUT'],
                                    'INPUT_FIELDS':[],
                                    'OVERLAY_FIELDS':[],
                                    'OVERLAY_FIELDS_PREFIX':'',
@@ -315,7 +325,7 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
 
         join = processing.run("native:joinattributestable", {'INPUT_2':w_rt_f['OUTPUT'],
                                                       'FIELD_2':'IMGSID',
-                                                      'INPUT':parameters['INPUT'],
+                                                      'INPUT':grid_rep['OUTPUT'],
                                                       'FIELD':'IMGSID',
                                                       'FIELDS_TO_COPY':[],
                                                       'METHOD':1,
@@ -332,8 +342,8 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
         feedback.setProgressText('Intersect Land Cover with Grid Layer...')
 
         intr_Lc = processing.run("native:intersection", 
-                                  {'INPUT':parameters['LC_LAYER'], 
-                                   'OVERLAY':parameters['INPUT'],
+                                  {'INPUT':lc_rep['OUTPUT'], 
+                                   'OVERLAY':grid_rep['OUTPUT'],
                                    'INPUT_FIELDS':[],
                                    'OVERLAY_FIELDS':[],
                                    'OVERLAY_FIELDS_PREFIX':'',
@@ -420,7 +430,7 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
         feedback.setProgressText('Intersect Grid Layer with Admin Boundary ... ')
 
         intr_Ad = processing.run("native:intersection", 
-                                  {'INPUT':parameters['INPUTA'], 
+                                  {'INPUT':admin_rep['OUTPUT'], 
                                    'OVERLAY':join_2['OUTPUT'],
                                    'INPUT_FIELDS':[],
                                    'OVERLAY_FIELDS':[],
