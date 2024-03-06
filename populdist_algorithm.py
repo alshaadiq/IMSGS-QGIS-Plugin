@@ -50,7 +50,9 @@ from qgis.core import (QgsProcessingAlgorithm,
                         QgsFeatureRequest
                         )
 
-
+from qgis.PyQt.QtCore import QUrl
+import os
+from qgis.PyQt.QtGui import QIcon
 import processing
 import geopandas as gpd
 
@@ -86,6 +88,9 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
 
     def tr(self, string):
         return QCoreApplication.translate('Processing', string)
+
+    def icon(self):
+        return QIcon(os.path.join(os.path.dirname(__file__), 'icons/populdist.png'))
 
     def createInstance(self):
         return PopulDistAlgorithm()

@@ -47,6 +47,9 @@ from qgis.core import (QgsProcessing,
                        )
 from qgis.PyQt.QtCore import *
 from qgis.PyQt.QtCore import (QCoreApplication,QVariant)
+from qgis.PyQt.QtCore import QUrl
+import os
+from qgis.PyQt.QtGui import QIcon
 import processing
 import math
 
@@ -72,6 +75,9 @@ class calcenergyAlgorithm(QgsProcessingAlgorithm):
 
     def tr(self, string):
         return QCoreApplication.translate('Processing', string)
+
+    def icon(self):
+        return QIcon(os.path.join(os.path.dirname(__file__), 'icons/enerneed.png'))
 
     def createInstance(self):
         return calcenergyAlgorithm()
@@ -219,6 +225,9 @@ class distavailabilityAlgorithm(QgsProcessingAlgorithm):
 
     def tr(self, string):
         return QCoreApplication.translate('Processing', string)
+
+    def icon(self):
+        return QIcon(os.path.join(os.path.dirname(__file__), 'icons/eneravai.png'))
 
     def createInstance(self):
         return distavailabilityAlgorithm()
@@ -520,6 +529,9 @@ class carcapAlgorithm(QgsProcessingAlgorithm):
 
     def tr(self, string):
         return QCoreApplication.translate('Processing', string)
+
+    def icon(self):
+        return QIcon(os.path.join(os.path.dirname(__file__), 'icons/enerstatus.png'))
 
     def createInstance(self):
         return carcapAlgorithm()

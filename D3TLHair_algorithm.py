@@ -46,8 +46,10 @@ from qgis.core import (QgsProcessing,
                        QgsFeature
                        )
 from qgis.PyQt.QtCore import *
+from qgis.PyQt.QtCore import QUrl
+import os
+from qgis.PyQt.QtGui import QIcon
 import processing
-import math
 
 #--------------------- Calculate Energy -------------------------
 class calcneedAlgorithm(QgsProcessingAlgorithm):
@@ -79,6 +81,8 @@ class calcneedAlgorithm(QgsProcessingAlgorithm):
     def createInstance(self):
         return calcneedAlgorithm()
 
+    def icon(self):
+        return QIcon(os.path.join(os.path.dirname(__file__), 'icons/waterneed.png'))
 
     def initAlgorithm(self, config):
 # ====================  Parameter =====================================  
@@ -386,6 +390,10 @@ class distavailability2Algorithm(QgsProcessingAlgorithm):
 
     def tr(self, string):
         return QCoreApplication.translate('Processing', string)
+    
+
+    def icon(self):
+        return QIcon(os.path.join(os.path.dirname(__file__), 'icons/wateravail.png'))
 
     def createInstance(self):
         return distavailability2Algorithm()
@@ -674,6 +682,10 @@ class carcap2Algorithm(QgsProcessingAlgorithm):
 
     def tr(self, string):
         return QCoreApplication.translate('Processing', string)
+    
+
+    def icon(self):
+        return QIcon(os.path.join(os.path.dirname(__file__), 'icons/waterstatus.png'))
 
     def createInstance(self):
         return carcap2Algorithm()
