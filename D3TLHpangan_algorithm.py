@@ -130,19 +130,22 @@ class calcenergyAlgorithm(QgsProcessingAlgorithm):
         feedback = QgsProcessingMultiStepFeedback(22, feedback)
         
  # ==================== algoritm =====================================  
+
         # transform coordinates to epsg 4326
         feedback.setProgressText('Reproject All layer to EPSG 4326...')
-        epsg4326 = QgsCoordinateReferenceSystem("EPSG:4326")
 
-        reproject = processing.run("native:reprojectlayer",
-                                        {'INPUT':parameters['popgrid'],
-                                        'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
-                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+        epsg4326 = QgsCoordinateReferenceSystem("EPSG:4326")
+        pop_crs = pop_layer.sourceCrs()
+
+        if pop_crs != epsg4326:
+            QgsCoordinateTransform(pop_crs, epsg4326, QgsProject.instance())
+
 
         #progress set to 1
         feedback.setCurrentStep(1)
         if feedback.isCanceled():
             return {}
+        
         
 
         
@@ -150,7 +153,7 @@ class calcenergyAlgorithm(QgsProcessingAlgorithm):
         feedback.setProgressText('Calculate grid AKE for each year... ')
 
         AKE_Count = processing.run("native:fieldcalculator", 
-                                      {'INPUT':reproject['OUTPUT'],
+                                      {'INPUT':parameters['popgrid'],
                                        'FIELD_NAME':'AKEGrid',
                                        'FIELD_TYPE':0,
                                        'FIELD_LENGTH':20,
