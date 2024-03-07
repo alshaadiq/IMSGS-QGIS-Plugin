@@ -30,7 +30,7 @@ __copyright__ = '(C) 2023 by Irwanto, Rania Altairatri Evelina Brawijaya, Mutia 
 
 __revision__ = '$Format:%H$'
 
-from qgis.PyQt.QtCore import (QCoreApplication,QVariant)
+
 from qgis.core import (QgsProcessing,
                        QgsFeatureSink,
                        QgsProcessingAlgorithm,
@@ -44,8 +44,9 @@ from qgis.core import (QgsProcessing,
                        QgsFeature
                        )
 from qgis.PyQt.QtCore import *
+import os
+from qgis.PyQt.QtGui import QIcon
 import processing
-
 
 #--------------------- Calculate Energy -------------------------
 class calcneedAlgorithm(QgsProcessingAlgorithm):
@@ -77,6 +78,8 @@ class calcneedAlgorithm(QgsProcessingAlgorithm):
     def createInstance(self):
         return calcneedAlgorithm()
 
+    def icon(self):
+        return QIcon(os.path.join(os.path.dirname(__file__), 'icons/waterneed.png'))
 
     def initAlgorithm(self, config):
 # ====================  Parameter =====================================  
@@ -383,6 +386,10 @@ class distavailability2Algorithm(QgsProcessingAlgorithm):
 
     def tr(self, string):
         return QCoreApplication.translate('Processing', string)
+    
+
+    def icon(self):
+        return QIcon(os.path.join(os.path.dirname(__file__), 'icons/wateravail.png'))
 
     def createInstance(self):
         return distavailability2Algorithm()
@@ -672,6 +679,10 @@ class carcap2Algorithm(QgsProcessingAlgorithm):
 
     def tr(self, string):
         return QCoreApplication.translate('Processing', string)
+    
+
+    def icon(self):
+        return QIcon(os.path.join(os.path.dirname(__file__), 'icons/waterstatus.png'))
 
     def createInstance(self):
         return carcap2Algorithm()

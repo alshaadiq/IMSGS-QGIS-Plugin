@@ -37,18 +37,16 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingParameterFeatureSource,
                        QgsProcessingParameterFeatureSink,
                        QgsProcessingParameterField,
-                       QgsCoordinateTransform,
                        QgsProcessingMultiStepFeedback,
                        QgsCoordinateReferenceSystem,
-                       QgsProject,
                        QgsFeature,
                        QgsProcessingParameterNumber,
                        QgsFields,QgsField,QgsWkbTypes,
                        )
 from qgis.PyQt.QtCore import *
-from qgis.PyQt.QtCore import (QCoreApplication,QVariant)
+import os
+from qgis.PyQt.QtGui import QIcon
 import processing
-import math
 
 #--------------------- Calculate Energy -------------------------
 class calcenergyAlgorithm(QgsProcessingAlgorithm):
@@ -72,6 +70,9 @@ class calcenergyAlgorithm(QgsProcessingAlgorithm):
 
     def tr(self, string):
         return QCoreApplication.translate('Processing', string)
+
+    def icon(self):
+        return QIcon(os.path.join(os.path.dirname(__file__), 'icons/enerneed.png'))
 
     def createInstance(self):
         return calcenergyAlgorithm()
@@ -117,9 +118,6 @@ class calcenergyAlgorithm(QgsProcessingAlgorithm):
     def processAlgorithm(self, parameters, context, feedback):
 
 # ==================== Define Parameter =====================================   
-        # input population layer 
-        pop_layer = self.parameterAsSource(parameters, self.popgrid,context)
-
         # input popfield from population layer
         pop_field = self.parameterAsString(parameters, self.popfield,context)
 
@@ -145,10 +143,7 @@ class calcenergyAlgorithm(QgsProcessingAlgorithm):
         feedback.setCurrentStep(1)
         if feedback.isCanceled():
             return {}
-        
-        
-
-        
+               
         #calculate total weigth for each grid
         feedback.setProgressText('Calculate grid AKE for each year... ')
 
@@ -165,10 +160,6 @@ class calcenergyAlgorithm(QgsProcessingAlgorithm):
         feedback.setCurrentStep(2)
         if feedback.isCanceled():
             return {}
-
-
-
-
 
 # ==================== output parameter =====================================  
 
@@ -219,6 +210,9 @@ class distavailabilityAlgorithm(QgsProcessingAlgorithm):
 
     def tr(self, string):
         return QCoreApplication.translate('Processing', string)
+
+    def icon(self):
+        return QIcon(os.path.join(os.path.dirname(__file__), 'icons/eneravai.png'))
 
     def createInstance(self):
         return distavailabilityAlgorithm()
@@ -290,14 +284,8 @@ class distavailabilityAlgorithm(QgsProcessingAlgorithm):
     def processAlgorithm(self, parameters, context, feedback):
 
 # ==================== Define Parameter =====================================   
-        # input population layer 
-        grid_layer = self.parameterAsSource(parameters, self.grid,context)
-
         # input IJEPBP field per grid
         IJEPBP_field = self.parameterAsString(parameters, self.IJEPBPESP,context)
-
-        # Administration Boundary
-        adm_layer = self.parameterAsSource(parameters, self.admlay, context)
 
         # Administration boundary name field
         adm_field = self.parameterAsString(parameters, self.admfield, context)
@@ -520,6 +508,9 @@ class carcapAlgorithm(QgsProcessingAlgorithm):
 
     def tr(self, string):
         return QCoreApplication.translate('Processing', string)
+
+    def icon(self):
+        return QIcon(os.path.join(os.path.dirname(__file__), 'icons/enerstatus.png'))
 
     def createInstance(self):
         return carcapAlgorithm()

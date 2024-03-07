@@ -49,6 +49,9 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingMultiStepFeedback
                        )
 from qgis.PyQt.QtCore import *
+from qgis.PyQt.QtCore import QUrl
+import os
+from qgis.PyQt.QtGui import QIcon
 import processing
 import math
 
@@ -78,7 +81,9 @@ class IMSGSAlgorithm(QgsProcessingAlgorithm):
 
     def createInstance(self):
         return IMSGSAlgorithm()
-
+    
+    def icon(self):
+        return QIcon(os.path.join(os.path.dirname(__file__), 'icons/generategrid.png'))
 
     def initAlgorithm(self, config):
 # ====================  Parameter =====================================  
