@@ -30,7 +30,6 @@ __copyright__ = '(C) 2023 by Irwanto, Rania Altairatri Evelina Brawijaya, Mutia 
 
 __revision__ = '$Format:%H$'
 
-from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (QgsProcessing,
                        QgsFeatureSink,
                        QgsProcessingAlgorithm,
@@ -49,7 +48,6 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingMultiStepFeedback
                        )
 from qgis.PyQt.QtCore import *
-from qgis.PyQt.QtCore import QUrl
 import os
 from qgis.PyQt.QtGui import QIcon
 import processing

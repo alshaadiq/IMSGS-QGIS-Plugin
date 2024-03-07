@@ -30,7 +30,6 @@ __copyright__ = '(C) 2023 by Irwanto, Rania Altairatri Evelina Brawijaya, Mutia 
 
 __revision__ = '$Format:%H$'
 
-from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (QgsProcessing,
                        QgsFeatureSink,
                        QgsProcessingAlgorithm,
@@ -125,7 +124,7 @@ class calcenergyAlgorithm(QgsProcessingAlgorithm):
         AKE_number = self.parameterAsString(parameters, self.AKE, context)
 
         #initialize progress bar
-        feedback = QgsProcessingMultiStepFeedback(22, feedback)
+        feedback = QgsProcessingMultiStepFeedback(2, feedback)
         
  # ==================== algoritm =====================================  
 
@@ -293,9 +292,6 @@ class distavailabilityAlgorithm(QgsProcessingAlgorithm):
         # Energy Production from Administrative Boundary Layer
         ener_field = self.parameterAsString(parameters, self.enerfield, context)
 
-        # input ecoregion layer 
-        ESP_layer = self.parameterAsSource(parameters, self.ESPlay,context)
-
         #initialize progress bar
         feedback = QgsProcessingMultiStepFeedback(10, feedback)
         
@@ -314,12 +310,22 @@ class distavailabilityAlgorithm(QgsProcessingAlgorithm):
         adm_rep = processing.run("native:reprojectlayer",
                                         {'INPUT':parameters['admlay'],
                                         'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
-                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})  
+                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+
+        adm_fix =  processing.run("native:fixgeometries", 
+                                {'INPUT':adm_rep['OUTPUT'],
+                                 'METHOD':0,
+                                 'OUTPUT':'TEMPORARY_OUTPUT'})    
         
         ESP_rep = processing.run("native:reprojectlayer",
                                         {'INPUT':parameters['ESPlay'],
                                         'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
-                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})              
+                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})    
+
+        esp_fix =  processing.run("native:fixgeometries", 
+                                {'INPUT':ESP_rep['OUTPUT'],
+                                 'METHOD':0,
+                                 'OUTPUT':'TEMPORARY_OUTPUT'})            
 
         #progress set to 1
         feedback.setCurrentStep(1)
@@ -330,9 +336,9 @@ class distavailabilityAlgorithm(QgsProcessingAlgorithm):
         feedback.setProgressText('Intersections')
 
         intr = processing.run("native:multiintersection", 
-                       {'INPUT':ESP_rep['OUTPUT'],
+                       {'INPUT':esp_fix['OUTPUT'],
                         'OVERLAYS':[grid_rep['OUTPUT'],
-                                    adm_rep['OUTPUT']],
+                                    adm_fix['OUTPUT']],
                         'OVERLAY_FIELDS_PREFIX':'',
                         'OUTPUT':'TEMPORARY_OUTPUT'})
         
@@ -445,7 +451,7 @@ class distavailabilityAlgorithm(QgsProcessingAlgorithm):
 
         join = processing.run("native:joinattributestable", {'INPUT_2':EnergyCalc['OUTPUT'],
                                                       'FIELD_2':'IMGSID',
-                                                      'INPUT':parameters['grid'],
+                                                      'INPUT':grid_rep['OUTPUT'],
                                                       'FIELD':'IMGSID',
                                                       'FIELDS_TO_COPY':[],
                                                       'METHOD':1,
@@ -590,20 +596,12 @@ class carcapAlgorithm(QgsProcessingAlgorithm):
     def processAlgorithm(self, parameters, context, feedback):
 
 # ==================== Define Parameter =====================================   
-        # input population layer 
-        need_layer = self.parameterAsSource(parameters, self.needgrid,context)
 
         # input popfield from population layer
         need_field = self.parameterAsString(parameters, self.needfield,context)
 
-        # input population layer 
-        ava_layer = self.parameterAsSource(parameters, self.avagrid,context)
-
         # input popfield from population layer
         ava_field = self.parameterAsString(parameters, self.avafield,context)
-
-        # input population layer 
-        popul_layer = self.parameterAsSource(parameters, self.populgrid,context)
 
         # input popfield from population layer
         popul_field = self.parameterAsString(parameters, self.populfield,context)
@@ -612,7 +610,7 @@ class carcapAlgorithm(QgsProcessingAlgorithm):
         AKE_number = self.parameterAsString(parameters, self.AKE, context)
 
         #initialize progress bar
-        feedback = QgsProcessingMultiStepFeedback(22, feedback)
+        feedback = QgsProcessingMultiStepFeedback(6, feedback)
         
  # ==================== algoritm =====================================  
         
@@ -732,8 +730,8 @@ class carcapAlgorithm(QgsProcessingAlgorithm):
                                        'FIELD_PRECISION':0,
                                        'FORMULA':"if(diff<=0, title('Not'),title('Exceed'))",
                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
-        #progress set to 3
-        feedback.setCurrentStep(3)
+        #progress set to 6
+        feedback.setCurrentStep(6)
         if feedback.isCanceled():
             return {}
 

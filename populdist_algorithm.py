@@ -46,8 +46,6 @@ from qgis.core import (QgsProcessingAlgorithm,
                         QgsFeatureSink,
                         QgsFeature
                         )
-
-from qgis.PyQt.QtCore import QUrl
 import os
 from qgis.PyQt.QtGui import QIcon
 import processing
@@ -523,7 +521,7 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
         
         join_3 = processing.run("native:joinattributestable", {'INPUT_2':popul_grid['OUTPUT'],
                                                       'FIELD_2':'IMGSID',
-                                                      'INPUT':parameters['INPUT'],
+                                                      'INPUT':grid_rep['INPUT'],
                                                       'FIELD':'IMGSID',
                                                       'FIELDS_TO_COPY':[],
                                                       'METHOD':1,
