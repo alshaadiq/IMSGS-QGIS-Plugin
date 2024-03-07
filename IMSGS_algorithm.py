@@ -43,8 +43,9 @@ from qgis.core import (QgsProcessing,
                        QgsProject,
                        QgsRectangle,
                        QgsProcessingParameterBoolean,
-                       QgsProcessingParameterField,
-                       QgsFields,QgsField,QgsWkbTypes,
+                       QgsFields,
+                       QgsField,
+                       QgsWkbTypes,
                        QgsProcessingMultiStepFeedback
                        )
 from qgis.PyQt.QtCore import *

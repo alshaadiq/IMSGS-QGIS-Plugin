@@ -42,17 +42,13 @@ from qgis.core import (QgsProcessingAlgorithm,
                         QgsFields,
                         QgsField,
                         QgsCoordinateReferenceSystem,
-                        QgsCoordinateTransform,
-                        QgsProject,
                         QgsWkbTypes,
                         QgsFeatureSink,
-                        QgsFeature,
-                        QgsFeatureRequest
+                        QgsFeature
                         )
 
 
 import processing
-import geopandas as gpd
 
 class PopulDistAlgorithm(QgsProcessingAlgorithm):
 
@@ -181,23 +177,12 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
     def processAlgorithm(self, parameters, context, feedback):
 
 # ==================== Define Parameter =====================================   
-        # input grid layer 
-        grid_layer = self.parameterAsSource(parameters, self.INPUT,context)
-
-        # landcover layer    
-        lc = self.parameterAsSource(parameters,self.lc_layer, context)
-
+        
         #input field that contain landcover weight 
         lc_weight = self.parameterAsString(parameters, self.TableWeightLC,context)
 
-        # road layer    
-        rt = self.parameterAsSource(parameters,self.rt_layer, context)
-
         #input field that contain road weight 
         rt_weight = self.parameterAsString(parameters, self.TableWeightRT,context)
-
-        # input admin boundary
-        admin_layer = self.parameterAsSource(parameters, self.INPUTA, context)
 
         #input admin field that contain admin boudary
         admin_field = self.parameterAsString(parameters, self.INPUTAT,context)
@@ -213,48 +198,52 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
         # transform coordinates to epsg 4326
         feedback.setProgressText('Reproject All layer to EPSG 4326...')
 
-        epsg4326 = QgsCoordinateReferenceSystem("EPSG:4326")
-        grid_crs = grid_layer.sourceCrs()
-        lc_crs = lc.sourceCrs()
-        rt_crs = rt.sourceCrs()
-        admin_crs = admin_layer.sourceCrs() 
-
-
         grid_rep = processing.run("native:reprojectlayer",
                                         {'INPUT':parameters['INPUT'],
                                         'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
                                         'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})  
 
         lc_rep = processing.run("native:reprojectlayer",
-                                        {'INPUT':parameters['lc_layer'],
+                                        {'INPUT':parameters['LC_LAYER'],
+                                        'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
+                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+
+        lc_fix = processing.run("native:fixgeometries", 
+                                {'INPUT':lc_rep['OUTPUT'],
+                                 'METHOD':0,
+                                 'OUTPUT':'TEMPORARY_OUTPUT'})  
+        
+        rt_rep = processing.run("native:reprojectlayer",
+                                        {'INPUT':parameters['RT_LAYER'],
                                         'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
                                         'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})  
         
-        rt_rep = processing.run("native:reprojectlayer",
-                                        {'INPUT':parameters['rt_layer'],
-                                        'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
-                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})  
+        rt_fix = processing.run("native:fixgeometries", 
+                            {'INPUT':rt_rep['OUTPUT'],
+                            'METHOD':0,
+                            'OUTPUT':'TEMPORARY_OUTPUT'})  
 
         admin_rep = processing.run("native:reprojectlayer",
                                         {'INPUT':parameters['INPUTA'],
                                         'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
                                         'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})  
+        
+        admin_fix = processing.run("native:fixgeometries", 
+                            {'INPUT':admin_rep['OUTPUT'],
+                            'METHOD':0,
+                            'OUTPUT':'TEMPORARY_OUTPUT'})  
 
 
         #progress set to 1
         feedback.setCurrentStep(1)
         if feedback.isCanceled():
             return{}
-        #progress set to 1
-        feedback.setCurrentStep(1)
-        if feedback.isCanceled():
-            return {}
         
         # Intersect road
         feedback.setProgressText('Intersect Road with Grid Layer...')
 
         intr_road = processing.run("native:intersection", 
-                                  {'INPUT':rt_rep['OUTPUT'], 
+                                  {'INPUT':rt_fix['OUTPUT'], 
                                    'OVERLAY':grid_rep['OUTPUT'],
                                    'INPUT_FIELDS':[],
                                    'OVERLAY_FIELDS':[],
@@ -342,7 +331,7 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
         feedback.setProgressText('Intersect Land Cover with Grid Layer...')
 
         intr_Lc = processing.run("native:intersection", 
-                                  {'INPUT':lc_rep['OUTPUT'], 
+                                  {'INPUT':lc_fix['OUTPUT'], 
                                    'OVERLAY':grid_rep['OUTPUT'],
                                    'INPUT_FIELDS':[],
                                    'OVERLAY_FIELDS':[],
@@ -430,7 +419,7 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
         feedback.setProgressText('Intersect Grid Layer with Admin Boundary ... ')
 
         intr_Ad = processing.run("native:intersection", 
-                                  {'INPUT':admin_rep['OUTPUT'], 
+                                  {'INPUT':admin_fix['OUTPUT'], 
                                    'OVERLAY':join_2['OUTPUT'],
                                    'INPUT_FIELDS':[],
                                    'OVERLAY_FIELDS':[],
@@ -567,6 +556,8 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
         fields.append(QgsField('WRT', QVariant.Double, '', 50, 4))
         fields.append(QgsField('WLC', QVariant.Double, '', 50, 5))
         fields.append(QgsField('Population', QVariant.Double,'', 50, 5))
+
+        epsg4326 = QgsCoordinateReferenceSystem("EPSG:4326")
 
         # Output parameter
         (sink, dest_id) = self.parameterAsSink(parameters, self.OUTPUT, context, fields, QgsWkbTypes.Polygon, epsg4326)

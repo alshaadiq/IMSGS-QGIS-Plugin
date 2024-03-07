@@ -36,9 +36,7 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingAlgorithm,
                        QgsProcessingParameterFeatureSource,
                        QgsProcessingParameterFeatureSink,
-                       QgsCoordinateTransform,
                        QgsCoordinateReferenceSystem,
-                       QgsProject,
                        QgsFields,QgsField,QgsWkbTypes,
                        QgsProcessingMultiStepFeedback,
                        QgsProcessingParameterField,
@@ -47,7 +45,7 @@ from qgis.core import (QgsProcessing,
                        )
 from qgis.PyQt.QtCore import *
 import processing
-import math
+
 
 #--------------------- Calculate Energy -------------------------
 class calcneedAlgorithm(QgsProcessingAlgorithm):
@@ -171,8 +169,6 @@ class calcneedAlgorithm(QgsProcessingAlgorithm):
     def processAlgorithm(self, parameters, context, model_feedback):
 
 # ==================== Define Parameter =====================================   
-        #input grid layer 
-        grid_layer = self.parameterAsSource(parameters, self.POPUL_GRID, context)
 
         #input population field
         popul = self.parameterAsString(parameters, self.POPUL_FIELD, context)
@@ -182,9 +178,6 @@ class calcneedAlgorithm(QgsProcessingAlgorithm):
 
         #input factor correction for water requirements
         Fc = self.parameterAsDouble(parameters, self.COR_FCT, context)
-
-        # input vegetation layer
-        veg_layer = self.parameterAsSource(parameters, self.VEG, context)
 
         # input field contain vegetation intensity
         int_veg = self.parameterAsString(parameters, self.VEG_INT, context)
@@ -200,19 +193,20 @@ class calcneedAlgorithm(QgsProcessingAlgorithm):
        # transform coordinate to epsg 4326
         feedback.setProgressText('Reproject All Layer to EPSG 4326')
 
-        epsg4326 = QgsCoordinateReferenceSystem("EPSG:4326")
-        grid_crs = grid_layer.sourceCrs()
-        veg_crs = veg_layer.sourceCrs()
-
         grid_rep = processing.run("native:reprojectlayer",
                                         {'INPUT':parameters['POPUL_GRID'],
                                         'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
-                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})  
+                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
 
         veg_rep = processing.run("native:reprojectlayer",
                                         {'INPUT':parameters['VEG'],
                                         'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
                                         'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})  
+        
+        veg_fix =  processing.run("native:reprojectlayer",
+                                {'INPUT':veg_rep['OUTPUT'],
+                                'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
+                                'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
 
 
         #progress set to 1
@@ -242,8 +236,8 @@ class calcneedAlgorithm(QgsProcessingAlgorithm):
         feedback.setProgressText('Intersect Vegetation with Grid Layer...')
 
         intr_veg = processing.run("native:intersection", 
-                                  {'INPUT':veg_rep['OUTPUT'], 
-                                   'OVERLAY': parameters['POPUL_GRID'],
+                                  {'INPUT':veg_fix['OUTPUT'], 
+                                   'OVERLAY': grid_rep['OUTPUT'],
                                    'INPUT_FIELDS':[],
                                    'OVERLAY_FIELDS':[],
                                    'OVERLAY_FIELDS_PREFIX':'',
@@ -345,6 +339,9 @@ class calcneedAlgorithm(QgsProcessingAlgorithm):
         fields.append(QgsField('Dgrid', QVariant.Double, '', 50 ,5))
         fields.append(QgsField('Qgrid', QVariant.Double, '', 50, 5))
         fields.append(QgsField('Tgrid', QVariant.Double, '', 50, 5))
+
+
+        epsg4326 = QgsCoordinateReferenceSystem("EPSG:4326")
 
         # Output parameter
         (sink, dest_id) = self.parameterAsSink(parameters, self.NEED, context, fields, QgsWkbTypes.Polygon, epsg4326)
@@ -462,17 +459,8 @@ class distavailability2Algorithm(QgsProcessingAlgorithm):
 
 # ==================== Define Parameter =====================================   
         
-        # grid layer parameters
-        grid_layer = self.parameterAsSource(parameters, self.Grid,context)
-
-        # enviromental services perfomance layer
-        IJH_Layer = self.parameterAsSource(parameters,self.IJH, context)
-
         # enviromental services performance layer 
         IJH_Value = self.parameterAsString(parameters, self.IJH_V,context)
-
-        # watershed area layer
-        WAS_layer = self.parameterAsSource(parameters, self.WAS, context)
 
         # watershed area name 
         WAS_Name = self.parameterAsString(parameters,self.WAS_N,context)
@@ -500,12 +488,22 @@ class distavailability2Algorithm(QgsProcessingAlgorithm):
         IJH_rep = processing.run("native:reprojectlayer",
                                         {'INPUT':parameters['IJH'],
                                         'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
-                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})  
+                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+
+        IJH_FIX = processing.run("native:fixgeometries", 
+                                {'INPUT':IJH_rep['OUTPUT'],
+                                 'METHOD':0,
+                                 'OUTPUT':'TEMPORARY_OUTPUT'})    
 
         WAS_rep = processing.run("native:reprojectlayer",
                                         {'INPUT':parameters['WAS'],
                                         'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
                                         'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})  
+
+        WAS_FIX = processing.run("native:fixgeometries", 
+                                {'INPUT':WAS_rep['OUTPUT'],
+                                 'METHOD':0,
+                                 'OUTPUT':'TEMPORARY_OUTPUT'})   
 
 
         #progress set to 1
@@ -518,9 +516,9 @@ class distavailability2Algorithm(QgsProcessingAlgorithm):
         feedback.setProgressText('Intersect all layer ....')
 
         intr = processing.run("native:multiintersection", 
-                       {'INPUT':IJH_rep['OUTPUT'],
+                       {'INPUT':IJH_FIX['OUTPUT'],
                         'OVERLAYS':[grid_rep['OUTPUT'],
-                                    WAS_rep['OUTPUT']],
+                                    WAS_FIX['OUTPUT']],
                         'OVERLAY_FIELDS_PREFIX':'',
                         'OUTPUT':'TEMPORARY_OUTPUT'})
         
@@ -559,7 +557,7 @@ class distavailability2Algorithm(QgsProcessingAlgorithm):
 
         feedback.setProgressText('Environmental services performance for each feature in grid...')
 
-        IJH = processing.run("native:fieldcalculator", 
+        IJH_layer = processing.run("native:fieldcalculator", 
                         {'INPUT':feat_area['OUTPUT'],
                         'FIELD_NAME':'IJH_feat',
                         'FIELD_TYPE':0,
@@ -576,7 +574,7 @@ class distavailability2Algorithm(QgsProcessingAlgorithm):
 
         feedback.setProgressText('Calculate enviromental services performance for each water shed...')
 
-        sum_by_id(IJH, 'WAS_IJH', WAS_Name, 'IJH_feat')
+        sum_by_id(IJH_layer, 'WAS_IJH', WAS_Name, 'IJH_feat')
 
         feedback.setCurrentStep(6)
         if feedback.isCanceled():
@@ -587,7 +585,7 @@ class distavailability2Algorithm(QgsProcessingAlgorithm):
         feedback.setProgressText('Calculate water availability for each polygon ... ')
 
         water_avl = processing.run("native:fieldcalculator", 
-                        {'INPUT':IJH['OUTPUT'],
+                        {'INPUT':IJH_layer['OUTPUT'],
                         'FIELD_NAME':'K_feat',
                         'FIELD_TYPE':0,
                         'FIELD_LENGTH':30,
@@ -615,7 +613,7 @@ class distavailability2Algorithm(QgsProcessingAlgorithm):
 
         join = processing.run("native:joinattributestable", {'INPUT_2':water_avl['OUTPUT'],
                                                       'FIELD_2':'IMGSID',
-                                                      'INPUT':parameters['Grid'],
+                                                      'INPUT':grid_rep['OUTPUT'],
                                                       'FIELD':'IMGSID',
                                                       'FIELDS_TO_COPY':[],
                                                       'METHOD':1,
@@ -747,14 +745,8 @@ class carcap2Algorithm(QgsProcessingAlgorithm):
 
 # ==================== Define Parameter =====================================  
 
-        # input parameters water need layer 
-        wn_layer = self.parameterAsSource(parameters, self.NEED, context)
-
         #input water need value 
         wn_val = self.parameterAsString(parameters, self.NEED_VAL, context)
-
-        #input water availability layer 
-        ava_layer = self.parameterAsSource(parameters, self.AVAIL, context)
 
         #input water availability value 
         ava_val = self.parameterAsString(parameters, self.AVAIL_VAL, context)
@@ -763,50 +755,14 @@ class carcap2Algorithm(QgsProcessingAlgorithm):
         wn_stad = self.parameterAsDouble(parameters, self.WN_STD, context)
 
         #initialize progress bar
-        feedback = QgsProcessingMultiStepFeedback(4, model_feedback)    
+        feedback = QgsProcessingMultiStepFeedback(2, model_feedback)    
 
 
  # ==================== algoritm ===================================== 
         
-        # transform coordinates to epsg 4326
-        feedback.setProgressText('Reproject All layer to EPSG 4326...')
-
-        epsg4326 = QgsCoordinateReferenceSystem("EPSG:4326")
-        wn_crs = wn_layer.sourceCrs()
-        ava_crs = ava_layer.sourceCrs() 
-
-        if wn_crs != epsg4326:
-            QgsCoordinateTransform(wn_crs, epsg4326, QgsProject.instance())
-
-
-        if ava_crs != epsg4326:
-            QgsCoordinateTransform(ava_crs, epsg4326, QgsProject.instance())
-
-# transform coordinates to epsg 4326
-        
-        feedback.setProgressText('Reproject All layer to EPSG 4326...')
-
-        epsg4326 = QgsCoordinateReferenceSystem("EPSG:4326")
-
-        need_rep = processing.run("native:reprojectlayer",
-                                        {'INPUT':parameters['NEED'],
-                                        'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
-                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
-
- 
-        ava_rep = processing.run("native:reprojectlayer",
-                                        {'INPUT':parameters['avagrid'],
-                                        'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
-                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})  
-
-        #progress set to 1
-        feedback.setCurrentStep(1)
-        if feedback.isCanceled():
-            return{}
-
-        join = processing.run("native:joinattributestable", {'INPUT_2':ava_rep['OUTPUT'],
+        join = processing.run("native:joinattributestable", {'INPUT_2':parameters['AVAIL'],
                                                       'FIELD_2':'IMGSID',
-                                                      'INPUT':need_rep['OUTPUT'],
+                                                      'INPUT':parameters['NEED'],
                                                       'FIELD':'IMGSID',
                                                       'FIELDS_TO_COPY':[],
                                                       'METHOD':1,
@@ -814,8 +770,8 @@ class carcap2Algorithm(QgsProcessingAlgorithm):
                                                       'PREFIX':'',
                                                       'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
         
-        #progress set to 2
-        feedback.setCurrentStep(2)
+        #progress set to 1
+        feedback.setCurrentStep(1)
         if feedback.isCanceled():
             return {}
         
@@ -839,8 +795,8 @@ class carcap2Algorithm(QgsProcessingAlgorithm):
                                        'FIELD_PRECISION':0,
                                        'FORMULA':"if(diff<=0, title('Not'),title('Exceed'))",
                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
-        #progress set to 3
-        feedback.setCurrentStep(3)
+        #progress set to 2
+        feedback.setCurrentStep(2)
         if feedback.isCanceled():
             return {}
         
@@ -856,8 +812,8 @@ class carcap2Algorithm(QgsProcessingAlgorithm):
                                        'FORMULA':f'(diff/{wn_stad})+Population',
                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
         
-        #progress set to 4
-        feedback.setCurrentStep(4)
+        #progress set to 3
+        feedback.setCurrentStep(3)
         if feedback.isCanceled():
             return {}
         
