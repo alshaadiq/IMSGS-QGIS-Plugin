@@ -48,6 +48,7 @@ from qgis.core import (QgsProcessingAlgorithm,
                         )
 import os
 from qgis.PyQt.QtGui import QIcon
+from qgis.PyQt.QtCore import QUrl
 import processing
 
 class PopulDistAlgorithm(QgsProcessingAlgorithm):
@@ -85,6 +86,12 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
 
     def icon(self):
         return QIcon(os.path.join(os.path.dirname(__file__), 'icons/populdist.png'))
+    
+    def helpUrl(self):
+        file = os.path.dirname(__file__) + '/index.html'
+        if not os.path.exists(file):
+            return ''
+        return QUrl.fromLocalFile(file).toString(QUrl.FullyEncoded)
 
     def createInstance(self):
         return PopulDistAlgorithm()
@@ -521,7 +528,7 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
         
         join_3 = processing.run("native:joinattributestable", {'INPUT_2':popul_grid['OUTPUT'],
                                                       'FIELD_2':'IMGSID',
-                                                      'INPUT':grid_rep['INPUT'],
+                                                      'INPUT':grid_rep['OUTPUT'],
                                                       'FIELD':'IMGSID',
                                                       'FIELDS_TO_COPY':[],
                                                       'METHOD':1,
@@ -558,13 +565,13 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
         fields.append(QgsField('IMGSID', QVariant.String, '', 50))
         fields.append(QgsField('WRT', QVariant.Double, '', 50, 4))
         fields.append(QgsField('WLC', QVariant.Double, '', 50, 5))
-        fields.append(QgsField('Population', QVariant.Double,'', 50, 5))
+        fields.append(QgsField('Population', QVariant.String,'', 50, 5))
 
         epsg4326 = QgsCoordinateReferenceSystem("EPSG:4326")
 
         # Output parameter
         (sink, dest_id) = self.parameterAsSink(parameters, self.OUTPUT, context, fields, QgsWkbTypes.Polygon, epsg4326)
-
+ 
         for feat in popul_null['OUTPUT'].getFeatures():
             grid_id = feat['IMGSID']
             length = feat['WRT']

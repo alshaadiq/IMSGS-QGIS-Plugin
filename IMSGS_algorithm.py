@@ -50,6 +50,7 @@ from qgis.core import (QgsProcessing,
 from qgis.PyQt.QtCore import *
 import os
 from qgis.PyQt.QtGui import QIcon
+from qgis.PyQt.QtCore import QUrl
 import processing
 import math
 
@@ -82,6 +83,12 @@ class IMSGSAlgorithm(QgsProcessingAlgorithm):
     
     def icon(self):
         return QIcon(os.path.join(os.path.dirname(__file__), 'icons/generategrid.png'))
+    
+    def helpUrl(self):
+        file = os.path.dirname(__file__) + '/index.html'
+        if not os.path.exists(file):
+            return ''
+        return QUrl.fromLocalFile(file).toString(QUrl.FullyEncoded)    
 
     def initAlgorithm(self, config):
 # ====================  Parameter =====================================  

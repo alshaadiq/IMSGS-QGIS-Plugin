@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      QGIS Documentation - a tool documentation page for my QGIS Plugin
+    </title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Nunito+Sans:300,400,600,700,800,900"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="scribbler-global.css" />
+    <link rel="stylesheet" href="scribbler-doc.css" />
+    <link rel="author" href="humans.txt" />
+  </head>
+  <body>
+    <div class="doc__bg"></div>
+    <nav class="header">
+      <h1 class="logo">IMSGS <span class="logo__thin">Help</span></h1>
+      <ul class="menu">
+        <div class="menu__item toggle"><span></span></div>
+        <li class="menu__item">
+          <a
+            href="https://github.com/alshaadiq/IMSGS-QGIS-Plugin"
+            target="_blank"
+            class="link link--dark"
+            ><i class="fa fa-github"></i>
+            GITHUB
+          </a>
+        </li>
+        <li class="menu__item">
+          <a href="index.html" class="link link--dark"
+            ><i class="fa fa-home"></i> Home (GATAU ISI APA)</a
+          >
+        </li>
+      </ul>
+    </nav>
+    <div class="wrapper">
+      <aside class="doc__nav">
+        <ul>
+          <li class="js-btn selected">Get Started</li>
+          <li class="js-btn">Grid</li>
+          <li class="js-btn">Population Distribution</li>
+          <li class="js-btn">Environmental Carrying</li>
+        </ul>
+      </aside>
+      <article class="doc__content">
+        <section class="js-section">
+          <h2 class="section__title">
+            Help – User Guide for Indonesian Multiscaled Grid System QGIS Plugin
+          </h2>
+          <p class="desc1">
+            IMSGS is a QGIS plugin that provides comprehensive support for
+            calculating, mapping, and analyzing in a data-driven framework. The
+            main objective of IMSGS is to provide automation of the
+            determination of Indonesia's Environmental Support and Capacity in
+            compliance with the national guidelines of the Ministry of
+            Environment and Forestry.
+          </p>
+          <h3 class="section__title">Installation</h3>
+          <div class="code__block code__block--notabs">
+            <pre class="code code--block">
+              <code>
+                sudo apt install python3
+                install QGIS
+                masukan ke qgis plugin broks
+              </code>
+            </pre>
+          </div>
+        </section>
+        <section class="js-section" id="grid">
+          <h3 class="section__title">Generate Grid</h3>
+          <p>
+            Create a vector layer with a grid covering a given extent. The grid
+            is fixed for the Indonesian region by defining Xmin, Xmax, Ymin,
+            Ymax points based on the World Geodetic System 1984 (WGS84)
+            reference system. The resolution can be chosen as required and can
+            be extracted by the size of the input layer. Every grid contains a
+            unique identifier that differentiates between grids.
+          </p>
+          <br />
+          <p>(PARAMETER)</p>
+          <table>
+            <tr>
+              <th>Label</th>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Description</th>
+            </tr>
+            <tr>
+              <td>Vector Layer (optional)</td>
+              <td>INPUT</td>
+              <td>[vector: any]</td>
+              <td>
+                Input vector layer that will be used as output geometry extent
+              </td>
+            </tr>
+            <tr>
+              <td>Geometry Extent [WGS 84] (optional)</td>
+              <td>STRING_PARAM</td>
+              <td>String</td>
+              <td>
+                Specify Xmin, Xmax, Ymin, Ymax points based on the World
+                Geodetic System 1984 (WGS84) reference system
+              </td>
+            </tr>
+            <tr>
+              <td>Geometry Grid</td>
+              <td>RADIO_PARAM</td>
+              <td>Enumeration Default : 30' x 30'</td>
+              <td>
+                Grid System Resolution:
+                <br />
+                • 30’ x 30’ – 55.5 x 55.5 (km)
+                <br />
+                • 15’ x 15’ – 27.75 x 27.75 (km)
+                <br />
+                • 7’30” x 7’30” – 13.875 x 13.875 (km)
+                <br />
+                • 2’30” x 2’30” – 4.625 x 4.625 (km)
+                <br />
+                • 30” x 30” – 0.900 x 0.900 (km)
+                <br />
+                • 5” x 5” – 0.150 x 0.150 (km)
+              </td>
+            </tr>
+            <tr>
+              <td>Extract Grid by Vector Layer (optional)</td>
+              <td>EXTRACT</td>
+              <td>Boolean</td>
+              <td>
+                Extract the vector layer grid according to the input vector
+                layer
+              </td>
+            </tr>
+            <tr>
+              <td>Output Layer</td>
+              <td>OUTPUT</td>
+              <td>[vector: any] Default: [Create temporary layer]</td>
+              <td>
+                Specify the output layer. One of:
+                <br />
+                • Create Temporary Layer
+                <br />
+                • Save to File…
+                <br />
+                • Save to GeoPackage
+                <br />
+                • Save to Database Table
+                <br />
+                The file encoding can also be changed here.
+              </td>
+            </tr>
+          </table>
+          <p>(OUTPUT)</p>
+          <table>
+            <tr>
+              <th>Label</th>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Description</th>
+            </tr>
+            <tr>
+              <td>Output Layer</td>
+              <td>OUTPUT</td>
+              <td>[vector: any]</td>
+              <td>isi</td>
+            </tr>
+          </table>
+          <hr />
+        </section>
+        <section class="js-section" id="pop">
+          <h3 class="section__title">Population Distribution</h3>
+          <p>
+            Obtain the population distribution for each grid. The population
+            distribution depends on the grid, road type and length, land cover
+            type and administrative boundary data containing population
+            information. The weighting of road and land cover data is filled in
+            manually/freely by the user. The results of the population
+            distribution calculation are then used to calculate the water and
+            food demand for each grid.
+          </p>
+          <p>(PARAMETER)</p>
+          <table>
+            <tr>
+              <th>Label</th>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Description</th>
+            </tr>
+            <tr>
+              <td>Input Grid Layer</td>
+              <td>INPUT</td>
+              <td>isi</td>
+              <td>
+                Input vector layer containing grids with unique identifier for
+                each grid
+              </td>
+            </tr>
+            <tr>
+              <td>Input Land Cover Layer</td>
+              <td>LC_LAYER</td>
+              <td>isi</td>
+              <td>
+                Input land cover layer containing weights for each land cover
+                type
+              </td>
+            </tr>
+            <tr>
+              <td>Select Field that Contains Weight for Landcover</td>
+              <td>TableWeightLC</td>
+              <td>isi</td>
+              <td>
+                Selecting the land cover layer column that contains the land
+                cover weights
+              </td>
+            </tr>
+            <tr>
+              <td>Input Road Layer</td>
+              <td>RT_LAYER</td>
+              <td>isi</td>
+              <td>Input road layer containing weights for each road type</td>
+            </tr>
+            <tr>
+              <td>Select Field that Contains Weight for Road</td>
+              <td>TableWeightRT</td>
+              <td>isi</td>
+              <td>
+                Selecting the road layer column containing the road weights
+              </td>
+            </tr>
+            <tr>
+              <td>Input Administrative Boundaries Layer</td>
+              <td>INPUTA</td>
+              <td>isi</td>
+              <td>
+                Administrative boundary layer input that contains weights on
+                each administrative boundary type
+              </td>
+            </tr>
+
+            <tr>
+              <td>Select Field that Contains Administrative Boundaries Name</td>
+              <td>INPUTAT</td>
+              <td>isi</td>
+              <td>
+                Selecting the administrative boundary layer column containing
+                the administrative boundary weights
+              </td>
+            </tr>
+            <tr>
+              <td>
+                Select Field that Contains Population from Administrative
+                Boundaries Layer
+              </td>
+              <td>INPUTPOP</td>
+              <td>isi</td>
+              <td>
+                Selecting the administrative boundary layer column that contains
+                the population number
+              </td>
+            </tr>
+            <tr>
+              <td>Output Layer</td>
+              <td>OUTPUT</td>
+              <td>isi</td>
+              <td>
+                Specify the output layer. One of :
+                <br />
+                •Create Temporary Layer
+                <br />
+                • Save to File…
+                <br />
+                •Save to GeoPackage
+                <br />
+                •Save to Database Table
+                <br />
+                The file encoding can also be changed here.
+              </td>
+            </tr>
+          </table>
+          <p>(OUTPUT)</p>
+          <table>
+            <tr>
+              <th>Label</th>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Description</th>
+            </tr>
+            <tr>
+              <td>Output Layer</td>
+              <td>OUTPUT</td>
+              <td>[vector: any]</td>
+              <td>
+                Resulting vector grid layer. Each grid has a unique identifier
+                based on the resolution size.
+              </td>
+            </tr>
+          </table>
+        </section>
+        <section class="js-section" id="Environmental Carrying">
+          <h3 class="section__title">Environmental Carrying</h3>
+          <p>
+            Create a vector layer with a grid covering a given extent. The grid
+            is fixed for the Indonesian region by defining Xmin, Xmax, Ymin,
+            Ymax points based on the World Geodetic System 1984 (WGS84)
+            reference system. The resolution can be chosen as required and can
+            be extracted by the size of the input layer. Every grid contains a
+            unique identifier that differentiates between grids.
+          </p>
+          <br />
+          <p>(PARAMETER)</p>
+          <table>
+            <tr>
+              <th>Label</th>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Description</th>
+            </tr>
+            <tr>
+              <td>Vector Layer (optional)</td>
+              <td>INPUT</td>
+              <td>[vector: any]</td>
+              <td>
+                Input vector layer that will be used as output geometry extent
+              </td>
+            </tr>
+            <tr>
+              <td>Geometry Extent [WGS 84] (optional)</td>
+              <td>STRING_PARAM</td>
+              <td>String</td>
+              <td>
+                Specify Xmin, Xmax, Ymin, Ymax points based on the World
+                Geodetic System 1984 (WGS84) reference system
+              </td>
+            </tr>
+            <tr>
+              <td>Geometry Grid</td>
+              <td>RADIO_PARAM</td>
+              <td>Enumeration Default : 30' x 30'</td>
+              <td>
+                Grid System Resolution:
+                <br />
+                • 30’ x 30’ – 55.5 x 55.5 (km)
+                <br />
+                • 15’ x 15’ – 27.75 x 27.75 (km)
+                <br />
+                • 7’30” x 7’30” – 13.875 x 13.875 (km)
+                <br />
+                • 2’30” x 2’30” – 4.625 x 4.625 (km)
+                <br />
+                • 30” x 30” – 0.900 x 0.900 (km)
+                <br />
+                • 5” x 5” – 0.150 x 0.150 (km)
+              </td>
+            </tr>
+            <tr>
+              <td>Extract Grid by Vector Layer (optional)</td>
+              <td>EXTRACT</td>
+              <td>Boolean</td>
+              <td>
+                Extract the vector layer grid according to the input vector
+                layer
+              </td>
+            </tr>
+            <tr>
+              <td>Output Layer</td>
+              <td>OUTPUT</td>
+              <td>[vector: any] Default: [Create temporary layer]</td>
+              <td>
+                Specify the output layer. One of:
+                <br />
+                • Create Temporary Layer
+                <br />
+                • Save to File…
+                <br />
+                • Save to GeoPackage
+                <br />
+                • Save to Database Table
+                <br />
+                The file encoding can also be changed here.
+              </td>
+            </tr>
+          </table>
+          <p>(OUTPUT)</p>
+          <table>
+            <tr>
+              <th>Label</th>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Description</th>
+            </tr>
+            <tr>
+              <td>Output Layer</td>
+              <td>OUTPUT</td>
+              <td>[vector: any]</td>
+              <td>
+                Resulting vector grid layer. Each grid has a unique identifier
+                based on the resolution size.
+              </td>
+            </tr>
+          </table>
+          <hr />
+        </section>
+      </article>
+    </div>
+    <footer class="footer">
+      Copyright by IMSGS. 2024
+      <a
+        href="https://docs.qgis.org/3.34/en/docs/user_manual/processing_algs/qgis/vectorcreation.html"
+        target="_blank"
+        class="link link--light"
+        >Codrops</a
+      >.
+    </footer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>
+      hljs.initHighlightingOnLoad();
+    </script>
+    <script src="scribbler.js"></script>
+  </body>
+</html>

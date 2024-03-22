@@ -46,6 +46,7 @@ from qgis.core import (QgsProcessing,
 from qgis.PyQt.QtCore import *
 import os
 from qgis.PyQt.QtGui import QIcon
+from qgis.PyQt.QtCore import QUrl
 import processing
 
 #--------------------- Calculate Energy -------------------------
@@ -80,6 +81,12 @@ class calcneedAlgorithm(QgsProcessingAlgorithm):
 
     def icon(self):
         return QIcon(os.path.join(os.path.dirname(__file__), 'icons/waterneed.png'))
+
+    def helpUrl(self):
+        file = os.path.dirname(__file__) + '/index.html'
+        if not os.path.exists(file):
+            return ''
+        return QUrl.fromLocalFile(file).toString(QUrl.FullyEncoded)
 
     def initAlgorithm(self, config):
 # ====================  Parameter =====================================  
@@ -390,6 +397,12 @@ class distavailability2Algorithm(QgsProcessingAlgorithm):
 
     def icon(self):
         return QIcon(os.path.join(os.path.dirname(__file__), 'icons/wateravail.png'))
+    
+    def helpUrl(self):
+        file = os.path.dirname(__file__) + '/index.html'
+        if not os.path.exists(file):
+            return ''
+        return QUrl.fromLocalFile(file).toString(QUrl.FullyEncoded)
 
     def createInstance(self):
         return distavailability2Algorithm()
@@ -683,6 +696,12 @@ class carcap2Algorithm(QgsProcessingAlgorithm):
 
     def icon(self):
         return QIcon(os.path.join(os.path.dirname(__file__), 'icons/waterstatus.png'))
+    
+    def helpUrl(self):
+        file = os.path.dirname(__file__) + '/index.html'
+        if not os.path.exists(file):
+            return ''
+        return QUrl.fromLocalFile(file).toString(QUrl.FullyEncoded)
 
     def createInstance(self):
         return carcap2Algorithm()
