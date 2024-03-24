@@ -144,7 +144,7 @@
               <td>OUTPUT</td>
               <td>[vector: any] Default: [Create temporary layer]</td>
               <td>
-                Specify the output layer. One of:
+                Specify the output layer. Option:
                 <br />
                 • Create Temporary Layer
                 <br />
@@ -274,7 +274,7 @@
               <td>OUTPUT</td>
               <td>isi</td>
               <td>
-                Specify the output layer. One of :
+                Specify the output layer. Option:
                 <br />
                 •Create Temporary Layer
                 <br />
@@ -436,13 +436,206 @@
               <td>OUTPUT</td>
               <td>[vector: any]</td>
               <td>
-                Resulting vector grid layer. Each grid has a unique identifier
-                based on the resolution size.
+                Vector layer with columns containing the distribution of water needs in each grid 
               </td>
             </tr>
           </table>
           <hr />
         </section>
+    <br />
+          <p>2. Generate Water Availibility Distribution</p>
+          <p>The value of environmental services is determined as a function of the combination of weights and scores of three parameters, namely landscape, land cover and vegetation type. The value of environmental services in each region will differ based on the determination of the scoring value.</p>
+          <br />
+          <p>(PARAMETER)</p>
+          <table>
+            <tr>
+              <th>Label</th>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Description</th>
+            </tr>
+            <tr>
+              <td>Input Grid Layer</td>
+              <td>Grid </td>
+              <td>[vector: polygon]</td>
+              <td>
+                Input vector layer containing grids with unique identifiers for each grid 
+              </td>
+            </tr>
+            <tr>
+              <td>Input Layer that Contains Environmental Services Performance (Index) </td>
+              <td>IJH </td>
+              <td>[vector: polygon] 
+              </td>
+              <td>
+                Input vector layer containing grids with unique identifier for each grid 
+              </td>
+            </tr>
+            <tr>
+              <td>Select Fields that Contains Environmental Services Performance (Index) </td>
+              <td>IJH_V </td>
+              <td>[[tablefield: any] 
+                <br />
+                [list] 
+                <br />
+                Default: None  </td>
+              <td>Select the column layer containing the environmental services index column </td>
+            </tr>
+            <tr>
+              <td>Input Layer that Contains Watershed Area </td>
+              <td>WAS </td>
+              <td>[vector: polygon] </td>
+              <td>Input vector layer containing watershed area </td>
+            </tr>
+            <tr>
+              <td>Select Field that Contains Water Shed Area Name </td>
+              <td>WAS_N </td>
+              <td>[tablefield: any] 
+                <br />
+                [list] 
+                <br />
+                Default: None </td>
+              <td>Select the column layer containing watershed area </td>
+            </tr>
+            <tr>
+              <td>Select Field that Contains Total Water Availability </td>
+              <td>WAS_V </td>
+              <td>[tablefield: any] 
+                <br />
+                [list] 
+                <br />
+                Default: None </td>
+              <td>Select the layer column that contains water availability in the Watershed layer </td>
+            </tr>
+              <td>Output Layer</td>
+              <td>OUTPUT </td>
+              <td>[vector: any] 
+                <br />
+                Default: [Create temporary layer] </td>
+              <td>Specify the output layer. Option: 
+              </br>
+              • Create Temporary Layer 
+              </br>
+              • Save to File… 
+              </br>
+              • Save to GeoPackage 
+              </br>
+              • Save to Database Table 
+              </br>
+              The file encoding can also be changed here.</td>
+            </tr>
+          </table>
+          <p>(OUTPUT)</p>
+          <table>
+            <tr>
+              <th>Label</th>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Description</th>
+            </tr>
+            <tr>
+              <td>Output Layer</td>
+              <td>OUTPUT</td>
+              <td>[vector: any]</td>
+              <td>
+                Vector layer with columns containing the distribution of water availability in each grid 
+              </td>
+            </tr>
+          </table>
+          <hr />
+        </section>
+        <br />
+        <p>3. Generate Water Need and Capacity Difference and Status </p>
+        <p>Analyze how much of the maximum population can be supported with existing water availability. The threshold determination is carried out with information on the need, availability, and need for water for a decent life (KHL) in the form of a constant. Threshold results were conducted without considering water needs for livestock and industrial activities. </p>
+        <br />
+        <p>(PARAMETER)</p>
+        <table>
+          <tr>
+            <th>Label</th>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Description</th>
+          </tr>
+          <tr>
+            <td>Input Vector Layer that Contains Water Needs for Each Grid </td>
+            <td>NEED  </td>
+            <td>[vector: polygon]</td>
+            <td>
+              Input vector layer containing the water needs distribution for each grid. The water needs distribution  vector layer for each grid has been generated in 'Generate Water Needs Distribution'.   
+            </td>
+          </tr>
+          <tr>
+            <td>Select Field that Contains Water Needs for Each Grid </td>
+            <td>NEED_VAL  </td>
+            <td>[tablefield: any] 
+              <br />
+              [list] 
+              <br />
+              Default: None  
+            </td>
+            <td>
+              Select the column layer that contains the distribution of water needs for each grid 
+            </td>
+          </tr>
+          <tr>
+            <td>Input Vector Layer that Contains Water Availability for Each Grid  </td>
+            <td>AVAIL  </td>
+            <td>[vector: polygon] </td>
+            <td>Input vector layer containing the water availability distribution for each grid. The water availability distribution vector layer for each grid has been generated in 'Generate Water Availability Distribution'. </td>
+          </tr>
+          <tr>
+            <td>Select Field that Contains Water Needs (Availability) for Each Grid </td>
+            <td>AVAIL_VAL </td>
+            <td>[tablefield: any] 
+              <br />
+              [list] 
+              <br />
+              Default: None </td>
+            <td>Select the column layer that contains the distribution of water availability for each grid  </td>
+          </tr>
+          <tr>
+            <td>Input Water Needs for a Decsnt Life (Insert Water Sufficiency Number) </td>
+            <td>WN_STD  </td>
+            <td>Default : 800 </td>
+            <td>Insert the value of water sufficiency number, in the form of a constant in unit of m³/capita/year, which is a correction factor for the per capita water requirement for living like a kayak that includes the need to produce food and domestic needs. This can be filled automatically or manually </td>
+          </tr>
+            <td>Output Layer</td>
+            <td>OUTPUT </td>
+            <td>[vector: any] 
+              <br />
+              Default: [Create temporary layer] </td>
+            <td>Specify the output layer. Option: 
+            </br>
+            • Create Temporary Layer 
+            </br>
+            • Save to File… 
+            </br>
+            • Save to GeoPackage 
+            </br>
+            • Save to Database Table 
+            </br>
+            The file encoding can also be changed here.</td>
+          </tr>
+        </table>
+        <p>(OUTPUT)</p>
+        <table>
+          <tr>
+            <th>Label</th>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Description</th>
+          </tr>
+          <tr>
+            <td>Output Layer</td>
+            <td>OUTPUT</td>
+            <td>[vector: any]</td>
+            <td>
+              Layer vector with a column of population thresholds that can be supported by existing water availability conditions 
+            </td>
+          </tr>
+        </table>
+        <hr />
+      </section>
       </article>
     </div>
     <footer class="footer">
