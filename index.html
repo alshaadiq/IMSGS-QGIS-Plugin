@@ -36,7 +36,7 @@
         </li>
         <li class="menu__item">
           <a href="index.html" class="link link--dark"
-            ><i class="fa fa-home"></i> Home (GATAU ISI APA)</a
+            ><i class="fa fa-home"></i> Home</a
           >
         </li>
       </ul>
@@ -47,7 +47,7 @@
           <li class="js-btn selected">Get Started</li>
           <li class="js-btn">Grid</li>
           <li class="js-btn">Population Distribution</li>
-          <li class="js-btn">Environmental Carrying</li>
+          <li class="js-btn">Environmental Carrying Capacity</li>
         </ul>
       </aside>
       <article class="doc__content">
@@ -170,7 +170,10 @@
               <td>Output Layer</td>
               <td>OUTPUT</td>
               <td>[vector: any]</td>
-              <td>isi</td>
+              <td>
+                Resulting vector grid layer. Each grid has a unique identifier
+                based on the resolution size.
+              </td>
             </tr>
           </table>
           <hr />
@@ -304,16 +307,25 @@
             </tr>
           </table>
         </section>
-        <section class="js-section" id="Environmental Carrying">
-          <h3 class="section__title">Environmental Carrying</h3>
+        <section
+          class="js-section"
+          id="Environmental Carrying Capacity (Water)"
+        >
+          <h3 class="section__title">
+            Environmental Carrying Capacity (Water)
+          </h3>
           <p>
-            Create a vector layer with a grid covering a given extent. The grid
-            is fixed for the Indonesian region by defining Xmin, Xmax, Ymin,
-            Ymax points based on the World Geodetic System 1984 (WGS84)
-            reference system. The resolution can be chosen as required and can
-            be extracted by the size of the input layer. Every grid contains a
-            unique identifier that differentiates between grids.
+           Environmental Carrying Capacity (Water) consists of:
+          </br>
+          • Generate Water Needs Distribution 
+          </br>
+          • Generate Water Availability Distribution 
+          </br>
+          • Generate Water Need and Capacity Difference and Status 
           </p>
+          <br />
+          <p>1. Generate Water Needs Distribution</p>
+          <p>The distribution of water needs in each grid is based on land cover factors based on population and accessibility of a location based on the availability of roads.</p>
           <br />
           <p>(PARAMETER)</p>
           <table>
@@ -324,68 +336,91 @@
               <th>Description</th>
             </tr>
             <tr>
-              <td>Vector Layer (optional)</td>
-              <td>INPUT</td>
-              <td>[vector: any]</td>
+              <td>Input Grid Layer Containing Population Values per Grid</td>
+              <td>POPUL_GRID</td>
+              <td>[vector: polygon]</td>
               <td>
-                Input vector layer that will be used as output geometry extent
+                Input vector layer containing a grid with population data for each grid
               </td>
             </tr>
             <tr>
-              <td>Geometry Extent [WGS 84] (optional)</td>
-              <td>STRING_PARAM</td>
-              <td>String</td>
+              <td>Select Fields that Contains Population Values per Grid</td>
+              <td>POPUL_FIELD</td>
+              <td>[tablefield: any] [list] 
+                  <br/>
+                  Default: None 
+              </td>
               <td>
-                Specify Xmin, Xmax, Ymin, Ymax points based on the World
-                Geodetic System 1984 (WGS84) reference system
+                Select the column layer that contains the population data on each grid
               </td>
             </tr>
             <tr>
-              <td>Geometry Grid</td>
-              <td>RADIO_PARAM</td>
-              <td>Enumeration Default : 30' x 30'</td>
+              <td>Input Standard Household Water Requirements per year</td>
+              <td>STD_WATER</td>
+              <td>[number] 
+                <br />
+                Min Value : 1 
+                <br />
+                Default : 43.2 </td>
               <td>
-                Grid System Resolution:
-                <br />
-                • 30’ x 30’ – 55.5 x 55.5 (km)
-                <br />
-                • 15’ x 15’ – 27.75 x 27.75 (km)
-                <br />
-                • 7’30” x 7’30” – 13.875 x 13.875 (km)
-                <br />
-                • 2’30” x 2’30” – 4.625 x 4.625 (km)
-                <br />
-                • 30” x 30” – 0.900 x 0.900 (km)
-                <br />
-                • 5” x 5” – 0.150 x 0.150 (km)
+                The standard of Household Water Requirements per year is 43.2 m³/year/capita. This can be filled automatically or manually 
               </td>
             </tr>
             <tr>
-              <td>Extract Grid by Vector Layer (optional)</td>
-              <td>EXTRACT</td>
-              <td>Boolean</td>
+              <td>Input Correction Factor for Household Water Requirements per Year</td>
+              <td>COR_FCT</td>
+              <td>[number] 
+                <br />
+                Min Value : 1 
+                <br />
+                Default : 2 </td>
               <td>
-                Extract the vector layer grid according to the input vector
-                layer
+                Standardized set of decent living water requirements, i.e. number 2 as a correction factor. This can be filled automatically or manually.
               </td>
+            </tr>
+            <tr>
+              <td>Input Vegetation Layer Containing Crop Intensity in Percent (%) of Seasons per year</td>
+              <td>VEG</td>
+              <td>[vector: polygon]</td>
+              <td>Input vector vegetation layer containing crop intensity in percent (%) season per year</td>
+            </tr>
+            <tr>
+              <td>Select Field that Contains Crop Intensity in percent (%) of season per year</td>
+              <td>VEG_INT</td>
+              <td>[tablefield: any] 
+                <br />
+                [list] 
+                <br />
+                Default: None </td>
+              <td>Selecting a column vegetation layer containing crop intensity data in percent (%) of season per year</td>
+            </tr>
+            <tr>
+              <td>Input Water Usage Standard for Vegetation</td>
+              <td>STD_VEG</td>
+              <td>[number] 
+                <br />
+                Min Value : 1 
+                <br/>
+                Default : 10368</td>
+              <td>Standard water use (1 liter/second/hectare); 0.001 m^3/second/ha x 3600 x 24 x 120 days per season. This can be filled automatically or manually.</td>
             </tr>
             <tr>
               <td>Output Layer</td>
-              <td>OUTPUT</td>
-              <td>[vector: any] Default: [Create temporary layer]</td>
-              <td>
-                Specify the output layer. One of:
+              <td>NEED</td>
+              <td>[vector: any] 
                 <br />
-                • Create Temporary Layer
-                <br />
-                • Save to File…
-                <br />
-                • Save to GeoPackage
-                <br />
-                • Save to Database Table
-                <br />
-                The file encoding can also be changed here.
-              </td>
+                Default: [Create temporary layer] </td>
+              <td>Specify the output layer. Option: 
+              </br>
+              • Create Temporary Layer 
+              </br>
+              • Save to File… 
+              </br>
+              • Save to GeoPackage 
+              </br>
+              • Save to Database Table 
+              </br>
+              The file encoding can also be changed here.</td>
             </tr>
           </table>
           <p>(OUTPUT)</p>
