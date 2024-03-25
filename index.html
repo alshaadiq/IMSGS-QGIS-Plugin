@@ -636,6 +636,289 @@
         </table>
         <hr />
       </section>
+      <section
+          class="js-section"
+          id="Environmental Carrying Capacity (Food)"
+        >
+          <h3 class="section__title">
+            Environmental Carrying Capacity (Food)
+          </h3>
+          <p>
+           Environmental Carrying Capacity (Food) consists of:
+          </br>
+          • Generate Energy Needs Distribution 
+          </br>
+          • Generate Energy Availability Distribution 
+          </br>
+          • Generate Energy Need and Capacity Difference and Status  
+          </p>
+          <br />
+          <p>1. Generate Energy Needs Distribution </p>
+          <p>The energy needs distibution are determined based on the calculation of the Energy Adequacy Rate (AKE) of the population of each grid for a year.</p>
+          <br />
+          <p>(PARAMETER)</p>
+          <table>
+            <tr>
+              <th>Label</th>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Description</th>
+            </tr>
+            <tr>
+              <td>Population per Grid Layer </td>
+              <td>popgrid </td>
+              <td>[vector: polygon]</td>
+              <td>
+                Input vector layer containing a grid with population data for each grid. 
+              </td>
+            </tr>
+            <tr>
+              <td>Select Field that Contains Population Count </td>
+              <td>popfield </td>
+              <td>[tablefield: any] 
+                  <br />
+                  [list] 
+                  <br/>
+                  Default: None 
+              </td>
+              <td>
+                Select the column layer that contains the population data on each grid 
+              </td>
+            </tr>
+            <tr>
+              <td>Insert Energy Sufficiency Number </td>
+              <td>AKE </td>
+              <td>[number] 
+                <br />
+                Default : 2100 </td>
+              <td>
+                The Angka Kebutuhan Energi (AKE) is the amount of food energy needed by an individual to carry out daily activities. The AKE of the average Indonesian population for a year, which is 2,100 kcal/day/capita. Can be filled automatically or manually 
+              </td>
+            </tr>
+            <tr>
+              <td>Output Layer</td>
+              <td>OUTPUT</td>
+              <td>[vector: any] 
+                <br />
+                Default: [Create temporary layer] </td>
+              <td>Specify the output layer. Option: 
+              </br>
+              • Create Temporary Layer 
+              </br>
+              • Save to File… 
+              </br>
+              • Save to GeoPackage 
+              </br>
+              • Save to Database Table 
+              </br>
+              The file encoding can also be changed here.</td>
+            </tr>
+          </table>
+          <p>(OUTPUT)</p>
+          <table>
+            <tr>
+              <th>Label</th>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Description</th>
+            </tr>
+            <tr>
+              <td>Output Layer</td>
+              <td>OUTPUT</td>
+              <td>[vector: any]</td>
+              <td>
+                Vector layer with columns containing the distribution of energy needs in each grid (AKE grid for a year) 
+              </td>
+            </tr>
+          </table>
+          <hr />
+        <br />
+          <p>2. Generate Energy Availability Distribution </p>
+          <p>The energy needs distibution are determined based on the calculation of the Energy Adequacy Rate (AKE) of the population of each grid for a year.</p>
+          <br />
+          <p>(PARAMETER)</p>
+          <table>
+            <tr>
+              <th>Label</th>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Description</th>
+            </tr>
+            <tr>
+              <td>Grid Layer </td>
+              <td>grid </td>
+              <td>isi</td>
+              <td>
+                Input vector layer containing grids with unique identifiers for each grid  
+              </td>
+            </tr>
+            <tr>
+              <td>Administration Boundary Layer </td>
+              <td>admlay </td>
+              <td>isi</td>
+              <td>Input vector layer containing administrative boundary data </td>
+            </tr>
+            <tr>
+              <td>Select Field that Contains Administrative Name from Administrative Boundary Layer </td>
+              <td>admfield </td>
+              <td>isi</td>
+              <td>Select the layer column containing the administrative boundary name data from the administrative boundary layer </td>
+            </tr>
+            <tr>
+              <td>Select Field that Contains Energy Production from Administrative Boundary Layer </td>
+              <td>enerfield </td>
+              <td>isi</td>
+              <td>Select the layer column containing energy production from the administrative boundary layer </td>
+            </tr>
+            <tr>
+              <td>Environment Service Performance Layer </td>
+              <td>ESPlay </td>
+              <td>isi</td>
+              <td>Input vector layer containing the environmental services performance layer </td>
+            </tr>
+            <tr>
+              <td>Select Field that Contains IJEPBP Value </td>
+              <td>IJEPBPESP </td>
+              <td>isi</td>
+              <td>Select the layer column containing the IJEPBP (Indeks Jasa Ekosistem Bahan Pangan) value </td>
+            </tr>
+            <tr>
+              <td>Output Layer</td>
+              <td>OUTPUT</td>
+              <td>isi</td>
+              <td>Specify the output layer. Option: 
+              </br>
+              • Create Temporary Layer 
+              </br>
+              • Save to File… 
+              </br>
+              • Save to GeoPackage 
+              </br>
+              • Save to Database Table 
+              </br>
+              The file encoding can also be changed here.</td>
+            </tr>
+          </table>
+          <p>(OUTPUT)</p>
+          <table>
+            <tr>
+              <th>Label</th>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Description</th>
+            </tr>
+            <tr>
+              <td>Output Layer</td>
+              <td>OUTPUT</td>
+              <td>[vector: any]</td>
+              <td>Vector layer with a column of food energy availability distribution </td>
+            </tr>
+          </table>
+          <hr />
+          <br />
+          <p>3. Generate Energy Need and Availability Distribution and Status </p>
+          <p>Analyze how much of the maximum population can be supported with existing food availability. The threshold determination is carried out with information on the need, availability, and need for food for a decent life (KHL) in the form of a constant.</p>  
+          <br />
+          <p>(PARAMETER)</p>
+          <table>
+            <tr>
+              <th>Label</th>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Description</th>
+            </tr>
+            <tr>
+              <td>Energy Needs Grid Layer </td>
+              <td>needgrid </td>
+              <td>[vector: polygon] </td>
+              <td>Grid layer input that contains ‘Energy Needs Per Grid’ Field </td>
+            </tr>
+            <tr>
+              <td>Select Field that Contains Energy Needs per Grid </td>
+              <td>needfield  </td>
+              <td>[tablefield: any] 
+              <br />
+              [list] 
+              <br />
+              Default: None </td>
+              <td>‘Energy Needs Per Grid’ Field </td>
+            </tr>
+            <tr>
+              <td>Energy Availability Grid Layer </td>
+              <td>avagrid </td>
+              <td>[vector: polygon] </td>
+              <td>Grid layer input that contains ‘Energy Availability Per Grid’ Field </td>
+            </tr>
+            <tr>
+              <td>Select Field that Contains Energy Availability per Grid </td>
+              <td>avafield </td>
+              <td>[tablefield: any] 
+              <br />
+              [list] 
+              <br />
+              Default: None </td>
+              <td>‘Energy Availability Per Grid’ Field </td>
+            </tr>
+            <tr>
+              <td>Population Grid Layer </td>
+              <td>populgrid </td>
+              <td>[vector: polygon] </td>
+              <td>Grid layer input that contains ‘Population Per Grid’ Field </td>
+            </tr>
+            <tr>
+              <td>Select Field that Contains Population per Grid </td>
+              <td>populfield </td>
+              <td>[tablefield: any] 
+              <br />
+              [list] 
+              <br />
+              Default: None </td>
+              <td>‘Population Per Grid’ Field </td>
+            </tr>
+            <tr>
+              <td>Insert Energy Sufficiency Number </td>
+              <td>AKE Default : 2100  </td>
+              <td>[number] 
+              <br />
+              Default : 2100 </td>
+              <td>The Angka Kebutuhan Energi (AKE) is the amount of food energy needed by an individual to carry out daily activities. The AKE of the average Indonesian population for a year, which is 2,100 kcal/day/capita. This can be filled automatically or manually</td>
+            </tr>
+            <tr>
+              <td>Output Layer</td>
+              <td>OUTPUT</td>
+              <td>[vector: any] 
+                <br />
+                Default: [Create temporary layer] </td>
+              <td>Specify the output layer. Option: 
+              </br>
+              • Create Temporary Layer 
+              </br>
+              • Save to File… 
+              </br>
+              • Save to GeoPackage 
+              </br>
+              • Save to Database Table 
+              </br>
+              The file encoding can also be changed here.</td>
+            </tr>
+          </table>
+          <p>(OUTPUT)</p>
+          <table>
+            <tr>
+              <th>Label</th>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Description</th>
+            </tr>
+            <tr>
+              <td>Output Layer</td>
+              <td>OUTPUT</td>
+              <td>[vector: any]</td>
+              <td>Layer vector with a column of population thresholds that can be supported by existing energy availability conditions </td>
+            </tr>
+          </table>
+          <hr />
+        </section>
       </article>
     </div>
     <footer class="footer">
