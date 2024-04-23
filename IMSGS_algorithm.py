@@ -96,7 +96,7 @@ class IMSGSAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.INPUT,
-                self.tr('Vector Layer'),
+                self.tr('Input Vector Layer'),
                 [QgsProcessing.TypeVectorPolygon],
                 optional=True,
             )
@@ -118,7 +118,7 @@ class IMSGSAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.selected_values,  # The parameter name
-                self.tr('Geometry Grid'),  # The parameter label
+                self.tr('Grid Resolution'),  # The parameter label
                 options=radio_options,
                 defaultValue="30' x 30'"  # Optional: Set a default value
             )
