@@ -89,7 +89,7 @@ class calcenergyAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.popgrid,
-                self.tr('Population per Grid Layer'),
+                self.tr('Input IMSGS Population layer'),
                 [QgsProcessing.TypeVectorPolygon],
             )
         )
@@ -97,7 +97,7 @@ class calcenergyAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterField(
                 self.popfield,
-                self.tr('Select Fields that Contains Population Count'),
+                self.tr('Select Field that Contains Population'),
                 parentLayerParameterName=self.popgrid,  # Set the parent layer parameter
                 type=QgsProcessingParameterField.Any,
             )
@@ -106,7 +106,7 @@ class calcenergyAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.AKE,
-                self.tr('Insert Energy Sufficiency Number'),
+                self.tr('Input Energy Needs Value'),
                 defaultValue=2100
             )
         )
@@ -235,7 +235,7 @@ class distavailabilityAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.grid,
-                self.tr('Grid Layer'),
+                self.tr('Input IMSGS Layer'),
                 [QgsProcessing.TypeVectorPolygon],
             )
         )
@@ -243,7 +243,7 @@ class distavailabilityAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.admlay,
-                self.tr('Administration Boundary Layer'),
+                self.tr('Input Administrative Boundary Layer'),
                 [QgsProcessing.TypeVectorPolygon],
             )
         )
@@ -251,7 +251,7 @@ class distavailabilityAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterField(
                 self.admfield,
-                self.tr('Select Fields that Contains Administrative Name from Administrative Boundary Layer'),
+                self.tr('Select Fields that Contains Administrative Name'),
                 parentLayerParameterName=self.admlay,  # Set the parent layer parameter
                 type=QgsProcessingParameterField.Any,
             )
@@ -260,7 +260,7 @@ class distavailabilityAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterField(
                 self.enerfield,
-                self.tr('Select Fields that Contains Energy Production from Administrative Boundary Layer'),
+                self.tr('Select Fields that Contains Food Energy Production'),
                 parentLayerParameterName=self.admlay,  # Set the parent layer parameter
                 type=QgsProcessingParameterField.Any,
             )
@@ -269,7 +269,7 @@ class distavailabilityAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.ESPlay,
-                self.tr('Environment Service Performance Layer'),
+                self.tr('Input Layer that Contains Environmental Performance Index'),
                 [QgsProcessing.TypeVectorPolygon],
             )
         )
@@ -277,7 +277,7 @@ class distavailabilityAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterField(
                 self.IJEPBPESP,
-                self.tr('Select Fields that Contains IJEPBP Value'),
+                self.tr('Select Fields that Contains Food Ecosystem Performance Index'),
                 parentLayerParameterName=self.ESPlay,  # Set the parent layer parameter
                 type=QgsProcessingParameterField.Any,
             )
@@ -546,7 +546,7 @@ class carcapAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.needgrid,
-                self.tr('Energy Needs Grid Layer'),
+                self.tr('Input IMSGS Energy Needs Layer'),
                 [QgsProcessing.TypeVectorPolygon],
             )
         )
@@ -554,7 +554,7 @@ class carcapAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterField(
                 self.needfield,
-                self.tr('Select Fields that Contains Energy Needs per Grid'),
+                self.tr('Select Field that Contains Energy Needs for each Grid'),
                 parentLayerParameterName=self.needgrid,  # Set the parent layer parameter
                 type=QgsProcessingParameterField.Any,
             )
@@ -563,7 +563,7 @@ class carcapAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.avagrid,
-                self.tr('Energy Availability Grid Layer'),
+                self.tr('Input IMSGS Energy Availability Layer'),
                 [QgsProcessing.TypeVectorPolygon],
             )
         )
@@ -571,7 +571,7 @@ class carcapAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterField(
                 self.avafield,
-                self.tr('Select Fields that Contains Energy Availability per Grid'),
+                self.tr('Select Field that Contains Energy Availability for each Grid'),
                 parentLayerParameterName=self.avagrid,  # Set the parent layer parameter
                 type=QgsProcessingParameterField.Any,
             )
@@ -580,7 +580,7 @@ class carcapAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.populgrid,
-                self.tr('Population Grid Layer'),
+                self.tr('Input IMSGS Population Layer'),
                 [QgsProcessing.TypeVectorPolygon],
             )
         )
@@ -588,7 +588,7 @@ class carcapAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterField(
                 self.populfield,
-                self.tr('Select Fields that Contains Population per Grid'),
+                self.tr('Select Fields that Contains Population for each Grid'),
                 parentLayerParameterName=self.populgrid,  # Set the parent layer parameter
                 type=QgsProcessingParameterField.Any,
             )
@@ -597,7 +597,7 @@ class carcapAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.AKE,
-                self.tr('Insert Energy Sufficiency Number'),
+                self.tr('Input Energy Sufficiency Value'),
                 defaultValue=2100
             )
         )

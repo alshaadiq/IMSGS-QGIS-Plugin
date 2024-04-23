@@ -61,7 +61,6 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
     rt_layer = 'RT_LAYER' # road layer
     TableWeightRT ='TableWeightRT' # road weights table
     INPUTA ='INPUTA' # admin boundary layer
-    INPUTAT ='INPUTAT' # admin boundart field
     INPUTPOP ='INPUTPOP' # population field 
     OUTPUT = 'OUTPUT' # output population grid
 
@@ -103,7 +102,7 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.INPUT,
-                self.tr('Input Grid Layer'),
+                self.tr('Input IMSGS Grid Layer'),
                 [QgsProcessing.TypeVectorPolygon]
             )
         )
@@ -112,7 +111,7 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.lc_layer,
-                self.tr('Input Landcover Layer'),
+                self.tr('Input Land Cover Layer'),
                 [QgsProcessing.TypeVectorPolygon]
             )
         )
@@ -121,7 +120,7 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterField(
                 self.TableWeightLC,
-                self.tr('Select Fields that Contains Weight for landcover'),
+                self.tr("Select Field that Contains Land Cover Type's Weight"),
                 parentLayerParameterName = self.lc_layer, # parent landcover layer
                 type=QgsProcessingParameterField.Any
             )
@@ -140,7 +139,7 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterField(
                 self.TableWeightRT,
-                self.tr('Select Fields that Contains Weight for road'),
+                self.tr("Select Field that Contains Road Type's Weight"),
                 parentLayerParameterName = self.rt_layer, # parent road layer
                 type=QgsProcessingParameterField.Any
             )
@@ -150,18 +149,8 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.INPUTA,
-                self.tr('Input Administrative Boundaries Layer'),
+                self.tr('Input Administrative Boundary Layer'),
                 [QgsProcessing.TypeVectorPolygon],
-            )
-        )
-
-        # Input administrative boundary field
-        self.addParameter(
-            QgsProcessingParameterField(
-                self.INPUTAT,
-                self.tr('Select Fields that Contains Administrative Boundaries Name'),
-                parentLayerParameterName=self.INPUTA,  # Set the parent layer parameter
-                type=QgsProcessingParameterField.Any,
             )
         )
 
@@ -169,7 +158,7 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterField(
                 self.INPUTPOP,
-                self.tr('Select Fields that Contains Population from Administrative Boundaries Layer'),
+                self.tr('Select Field that Contains Population'),
                 parentLayerParameterName=self.INPUTA,  # Set the parent layer parameter
                 type=QgsProcessingParameterField.Any,
             )
@@ -193,9 +182,6 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
 
         #input field that contain road weight 
         rt_weight = self.parameterAsString(parameters, self.TableWeightRT,context)
-
-        #input admin field that contain admin boudary
-        admin_field = self.parameterAsString(parameters, self.INPUTAT,context)
 
         #input admin field that contain population
         popul_field = self.parameterAsString(parameters, self.INPUTPOP,context)

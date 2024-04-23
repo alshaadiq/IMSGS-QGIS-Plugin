@@ -95,7 +95,7 @@ class calcneedAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.POPUL_GRID,
-                self.tr('Input grid layer containing population values ​​per grid'),
+                self.tr('Input IMSGS Population layer'),
                 [QgsProcessing.TypeVectorPolygon],
                 optional=False,
             )
@@ -105,7 +105,7 @@ class calcneedAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterField(
                 self.POPUL_FIELD,
-                self.tr('Select Fields that Contains Population Values per Grid'),
+                self.tr('Select Field that Contains Population'),
                 parentLayerParameterName = self.POPUL_GRID, # parent grid layer
                 type=QgsProcessingParameterField.Any
             )
@@ -115,7 +115,7 @@ class calcneedAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.STD_WATER,
-                self.tr("Input standard household water requirements per year "),
+                self.tr("Input Household Water Usage Standard per Year"),
                 type=QgsProcessingParameterNumber.Double,
                 minValue=1,
                 defaultValue=43.2,
@@ -127,7 +127,7 @@ class calcneedAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.COR_FCT,
-                self.tr("Input Correction Factor for household water requirements per year"),
+                self.tr("Input Correction Factor for Household Water Requirements per Year"),
                 type = QgsProcessingParameterNumber.Double,
                 minValue=1,
                 defaultValue=2,
@@ -139,7 +139,7 @@ class calcneedAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.VEG,
-                self.tr('Input Vegetation layer containing Crop intensity in percent (%) of seasons per year'),
+                self.tr('Input Vegetation Layer that Contains Seasonal Crop Intensity per Year (%)'),
                 [QgsProcessing.TypeVectorPolygon],
                 optional=False,
             )
@@ -149,7 +149,7 @@ class calcneedAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterField(
                 self.VEG_INT,
-                self.tr('Select Fields that Contain crop intensity in percent (%) of seasons per year'),
+                self.tr('Select Fields that Contains Seasonal Crop Intensity per Year (%)'),
                 parentLayerParameterName = self.VEG, # parent grid layer
                 type=QgsProcessingParameterField.Any
             )
@@ -159,7 +159,7 @@ class calcneedAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.STD_VEG,
-                self.tr("Input Water Usage Standard for vegetation"),
+                self.tr("Input Vegetation Water Usage Standard per Season"),
                 type = QgsProcessingParameterNumber.Double,
                 minValue=1,
                 defaultValue = 10368,
@@ -415,7 +415,7 @@ class distavailability2Algorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.Grid,
-                self.tr('Input Grid Layer'),
+                self.tr('Input IMSGS Layer'),
                 [QgsProcessing.TypeVectorPolygon]
             )
         )
@@ -424,7 +424,7 @@ class distavailability2Algorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.IJH,
-                self.tr('Input Layer that contains environmental services performance'),
+                self.tr('Input Layer that Contains Environmental Performance Index'),
                 [QgsProcessing.TypeVectorPolygon]
             )
         )
@@ -433,7 +433,7 @@ class distavailability2Algorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterField(
                 self.IJH_V,
-                self.tr('Select Fields that Contains environmental services performance'),
+                self.tr('Select Field that Contains Environmental Performance Index'),
                 parentLayerParameterName = self.IJH, # parent landcover layer
                 type=QgsProcessingParameterField.Any
             )
@@ -443,7 +443,7 @@ class distavailability2Algorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.WAS,
-                self.tr('Input Layer that contains Watershed Area'),
+                self.tr('Input Watershed Area Layer'),
                 [QgsProcessing.TypeVectorPolygon]
             )
         )
@@ -452,7 +452,7 @@ class distavailability2Algorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterField(
                 self.WAS_N,
-                self.tr('Select Field That Contains Water shed Area Name'),
+                self.tr('Select Field That Contains Watershed Area Name'),
                 parentLayerParameterName = self.WAS, # parent layer 
                 type=QgsProcessingParameterField.Any
             )
@@ -714,7 +714,7 @@ class carcap2Algorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.NEED,
-                self.tr('Input Vector layer that contain water needs for each grid'),
+                self.tr('Input IMSGS Water Needs Layer'),
                 [QgsProcessing.TypeVectorPolygon]
             )
         )
@@ -723,7 +723,7 @@ class carcap2Algorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterField(
                 self.NEED_VAL,
-                self.tr('Select Fields that Contains water needs for each grid'),
+                self.tr('Select Field that Contains Water Needs for each Grid'),
                 parentLayerParameterName = self.NEED, # parent road layer
                 type=QgsProcessingParameterField.Any
             )
@@ -734,7 +734,7 @@ class carcap2Algorithm(QgsProcessingAlgorithm):
         self.addParameter(
         QgsProcessingParameterFeatureSource(
             self.AVAIL,
-            self.tr('Input Vector layer that contain water availibility for each grid'),
+            self.tr('Input IMSGS Water Availibility Layer'),
             [QgsProcessing.TypeVectorPolygon]
 
             )
@@ -744,7 +744,7 @@ class carcap2Algorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterField(
                 self.AVAIL_VAL,
-                self.tr('Select Fields that Contains water needs for each grid'),
+                self.tr('Select Field that Contains Water Availibility for each Grid'),
                 parentLayerParameterName = self.AVAIL, # parent road layer
                 type=QgsProcessingParameterField.Any
             )
@@ -754,7 +754,7 @@ class carcap2Algorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.WN_STD,
-                self.tr("Input water needs for a decent life "),
+                self.tr("Water Needs Value for Decent Life per Year"),
                 type = QgsProcessingParameterNumber.Double,
                 minValue=1,
                 defaultValue = 800,
