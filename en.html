@@ -94,24 +94,19 @@
               <th>Description</th>
             </tr>
             <tr>
-              <td>Vector Layer (optional)</td>
+              <td>Input Vector Layer (optional)</td>
               <td>INPUT</td>
               <td>[vector: any]</td>
-              <td>
-                Input vector layer that will be used as output geometry extent
-              </td>
+              <td>Input vector layer that will be used as output geometry extent</td>
             </tr>
             <tr>
               <td>Geometry Extent [WGS 84] (optional)</td>
               <td>STRING_PARAM</td>
               <td>String</td>
-              <td>
-                Specify Xmin, Xmax, Ymin, Ymax points based on the World
-                Geodetic System 1984 (WGS84) reference system
-              </td>
+              <td>Specify Xmin, Xmax, Ymin, Ymax points based on the World Geodetic System 1984 (WGS84) reference system</td>
             </tr>
             <tr>
-              <td>Geometry Grid</td>
+              <td>Grid Resolution</td>
               <td>RADIO_PARAM</td>
               <td>Enumeration Default : 30'' x 30''</td>
               <td>
@@ -144,7 +139,7 @@
               <td>OUTPUT</td>
               <td>[vector: any] Default: [Create temporary layer]</td>
               <td>
-                Specify the output layer. Option:
+                Specify the output layer. Choose one of the following: 
                 <br />
                 • Create Temporary Layer
                 <br />
@@ -179,11 +174,11 @@
           <hr />
         </section>
         <section class="js-section" id="pop">
-          <h3 class="section__title">Population Distribution</h3>
+          <h3 class="section__title">Distribute Population of Grid</h3>
           <p>
             Obtain the population distribution for each grid. The population
-            distribution depends on the grid, road type and length, land cover
-            type and administrative boundary data containing population
+            distribution depends on the grid, road type, road length, land cover
+            type, and administrative boundary data containing population
             information. The weighting of road and land cover data is filled in
             manually/freely by the user. The results of the population
             distribution calculation are then used to calculate the water and
@@ -198,9 +193,9 @@
               <th>Description</th>
             </tr>
             <tr>
-              <td>Input Grid Layer</td>
+              <td>Input IMSGS Grid Layer</td>
               <td>INPUT</td>
-              <td>isi</td>
+              <td>[vector: polygon]</td>
               <td>
                 Input vector layer containing grids with unique identifier for
                 each grid
@@ -209,61 +204,51 @@
             <tr>
               <td>Input Land Cover Layer</td>
               <td>LC_LAYER</td>
-              <td>isi</td>
+              <td>[vector: polygon]</td>
               <td>
                 Input land cover layer containing weights for each land cover
                 type
               </td>
             </tr>
             <tr>
-              <td>Select Field that Contains Weight for Landcover</td>
+              <td>Select Field that Contains Land Cover Type’s Weight</td>
               <td>TableWeightLC</td>
-              <td>isi</td>
+              <td>[tablefield: any] [list]
+                <br/>
+                Default: None</td>
               <td>
-                Selecting the land cover layer column that contains the land
-                cover weights
+                Selecting the land cover layer column that contains the land cover type’s weights
               </td>
             </tr>
             <tr>
               <td>Input Road Layer</td>
               <td>RT_LAYER</td>
-              <td>isi</td>
+              <td>[vector: line]</td>
               <td>Input road layer containing weights for each road type</td>
             </tr>
             <tr>
-              <td>Select Field that Contains Weight for Road</td>
+              <td>Select Field that Contains Road Type’s Weight</td>
               <td>TableWeightRT</td>
-              <td>isi</td>
-              <td>
-                Selecting the road layer column containing the road weights
-              </td>
+              <td>[tablefield: any] [list] 
+                <br/>
+                Default: None </td>
+              <td>Selecting the road layer column containing the road type’s weights</td>
             </tr>
             <tr>
               <td>Input Administrative Boundaries Layer</td>
               <td>INPUTA</td>
-              <td>isi</td>
+              <td>[vector: polygon]</td>
               <td>
                 Administrative boundary layer input that contains weights on
                 each administrative boundary type
               </td>
             </tr>
-
             <tr>
-              <td>Select Field that Contains Administrative Boundaries Name</td>
-              <td>INPUTAT</td>
-              <td>isi</td>
-              <td>
-                Selecting the administrative boundary layer column containing
-                the administrative boundary weights
-              </td>
-            </tr>
-            <tr>
-              <td>
-                Select Field that Contains Population from Administrative
-                Boundaries Layer
-              </td>
+              <td>Select Field that Contains Population</td>
               <td>INPUTPOP</td>
-              <td>isi</td>
+              <td>[tablefield: any] [list]
+                <br/>
+                Default: None </td>
               <td>
                 Selecting the administrative boundary layer column that contains
                 the population number
@@ -272,9 +257,11 @@
             <tr>
               <td>Output Layer</td>
               <td>OUTPUT</td>
-              <td>isi</td>
+              <td>[vector: any] 
+                <br/>
+                Default: [Create temporary layer] </td>
               <td>
-                Specify the output layer. Option:
+                Specify the output layer. Choose one of the following:
                 <br />
                 •Create Temporary Layer
                 <br />
@@ -301,8 +288,15 @@
               <td>OUTPUT</td>
               <td>[vector: any]</td>
               <td>
-                Resulting vector grid layer. Each grid has a unique identifier
-                based on the resolution size.
+                Output vector layer with four columns which are:
+                <br />
+                1. IMSGSID : Grid ID 
+                <br />
+                2. WRT : Total Road Type Weight of each grid
+                <br />
+                3. WLC : Total Land Cover Type Wight of each grid
+                <br />
+                4. Population : Population count of each grid 
               </td>
             </tr>
           </table>
@@ -336,7 +330,7 @@
               <th>Description</th>
             </tr>
             <tr>
-              <td>Input Grid Layer Containing Population Values per Grid</td>
+              <td>Input IMSGS Population Layer</td>
               <td>POPUL_GRID</td>
               <td>[vector: polygon]</td>
               <td>
@@ -344,7 +338,7 @@
               </td>
             </tr>
             <tr>
-              <td>Select Fields that Contains Population Values per Grid</td>
+              <td>Select Field that Contains Population</td>
               <td>POPUL_FIELD</td>
               <td>[tablefield: any] [list] 
                   <br/>
@@ -355,7 +349,7 @@
               </td>
             </tr>
             <tr>
-              <td>Input Standard Household Water Requirements per year</td>
+              <td>Input Household Water Usage Standard per Year</td>
               <td>STD_WATER</td>
               <td>[number] 
                 <br />
@@ -367,7 +361,7 @@
               </td>
             </tr>
             <tr>
-              <td>Input Correction Factor for Household Water Requirements per Year</td>
+              <td>Input Correction Factor for Household Water Usage per Year</td>
               <td>COR_FCT</td>
               <td>[number] 
                 <br />
@@ -379,13 +373,13 @@
               </td>
             </tr>
             <tr>
-              <td>Input Vegetation Layer Containing Crop Intensity in Percent (%) of Seasons per year</td>
+              <td>Input Vegetation Layer that Contains Seasonal Crop Intensity per year (%)</td>
               <td>VEG</td>
               <td>[vector: polygon]</td>
               <td>Input vector vegetation layer containing crop intensity in percent (%) season per year</td>
             </tr>
             <tr>
-              <td>Select Field that Contains Crop Intensity in percent (%) of season per year</td>
+              <td>Select Field that Contains Seasonal Crop Intensity per year (%)</td>
               <td>VEG_INT</td>
               <td>[tablefield: any] 
                 <br />
@@ -395,7 +389,7 @@
               <td>Selecting a column vegetation layer containing crop intensity data in percent (%) of season per year</td>
             </tr>
             <tr>
-              <td>Input Water Usage Standard for Vegetation</td>
+              <td>Input Vegetation Water Usage Standard per Season</td>
               <td>STD_VEG</td>
               <td>[number] 
                 <br />
@@ -410,7 +404,7 @@
               <td>[vector: any] 
                 <br />
                 Default: [Create temporary layer] </td>
-              <td>Specify the output layer. Option: 
+              <td>Specify the output layer. Choose one of the following: 
               </br>
               • Create Temporary Layer 
               </br>
@@ -443,8 +437,8 @@
           <hr />
         </section>
     <br />
-          <p>2. Generate Water Availibility Distribution</p>
-          <p>The value of environmental services is determined as a function of the combination of weights and scores of three parameters, namely landscape, land cover and vegetation type. The value of environmental services in each region will differ based on the determination of the scoring value.</p>
+          <p>2. Generate Water Availability Distribution</p>
+          <p>The value of environmental services is determined as a function of the combination of weights and scores of three parameters, namely landscape, land cover, and vegetation type. The value of environmental services in each region will differ based on the determination of the scoring value.</p>
           <br />
           <p>(PARAMETER)</p>
           <table>
@@ -455,7 +449,7 @@
               <th>Description</th>
             </tr>
             <tr>
-              <td>Input Grid Layer</td>
+              <td>Input IMSGS Layer</td>
               <td>Grid </td>
               <td>[vector: polygon]</td>
               <td>
@@ -463,7 +457,7 @@
               </td>
             </tr>
             <tr>
-              <td>Input Layer that Contains Environmental Services Performance (Index) </td>
+              <td>Input Layer that Contains Environmental Performance Index</td>
               <td>IJH </td>
               <td>[vector: polygon] 
               </td>
@@ -472,7 +466,7 @@
               </td>
             </tr>
             <tr>
-              <td>Select Fields that Contains Environmental Services Performance (Index) </td>
+              <td>Select Field that Contains Enviromental Performance Index</td>
               <td>IJH_V </td>
               <td>[[tablefield: any] 
                 <br />
@@ -482,13 +476,13 @@
               <td>Select the column layer containing the environmental services index column </td>
             </tr>
             <tr>
-              <td>Input Layer that Contains Watershed Area </td>
+              <td>Input Watershed Area Layer</td>
               <td>WAS </td>
               <td>[vector: polygon] </td>
               <td>Input vector layer containing watershed area </td>
             </tr>
             <tr>
-              <td>Select Field that Contains Water Shed Area Name </td>
+              <td>Select Field that Contains Watershed Area Name</td>
               <td>WAS_N </td>
               <td>[tablefield: any] 
                 <br />
@@ -512,7 +506,7 @@
               <td>[vector: any] 
                 <br />
                 Default: [Create temporary layer] </td>
-              <td>Specify the output layer. Option: 
+              <td>Specify the output layer. Choose one of the following: 
               </br>
               • Create Temporary Layer 
               </br>
@@ -546,7 +540,7 @@
         </section>
         <br />
         <p>3. Generate Water Need and Capacity Difference and Status </p>
-        <p>Analyze how much of the maximum population can be supported with existing water availability. The threshold determination is carried out with information on the need, availability, and need for water for a decent life (KHL) in the form of a constant. Threshold results were conducted without considering water needs for livestock and industrial activities. </p>
+        <p>Analyze how much of the maximum population can be supported with existing water availability. The threshold determination is carried out with information on the need, availability, and need for water for a decent life (KHL) in the form of a constant. Threshold results were conducted without considering water needs for livestock and industrial activities.</p>
         <br />
         <p>(PARAMETER)</p>
         <table>
@@ -557,12 +551,10 @@
             <th>Description</th>
           </tr>
           <tr>
-            <td>Input Vector Layer that Contains Water Needs for Each Grid </td>
+            <td>Input IMSGS Water Needs Layer</td>
             <td>NEED  </td>
             <td>[vector: polygon]</td>
-            <td>
-              Input vector layer containing the water needs distribution for each grid. The water needs distribution  vector layer for each grid has been generated in 'Generate Water Needs Distribution'.   
-            </td>
+            <td>Input vector layer containing the water needs distribution for each grid. The water needs distribution vector layer for each grid has been generated in 'Generate Water Needs Distribution'.</td>
           </tr>
           <tr>
             <td>Select Field that Contains Water Needs for Each Grid </td>
@@ -578,13 +570,13 @@
             </td>
           </tr>
           <tr>
-            <td>Input Vector Layer that Contains Water Availability for Each Grid  </td>
+            <td>Input IMSGS Water Availability Layer</td>
             <td>AVAIL  </td>
             <td>[vector: polygon] </td>
             <td>Input vector layer containing the water availability distribution for each grid. The water availability distribution vector layer for each grid has been generated in 'Generate Water Availability Distribution'. </td>
           </tr>
           <tr>
-            <td>Select Field that Contains Water Needs (Availability) for Each Grid </td>
+            <td>Select Field that Contains Water Availability for Each Grid</td>
             <td>AVAIL_VAL </td>
             <td>[tablefield: any] 
               <br />
@@ -594,7 +586,7 @@
             <td>Select the column layer that contains the distribution of water availability for each grid  </td>
           </tr>
           <tr>
-            <td>Input Water Needs for a Decsnt Life (Insert Water Sufficiency Number) </td>
+            <td>Input Water Needs for a Decent Life Value per Year</td>
             <td>WN_STD  </td>
             <td>Default : 800 </td>
             <td>Insert the value of water sufficiency number, in the form of a constant in unit of m³/capita/year, which is a correction factor for the per capita water requirement for living like a kayak that includes the need to produce food and domestic needs. This can be filled automatically or manually </td>
@@ -604,7 +596,7 @@
             <td>[vector: any] 
               <br />
               Default: [Create temporary layer] </td>
-            <td>Specify the output layer. Option: 
+            <td>Specify the output layer. Choose one of the following: 
             </br>
             • Create Temporary Layer 
             </br>
@@ -654,7 +646,7 @@
           </p>
           <br />
           <p>1. Generate Energy Needs Distribution </p>
-          <p>The energy needs distibution are determined based on the calculation of the Energy Adequacy Rate (AKE) of the population of each grid for a year.</p>
+          <p>The energy needs distribution is determined based on the calculation of the Energy Adequacy Rate (AKE) of the population of each grid for a year.</p>
           <br />
           <p>(PARAMETER)</p>
           <table>
@@ -665,7 +657,7 @@
               <th>Description</th>
             </tr>
             <tr>
-              <td>Population per Grid Layer </td>
+              <td>Input IMSGS Population Layer</td>
               <td>popgrid </td>
               <td>[vector: polygon]</td>
               <td>
@@ -673,7 +665,7 @@
               </td>
             </tr>
             <tr>
-              <td>Select Field that Contains Population Count </td>
+              <td>Select Field that Contains Population</td>
               <td>popfield </td>
               <td>[tablefield: any] 
                   <br />
@@ -686,7 +678,7 @@
               </td>
             </tr>
             <tr>
-              <td>Insert Energy Sufficiency Number </td>
+              <td>Input Energy Needs Value</td>
               <td>AKE </td>
               <td>[number] 
                 <br />
@@ -701,7 +693,7 @@
               <td>[vector: any] 
                 <br />
                 Default: [Create temporary layer] </td>
-              <td>Specify the output layer. Option: 
+              <td>Specify the output layer. Choose one of the following: 
               </br>
               • Create Temporary Layer 
               </br>
@@ -734,7 +726,7 @@
           <hr />
         <br />
           <p>2. Generate Energy Availability Distribution </p>
-          <p>The energy needs distibution are determined based on the calculation of the Energy Adequacy Rate (AKE) of the population of each grid for a year.</p>
+          <p>isi</p>
           <br />
           <p>(PARAMETER)</p>
           <table>
@@ -745,7 +737,7 @@
               <th>Description</th>
             </tr>
             <tr>
-              <td>Grid Layer </td>
+              <td>Input IMSGS Layer</td>
               <td>grid </td>
               <td>isi</td>
               <td>
@@ -753,40 +745,40 @@
               </td>
             </tr>
             <tr>
-              <td>Administration Boundary Layer </td>
+              <td>Input Administrative Boundary</td>
               <td>admlay </td>
               <td>isi</td>
               <td>Input vector layer containing administrative boundary data </td>
             </tr>
             <tr>
-              <td>Select Field that Contains Administrative Name from Administrative Boundary Layer </td>
+              <td>Select Field that Contains Administrative Boundary Name</td>
               <td>admfield </td>
               <td>isi</td>
               <td>Select the layer column containing the administrative boundary name data from the administrative boundary layer </td>
             </tr>
             <tr>
-              <td>Select Field that Contains Energy Production from Administrative Boundary Layer </td>
+              <td>Select Field that Contains Food Energy Production</td>
               <td>enerfield </td>
               <td>isi</td>
               <td>Select the layer column containing energy production from the administrative boundary layer </td>
             </tr>
             <tr>
-              <td>Environment Service Performance Layer </td>
+              <td>Input Layer that Contains Environmental Performance Index</td>
               <td>ESPlay </td>
               <td>isi</td>
               <td>Input vector layer containing the environmental services performance layer </td>
             </tr>
             <tr>
-              <td>Select Field that Contains IJEPBP Value </td>
+              <td>Select Field that Contains Food Ecosystem Performance Index</td>
               <td>IJEPBPESP </td>
               <td>isi</td>
-              <td>Select the layer column containing the IJEPBP (Indeks Jasa Ekosistem Bahan Pangan) value </td>
+              <td>Select the layer column containing the Food Ecosystem Performance Index (IJEPBP) value</td>
             </tr>
             <tr>
               <td>Output Layer</td>
               <td>OUTPUT</td>
               <td>isi</td>
-              <td>Specify the output layer. Option: 
+              <td>Specify the output layer. Choose one of the following: 
               </br>
               • Create Temporary Layer 
               </br>
@@ -828,13 +820,13 @@
               <th>Description</th>
             </tr>
             <tr>
-              <td>Energy Needs Grid Layer </td>
+              <td>Input IMSGS Energy Needs Layer</td>
               <td>needgrid </td>
               <td>[vector: polygon] </td>
               <td>Grid layer input that contains ‘Energy Needs Per Grid’ Field </td>
             </tr>
             <tr>
-              <td>Select Field that Contains Energy Needs per Grid </td>
+              <td>Select Field that Contains Energy Needs for Each Grid</td>
               <td>needfield  </td>
               <td>[tablefield: any] 
               <br />
@@ -844,14 +836,14 @@
               <td>‘Energy Needs Per Grid’ Field </td>
             </tr>
             <tr>
-              <td>Energy Availability Grid Layer </td>
+              <td>Input IMSGS Energy Availability Layer</td>
               <td>avagrid </td>
               <td>[vector: polygon] </td>
               <td>Grid layer input that contains ‘Energy Availability Per Grid’ Field </td>
             </tr>
             <tr>
-              <td>Select Field that Contains Energy Availability per Grid </td>
-              <td>avafield </td>
+              <td>Select Field that Contains Energy Availability for Each Grid</td>
+              <td>avafield</td>
               <td>[tablefield: any] 
               <br />
               [list] 
@@ -860,13 +852,13 @@
               <td>‘Energy Availability Per Grid’ Field </td>
             </tr>
             <tr>
-              <td>Population Grid Layer </td>
+              <td>Input IMSGS Population Layer</td>
               <td>populgrid </td>
               <td>[vector: polygon] </td>
               <td>Grid layer input that contains ‘Population Per Grid’ Field </td>
             </tr>
             <tr>
-              <td>Select Field that Contains Population per Grid </td>
+              <td>Select Field that Contains Population for Each Grid</td>
               <td>populfield </td>
               <td>[tablefield: any] 
               <br />
@@ -876,7 +868,7 @@
               <td>‘Population Per Grid’ Field </td>
             </tr>
             <tr>
-              <td>Insert Energy Sufficiency Number </td>
+              <td>Insert Energy Sufficiency Value</td>
               <td>AKE Default : 2100  </td>
               <td>[number] 
               <br />
@@ -889,7 +881,7 @@
               <td>[vector: any] 
                 <br />
                 Default: [Create temporary layer] </td>
-              <td>Specify the output layer. Option: 
+              <td>Specify the output layer. Choose one of the following: 
               </br>
               • Create Temporary Layer 
               </br>
@@ -922,7 +914,7 @@
       </article>
     </div>
     <footer class="footer">
-      Copyright by IMSGS. 2024
+      Copyright by Irwanto, Rania Altairatri Evelina Brawijaya, Mutia Hendriani Putri, Muhammad Usman Alshaadiq. 2024
       <a
         href="https://docs.qgis.org/3.34/en/docs/user_manual/processing_algs/qgis/vectorcreation.html"
         target="_blank"
