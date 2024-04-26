@@ -475,7 +475,7 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
         #calculate total weigth for each admin boundary
         feedback.setProgressText('Calculate Total Weight for each admin boundary... ')
 
-        sum_by_id(W_grid, 'W_admin', admin_field, 'weight_grid')
+        sum_by_id(W_grid, 'W_admin', popul_field, 'weight_grid')
 
         #progress set to 18
         feedback.setCurrentStep(18)
@@ -551,7 +551,7 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
         fields.append(QgsField('IMGSID', QVariant.String, '', 50))
         fields.append(QgsField('WRT', QVariant.Double, '', 50, 4))
         fields.append(QgsField('WLC', QVariant.Double, '', 50, 5))
-        fields.append(QgsField('Population', QVariant.String,'', 50, 5))
+        fields.append(QgsField('Population', QVariant.Int,'', 50))
 
         epsg4326 = QgsCoordinateReferenceSystem("EPSG:4326")
 
