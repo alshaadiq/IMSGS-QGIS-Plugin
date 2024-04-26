@@ -508,8 +508,6 @@ class carcapAlgorithm(QgsProcessingAlgorithm):
     needfield = 'needfield'
     avagrid = 'avagrid'
     avafield = 'avafield'
-    populgrid = 'populgrid'
-    populfield = 'populfield'
     AKE = 'AKE'
 
     def name(self):
@@ -577,22 +575,6 @@ class carcapAlgorithm(QgsProcessingAlgorithm):
             )
         )
 
-        self.addParameter(
-            QgsProcessingParameterFeatureSource(
-                self.populgrid,
-                self.tr('Input IMSGS Population Layer'),
-                [QgsProcessing.TypeVectorPolygon],
-            )
-        )
-
-        self.addParameter(
-            QgsProcessingParameterField(
-                self.populfield,
-                self.tr('Select Fields that Contains Population for each Grid'),
-                parentLayerParameterName=self.populgrid,  # Set the parent layer parameter
-                type=QgsProcessingParameterField.Any,
-            )
-        )
 
         self.addParameter(
             QgsProcessingParameterNumber(
@@ -620,9 +602,6 @@ class carcapAlgorithm(QgsProcessingAlgorithm):
 
         # input popfield from population layer
         ava_field = self.parameterAsString(parameters, self.avafield,context)
-
-        # input popfield from population layer
-        popul_field = self.parameterAsString(parameters, self.populfield,context)
 
         # AKE number
         AKE_number = self.parameterAsString(parameters, self.AKE, context)
@@ -762,24 +741,26 @@ class carcapAlgorithm(QgsProcessingAlgorithm):
         # initialization fields
         fields = QgsFields()
         fields.append(QgsField('IMGSID', QVariant.String, '', 50))
-        fields.append(QgsField('Diff', QVariant.Double, '', 50))
-        fields.append(QgsField('Thres', QVariant.Double,'', 50))
-        fields.append(QgsField('Status', QVariant.Double,'', 50))
-        fields.append(QgsField('Stats', QVariant.String, '', 50))
+        fields.append(QgsField('AgridF', QVariant.Double, '', 50))
+        fields.append(QgsField('NgridF', QVariant.Double, '', 50))
+        fields.append(QgsField('Difference', QVariant.Double, '', 50))
+        fields.append(QgsField('Status', QVariant.String,'', 50))
+        fields.append(QgsField('Threshold', QVariant.Double, '', 50))
 
         # Output parameter
         (sink, dest_id) = self.parameterAsSink(parameters, self.OUTPUT, context, fields, QgsWkbTypes.Polygon, epsg4326)
 
         for feat in stat['OUTPUT'].getFeatures():
             IMGSID = feat['IMGSID']
+            Agridf = feat[f'{ava_field}']
+            Ngridf = feat[f'{need_field}']
             Diff = feat['Diff']
-            Thres = feat['Thres']
-            Status = feat['Status']
             Stat = feat['Stats']
+            Thres = feat['Thres']
             
 
             new_feat = QgsFeature(feat)
-            new_feat.setAttributes([IMGSID,Diff,Thres,Status,Stat])
+            new_feat.setAttributes([IMGSID,Agridf,Ngridf,Diff,Stat,Thres])
             
             sink.addFeature(new_feat, QgsFeatureSink.FastInsert)
         
