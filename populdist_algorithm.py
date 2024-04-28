@@ -227,7 +227,12 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
         admin_fix = processing.run("native:fixgeometries", 
                             {'INPUT':admin_rep['OUTPUT'],
                             'METHOD':0,
-                            'OUTPUT':'TEMPORARY_OUTPUT'})  
+                            'OUTPUT':'TEMPORARY_OUTPUT'})
+
+        grid_clip = processing.run("native:clip", 
+                                {'INPUT':grid_rep['OUTPUT'],
+                                 'OVERLAY':admin_fix['OUTPUT'],
+                                 'OUTPUT':'TEMPORARY_OUTPUT'})  
 
 
         #progress set to 1
@@ -240,7 +245,7 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
 
         intr_road = processing.run("native:intersection", 
                                   {'INPUT':rt_fix['OUTPUT'], 
-                                   'OVERLAY':grid_rep['OUTPUT'],
+                                   'OVERLAY':grid_clip['OUTPUT'],
                                    'INPUT_FIELDS':[],
                                    'OVERLAY_FIELDS':[],
                                    'OVERLAY_FIELDS_PREFIX':'',
@@ -310,13 +315,22 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
 
         join = processing.run("native:joinattributestable", {'INPUT_2':w_rt_f['OUTPUT'],
                                                       'FIELD_2':'IMGSID',
-                                                      'INPUT':grid_rep['OUTPUT'],
+                                                      'INPUT':grid_clip['OUTPUT'],
                                                       'FIELD':'IMGSID',
                                                       'FIELDS_TO_COPY':[],
                                                       'METHOD':1,
                                                       'DISCARD_NONMATCHING':False,
                                                       'PREFIX':'',
                                                       'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+        
+        RT_null =processing.run("native:fieldcalculator", 
+                                      {'INPUT':join['OUTPUT'],
+                                       'FIELD_NAME':'WRT_null',
+                                       'FIELD_TYPE':0,
+                                       'FIELD_LENGTH':20,
+                                       'FIELD_PRECISION':15,
+                                       'FORMULA':'if("WRT" is null, 0, "WRT")',
+                                       'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
         
         #progress set to 7
         feedback.setCurrentStep(7)
@@ -328,7 +342,7 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
 
         intr_Lc = processing.run("native:intersection", 
                                   {'INPUT':lc_fix['OUTPUT'], 
-                                   'OVERLAY':grid_rep['OUTPUT'],
+                                   'OVERLAY':grid_clip['OUTPUT'],
                                    'INPUT_FIELDS':[],
                                    'OVERLAY_FIELDS':[],
                                    'OVERLAY_FIELDS_PREFIX':'',
@@ -398,13 +412,22 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
 
         join_2 = processing.run("native:joinattributestable", {'INPUT_2':w_lc_f['OUTPUT'],
                                                       'FIELD_2':'IMGSID',
-                                                      'INPUT':join['OUTPUT'],
+                                                      'INPUT':RT_null['OUTPUT'],
                                                       'FIELD':'IMGSID',
                                                       'FIELDS_TO_COPY':[],
                                                       'METHOD':1,
                                                       'DISCARD_NONMATCHING':False,
                                                       'PREFIX':'',
                                                       'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+        
+        Lc_null =processing.run("native:fieldcalculator", 
+                                      {'INPUT':join_2['OUTPUT'],
+                                       'FIELD_NAME':'WLC_null',
+                                       'FIELD_TYPE':0,
+                                       'FIELD_LENGTH':20,
+                                       'FIELD_PRECISION':15,
+                                       'FORMULA':'if("WLC" is null, 0, "WLC")',
+                                       'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT}) 
         
         #progress set to 13
         feedback.setCurrentStep(13)
@@ -416,7 +439,7 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
 
         intr_Ad = processing.run("native:intersection", 
                                   {'INPUT':admin_fix['OUTPUT'], 
-                                   'OVERLAY':join_2['OUTPUT'],
+                                   'OVERLAY':Lc_null['OUTPUT'],
                                    'INPUT_FIELDS':[],
                                    'OVERLAY_FIELDS':[],
                                    'OVERLAY_FIELDS_PREFIX':'',
@@ -464,7 +487,7 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
                                        'FIELD_TYPE':0,
                                        'FIELD_LENGTH':20,
                                        'FIELD_PRECISION':15,
-                                       'FORMULA':'(WLC+WRT)*(a_admin/tot_area)',
+                                       'FORMULA':'(WLC_null+WRT_null)*(a_admin/tot_area)',
                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
         
         #progress set to 17
@@ -514,7 +537,7 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
         
         join_3 = processing.run("native:joinattributestable", {'INPUT_2':popul_grid['OUTPUT'],
                                                       'FIELD_2':'IMGSID',
-                                                      'INPUT':grid_rep['OUTPUT'],
+                                                      'INPUT':grid_clip['OUTPUT'],
                                                       'FIELD':'IMGSID',
                                                       'FIELDS_TO_COPY':[],
                                                       'METHOD':1,
@@ -560,8 +583,8 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
  
         for feat in popul_null['OUTPUT'].getFeatures():
             grid_id = feat['IMGSID']
-            length = feat['WRT']
-            area = feat['WLC']
+            length = feat['WRT_null']
+            area = feat['WLC_null']
             popul = feat['Population']
             
 
