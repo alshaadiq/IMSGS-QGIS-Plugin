@@ -187,7 +187,7 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
         popul_field = self.parameterAsString(parameters, self.INPUTPOP,context)
 
         #initialize progress bar
-        feedback = QgsProcessingMultiStepFeedback(22, feedback) 
+        feedback = QgsProcessingMultiStepFeedback(18, feedback) 
 
 # ==================== algoritm =====================================  
 
@@ -345,7 +345,7 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
                                    'GRID_SIZE':None})
         
         #progress set to 8
-        feedback.setCurrentStep(9)
+        feedback.setCurrentStep(8)
         if feedback.isCanceled():
             return {}
         
@@ -424,6 +424,14 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
                                        'FORMULA':'if("WLC" is null, 0, "WLC")',
                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT}) 
         
+        #progress set to 13
+        feedback.setCurrentStep(13)
+        if feedback.isCanceled():
+            return {}
+        
+        # join value to grid
+        feedback.setProgressText('Intersect Administrative Boundary with Grid Layer...')
+
         intr_Agg = processing.run("native:intersection", 
                                   {'INPUT':admin_rep['OUTPUT'], 
                                    'OVERLAY':grid_clip['OUTPUT'],
@@ -432,6 +440,14 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
                                    'OVERLAY_FIELDS_PREFIX':'',
                                    'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT,
                                    'GRID_SIZE':None})
+        
+        #progress set to 14
+        feedback.setCurrentStep(14)
+        if feedback.isCanceled():
+            return {}
+        
+        # join value to grid
+        feedback.setProgressText('Calculate Administrative Area...')
         
         Area_calc =processing.run("native:fieldcalculator", 
                                       {'INPUT':intr_Agg['OUTPUT'],
@@ -442,10 +458,14 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
                                        'FORMULA':'$area',
                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT}) 
 
-        #progress set to 13
-        feedback.setCurrentStep(13)
+        #progress set to 15
+        feedback.setCurrentStep(15)
         if feedback.isCanceled():
             return {}
+        
+        # join value to grid
+        feedback.setProgressText('Aggregate Administrative Boundary...')        
+
         join_3  = processing.run("native:aggregate", {'INPUT':Area_calc['OUTPUT'],
                                                       'GROUP_BY':'"IMGSID"',
                                                       'AGGREGATES':[{'aggregate': 'concatenate_unique',
@@ -469,6 +489,14 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
                                                                       'type_name': 'int8'}],
                                                       'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
         
+        #progress set to 16
+        feedback.setCurrentStep(16)
+        if feedback.isCanceled():
+            return {}
+        
+        # join value to grid
+        feedback.setProgressText('Join Adminstrative Boundary with Grid Layer...') 
+
         join_4 = processing.run("native:joinattributestable", {'INPUT_2':join_3['OUTPUT'],
                                                       'FIELD_2':'IMGSID',
                                                       'INPUT':Lc_null['OUTPUT'],
@@ -478,6 +506,14 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
                                                       'DISCARD_NONMATCHING':False,
                                                       'PREFIX':'',
                                                       'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+
+        #progress set to 17
+        feedback.setCurrentStep(17)
+        if feedback.isCanceled():
+            return {}
+        
+        # join value to grid
+        feedback.setProgressText('Calculate Grid Weight And Weight Admin...') 
         
         W_grid = processing.run("native:fieldcalculator", 
                                       {'INPUT':join_4['OUTPUT'],
@@ -489,6 +525,14 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
         
         sum_by_id(W_grid, 'W_admin', popul_field, 'weight_grid')
+
+        #progress set to 18
+        feedback.setCurrentStep(18)
+        if feedback.isCanceled():
+            return {}
+        
+        # join value to grid
+        feedback.setProgressText('Calculate Population for each Grid...') 
 
         popul_grid = processing.run("native:fieldcalculator", 
                                 {'INPUT':W_grid['OUTPUT'],
@@ -508,141 +552,6 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
                                        'FORMULA':'if("popul" is null, 0, "popul")',
                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})      
 
-
-
-        # # intersect admin boundary
-        # feedback.setProgressText('Intersect Grid Layer with Admin Boundary ... ')
-
-        # intr_Ad = processing.run("native:intersection", 
-        #                           {'INPUT':admin_fix['OUTPUT'], 
-        #                            'OVERLAY':Lc_null['OUTPUT'],
-        #                            'INPUT_FIELDS':[],
-        #                            'OVERLAY_FIELDS':[],
-        #                            'OVERLAY_FIELDS_PREFIX':'',
-        #                            'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT,
-        #                            'GRID_SIZE':None})
-        
-        # #progress set to 14
-        # feedback.setCurrentStep(14)
-        # if feedback.isCanceled():
-        #     return {}
-        
-        # #calculate area admin
-        # feedback.setProgressText('Calculate area for each feature in grid... ')
-
-        # area_admin = processing.run("native:fieldcalculator", 
-        #                               {'INPUT':intr_Ad['OUTPUT'],
-        #                                'FIELD_NAME':'a_admin',
-        #                                'FIELD_TYPE':0,
-        #                                'FIELD_LENGTH':20,
-        #                                'FIELD_PRECISION':15,
-        #                                'FORMULA':'$area',
-        #                                'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
-        
-        # #progress set to 15
-        # feedback.setCurrentStep(15)
-        # if feedback.isCanceled():
-        #     return {}
-                
-        # #calculate sum area by id
-        # feedback.setProgressText('Calculate total area for each feature in grid... ')
-
-        # sum_by_id(area_admin, 'tot_area', 'IMGSID', 'a_admin')
-
-        # #progress set to 16
-        # feedback.setCurrentStep(16)
-        # if feedback.isCanceled():
-        #     return {}
-        
-        # #calculate total weigth for each grid
-        # feedback.setProgressText('Calculate total weight for each grid... ')
-
-        # W_grid = processing.run("native:fieldcalculator", 
-        #                               {'INPUT':area_admin['OUTPUT'],
-        #                                'FIELD_NAME':'weight_grid',
-        #                                'FIELD_TYPE':0,
-        #                                'FIELD_LENGTH':20,
-        #                                'FIELD_PRECISION':15,
-        #                                'FORMULA':'(WLC_null+WRT_null)*(a_admin/tot_area)',
-        #                                'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
-        
-        # #progress set to 17
-        # feedback.setCurrentStep(17)
-        # if feedback.isCanceled():
-        #     return {}
-        
-        # #calculate total weigth for each admin boundary
-        # feedback.setProgressText('Calculate Total Weight for each admin boundary... ')
-
-        # sum_by_id(W_grid, 'W_admin', popul_field, 'weight_grid')
-
-        # #progress set to 18
-        # feedback.setCurrentStep(18)
-        # if feedback.isCanceled():
-        #     return {}
-        
-        # #calculate population for each grid
-        # feedback.setProgressText('Calculate Population For Each Grid... ')
-
-        # popul_grid = processing.run("native:fieldcalculator", 
-        #                         {'INPUT':W_grid['OUTPUT'],
-        #                         'FIELD_NAME':'popul_grid',
-        #                         'FIELD_TYPE':0,
-        #                         'FIELD_LENGTH':20,
-        #                         'FIELD_PRECISION':15,
-        #                         'FORMULA':f'(weight_grid/W_admin)*{popul_field}',
-        #                         'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
-        
-        # #progress set to 19
-        # feedback.setCurrentStep(19)
-        # if feedback.isCanceled():
-        #     return {}
-        
-        # #Sum by id population
-        # feedback.setProgressText('Calculate Sum population by IMGSID... ')
-
-        # sum_by_id(popul_grid, 'popul', 'IMGSID', 'popul_grid')
-
-        # #progress set to 20
-        # feedback.setCurrentStep(20)
-        # if feedback.isCanceled():
-        #     return {}
-        
-        # # join value to grid
-        # feedback.setProgressText('Join Value by Field (population)...')
-        
-        # join_3 = processing.run("native:joinattributestable", {'INPUT_2':popul_grid['OUTPUT'],
-        #                                               'FIELD_2':'IMGSID',
-        #                                               'INPUT':grid_clip['OUTPUT'],
-        #                                               'FIELD':'IMGSID',
-        #                                               'FIELDS_TO_COPY':[],
-        #                                               'METHOD':1,
-        #                                               'DISCARD_NONMATCHING':False,
-        #                                               'PREFIX':'',
-        #                                               'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
-        
-        # #progress set to 21
-        # feedback.setCurrentStep(21)
-        # if feedback.isCanceled():
-        #     return {}
-
-        # # remove null from population
-        # feedback.setProgressText('Remove Null From Population Field ...')
-
-        # popul_null =processing.run("native:fieldcalculator", 
-        #                               {'INPUT':join_3['OUTPUT'],
-        #                                'FIELD_NAME':'Population',
-        #                                'FIELD_TYPE':0,
-        #                                'FIELD_LENGTH':20,
-        #                                'FIELD_PRECISION':15,
-        #                                'FORMULA':'if("popul" is null, 0, "popul")',
-        #                                'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
-
-        # #progress set to 22
-        # feedback.setCurrentStep(22)
-        # if feedback.isCanceled():
-        #     return {} 
-
         # ==================== output parameter =====================================
 
         # initialization fields
@@ -650,9 +559,9 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
         fields.append(QgsField('IMGSID', QVariant.String, '', 50))
         fields.append(QgsField('WRT', QVariant.Double, '', 50, 4))
         fields.append(QgsField('WLC', QVariant.Double, '', 50, 5))
-        # fields.append(QgsField('W_Grid', QVariant.Double, '', 50, 5))
-        # fields.append(QgsField('W_kec',QVariant.String,'',50))
-        # fields.append(QgsField('popkec',QVariant.Int,'',50))
+        fields.append(QgsField('WGrid', QVariant.Double, '', 50, 5))
+        fields.append(QgsField('Wadmin',QVariant.Double,'',50,5))
+        fields.append(QgsField('Pop_perAdmin',QVariant.Int,'',50))
         fields.append(QgsField('Population', QVariant.Int,'', 50))
 
         epsg4326 = QgsCoordinateReferenceSystem("EPSG:4326")
@@ -664,14 +573,13 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
             grid_id = feat['IMGSID']
             length = feat['WRT_null']
             area = feat['WLC_null']
-            # w_grid = feat['weight_grid']
-            # w_kec = feat['W_admin']
-            # kec = feat[f'{popul_field}']
+            w_grid = feat['weight_grid']
+            w_kec = feat['W_admin']
+            kec = feat[f'{popul_field}']
             popul = feat['Population']
             
-
             new_feat = QgsFeature(feat)
-            new_feat.setAttributes([grid_id,length,area,popul])
+            new_feat.setAttributes([grid_id,length,area,w_grid,w_kec,kec,popul])
             
             sink.addFeature(new_feat, QgsFeatureSink.FastInsert)
         
