@@ -424,23 +424,63 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
                                        'FORMULA':'if("WLC" is null, 0, "WLC")',
                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT}) 
         
+        intr_Agg = processing.run("native:intersection", 
+                                  {'INPUT':admin_rep['OUTPUT'], 
+                                   'OVERLAY':grid_clip['OUTPUT'],
+                                   'INPUT_FIELDS':[],
+                                   'OVERLAY_FIELDS':[],
+                                   'OVERLAY_FIELDS_PREFIX':'',
+                                   'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT,
+                                   'GRID_SIZE':None})
+        
+        Area_calc =processing.run("native:fieldcalculator", 
+                                      {'INPUT':intr_Agg['OUTPUT'],
+                                       'FIELD_NAME':'area_admint',
+                                       'FIELD_TYPE':0,
+                                       'FIELD_LENGTH':20,
+                                       'FIELD_PRECISION':15,
+                                       'FORMULA':'$area',
+                                       'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT}) 
+
         #progress set to 13
         feedback.setCurrentStep(13)
         if feedback.isCanceled():
             return {}
+        join_3  = processing.run("native:aggregate", {'INPUT':Area_calc['OUTPUT'],
+                                                      'GROUP_BY':'"IMGSID"',
+                                                      'AGGREGATES':[{'aggregate': 'concatenate_unique',
+                                                                     'delimiter': ',',
+                                                                     'input': '"IMGSID"',
+                                                                     'length': 50,
+                                                                     'name': 'IMGSID',
+                                                                     'precision': 0,
+                                                                     'sub_type': 0,
+                                                                     'type': 10,
+                                                                     'type_name': 'text'},
+                                                                     
+                                                                     {'aggregate': 'maximum',
+                                                                      'delimiter': ',',
+                                                                      'input': f'if("area_admint"=maximum("area_admint"),{popul_field},null)',
+                                                                      'length': 10,
+                                                                      'name': f'{popul_field}',
+                                                                      'precision': 0,
+                                                                      'sub_type': 0,
+                                                                      'type': 4,
+                                                                      'type_name': 'int8'}],
+                                                      'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
         
-        join_3  = processing.run("native:joinattributesbylocation", 
-                       {'INPUT':Lc_null['OUTPUT'],
-                        'PREDICATE':[0],
-                        'JOIN':admin_rep['OUTPUT'],
-                        'JOIN_FIELDS':f'{popul_field}',
-                        'METHOD':2,
-                        'DISCARD_NONMATCHING':False,
-                        'PREFIX':'',
-                        'OUTPUT':'TEMPORARY_OUTPUT'})
+        join_4 = processing.run("native:joinattributestable", {'INPUT_2':join_3['OUTPUT'],
+                                                      'FIELD_2':'IMGSID',
+                                                      'INPUT':Lc_null['OUTPUT'],
+                                                      'FIELD':'IMGSID',
+                                                      'FIELDS_TO_COPY':[],
+                                                      'METHOD':1,
+                                                      'DISCARD_NONMATCHING':False,
+                                                      'PREFIX':'',
+                                                      'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
         
         W_grid = processing.run("native:fieldcalculator", 
-                                      {'INPUT':join_3['OUTPUT'],
+                                      {'INPUT':join_4['OUTPUT'],
                                        'FIELD_NAME':'weight_grid',
                                        'FIELD_TYPE':0,
                                        'FIELD_LENGTH':20,
