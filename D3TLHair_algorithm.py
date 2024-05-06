@@ -369,7 +369,7 @@ class calcneedAlgorithm(QgsProcessingAlgorithm):
             grid_id = feat['IMGSID']
             popul_field = feat[f'{popul}']
             d_grid_1 = feat['Dgrid']
-            q_grid_1 = feat['Qgrid']
+            q_grid_1 = feat['Qgrid_null']
             T_grid_1 = feat['Tgrid']
 
             new_feat = QgsFeature(feat)
