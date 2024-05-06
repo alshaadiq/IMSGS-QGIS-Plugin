@@ -317,6 +317,15 @@ class calcneedAlgorithm(QgsProcessingAlgorithm):
                                                       'PREFIX':'',
                                                       'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
         
+        join_null =processing.run("native:fieldcalculator", 
+                                {'INPUT':join['OUTPUT'],
+                                'FIELD_NAME':'Qgrid_null',
+                                'FIELD_TYPE':0,
+                                'FIELD_LENGTH':20,
+                                'FIELD_PRECISION':15,
+                                'FORMULA':'if("Qgrid" is null, 0, "Qgrid")',
+                                'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT}) 
+        
         #progress set to 7
         feedback.setCurrentStep(7)
         if feedback.isCanceled():
@@ -327,12 +336,12 @@ class calcneedAlgorithm(QgsProcessingAlgorithm):
         feedback.setProgressText('Calculate water Need per Grid ...')
 
         T_grid =  processing.run("native:fieldcalculator", 
-                                {'INPUT': join['OUTPUT'],
+                                {'INPUT': join_null['OUTPUT'],
                                 'FIELD_NAME': "Tgrid",
                                 'FIELD_TYPE':0,
                                 'FIELD_LENGTH':30,
                                 'FIELD_PRECISION':20,
-                                'FORMULA':'Dgrid + Qgrid',
+                                'FORMULA':'Dgrid + Qgrid_null',
                                 'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
 
         #progress set to 8
@@ -641,6 +650,15 @@ class distavailability2Algorithm(QgsProcessingAlgorithm):
                                                       'PREFIX':'',
                                                       'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
         
+        join_null =processing.run("native:fieldcalculator", 
+                                {'INPUT':join['OUTPUT'],
+                                'FIELD_NAME':'K_grid_N',
+                                'FIELD_TYPE':0,
+                                'FIELD_LENGTH':20,
+                                'FIELD_PRECISION':15,
+                                'FORMULA':'if("K_Grid" is null, 0, "K_Grid")',
+                                'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+        
         feedback.setCurrentStep(9)
         if feedback.isCanceled():
             return{}
@@ -657,10 +675,10 @@ class distavailability2Algorithm(QgsProcessingAlgorithm):
 
         (sink, dest_id) = self.parameterAsSink(parameters, self.OUTPUT, context, fields,QgsWkbTypes.Polygon, epsg4326 )
 
-        for feat in join['OUTPUT'].getFeatures():
+        for feat in join_null['OUTPUT'].getFeatures():
 
             grid_id = feat['IMGSID']
-            k = feat['K_grid']
+            k = feat['K_grid_N']
             
 
             new_feat = QgsFeature(feat)
