@@ -496,7 +496,7 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
                                                                       'delimiter': ',',
                                                                       'input': f'if("area_admint"=maximum("area_admint"),{name_field},null)',
                                                                       'length': 50,
-                                                                      'name': 'adm_name',
+                                                                      'name': 'Admname',
                                                                       'precision': 0,
                                                                       'sub_type': 0,
                                                                       'type': 10,
@@ -548,7 +548,7 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
                                        'FORMULA':'(WLC_null+WRT_null)',
                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
         
-        sum_by_id(W_grid, 'W_admin', name_field, 'weight_grid')
+        sum_by_id(W_grid, 'W_admin', 'Admname', 'weight_grid')
 
         #progress set to 18
         feedback.setCurrentStep(18)
@@ -599,7 +599,7 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
             area = feat['WLC_null']
             w_grid = feat['weight_grid']
             w_kec = feat['W_admin']
-            kec = feat[f'{name_field}']
+            kec = feat['Admname']
             popul = feat['Population']
             
             new_feat = QgsFeature(feat)

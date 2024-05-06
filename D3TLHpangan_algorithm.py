@@ -298,6 +298,8 @@ class distavailabilityAlgorithm(QgsProcessingAlgorithm):
         # input IJEPBP field per grid
         IJEPBP_field = self.parameterAsString(parameters, self.IJEPBPESP,context)
 
+        # Administration boundary name field
+        adm_field = self.parameterAsString(parameters, self.admfield, context)
 
         # Energy Production from Administrative Boundary Layer
         ener_field = self.parameterAsString(parameters, self.enerfield, context)
@@ -370,7 +372,7 @@ class distavailabilityAlgorithm(QgsProcessingAlgorithm):
                                 'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
         
         #progress set to 3
-        feedback.setCurrentStep(9)
+        feedback.setCurrentStep(3)
         if feedback.isCanceled():
             return {}
 
@@ -404,7 +406,7 @@ class distavailabilityAlgorithm(QgsProcessingAlgorithm):
 #calculate sum IJEPBP by administrative boundary
         feedback.setProgressText('Calculate sum IJEPBP by administrative boundary ...')
 
-        sum_by_id(IJEPBP_feat, 'IJEPBP_adm', 'Admname', 'IJEPBPfeat')
+        sum_by_id(IJEPBP_feat, 'IJEPBP_adm', adm_field, 'IJEPBPfeat')
 
         #progress set to 6
         feedback.setCurrentStep(6)
@@ -469,15 +471,6 @@ class distavailabilityAlgorithm(QgsProcessingAlgorithm):
                                                       'PREFIX':'',
                                                       'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
         
-        join_null = processing.run("native:fieldcalculator", 
-                                      {'INPUT':join['OUTPUT'],
-                                       'FIELD_NAME':'EnerAvai_n',
-                                       'FIELD_TYPE':0,
-                                       'FIELD_LENGTH':20,
-                                       'FIELD_PRECISION':15,
-                                       'FORMULA':'if("EnerAvai" is null, 0, "EnerAvai")',
-                                       'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
-        
         feedback.setCurrentStep(10)
         if feedback.isCanceled():
             return{}
@@ -494,9 +487,9 @@ class distavailabilityAlgorithm(QgsProcessingAlgorithm):
         # Output parameter
         (sink, dest_id) = self.parameterAsSink(parameters, self.OUTPUT, context, fields, QgsWkbTypes.Polygon, epsg4326)
 
-        for feat in join_null['OUTPUT'].getFeatures():
+        for feat in join['OUTPUT'].getFeatures():
             grid_id = feat['IMGSID']
-            energy_available = feat['EnerAvai_n']
+            energy_available = feat['EnerAvai']
             IJEPBPADM = feat['IJEPBP_Adm']
             IJEPBPFEATURE = feat['IJEPBPfeat']
 
