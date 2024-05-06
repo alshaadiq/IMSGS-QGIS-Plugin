@@ -469,6 +469,15 @@ class distavailabilityAlgorithm(QgsProcessingAlgorithm):
                                                       'PREFIX':'',
                                                       'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
         
+        join_null = processing.run("native:fieldcalculator", 
+                                      {'INPUT':join['OUTPUT'],
+                                       'FIELD_NAME':'EnerAvai_n',
+                                       'FIELD_TYPE':0,
+                                       'FIELD_LENGTH':20,
+                                       'FIELD_PRECISION':15,
+                                       'FORMULA':'if("EnerAvai" is null, 0, "EnerAvai")',
+                                       'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+        
         feedback.setCurrentStep(10)
         if feedback.isCanceled():
             return{}
@@ -485,9 +494,9 @@ class distavailabilityAlgorithm(QgsProcessingAlgorithm):
         # Output parameter
         (sink, dest_id) = self.parameterAsSink(parameters, self.OUTPUT, context, fields, QgsWkbTypes.Polygon, epsg4326)
 
-        for feat in join['OUTPUT'].getFeatures():
+        for feat in join_null['OUTPUT'].getFeatures():
             grid_id = feat['IMGSID']
-            energy_available = feat['EnerAvai']
+            energy_available = feat['EnerAvai_n']
             IJEPBPADM = feat['IJEPBP_Adm']
             IJEPBPFEATURE = feat['IJEPBPfeat']
 
