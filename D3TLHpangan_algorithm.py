@@ -298,8 +298,6 @@ class distavailabilityAlgorithm(QgsProcessingAlgorithm):
         # input IJEPBP field per grid
         IJEPBP_field = self.parameterAsString(parameters, self.IJEPBPESP,context)
 
-        # Administration boundary name field
-        adm_field = self.parameterAsString(parameters, self.admfield, context)
 
         # Energy Production from Administrative Boundary Layer
         ener_field = self.parameterAsString(parameters, self.enerfield, context)
@@ -406,7 +404,7 @@ class distavailabilityAlgorithm(QgsProcessingAlgorithm):
 #calculate sum IJEPBP by administrative boundary
         feedback.setProgressText('Calculate sum IJEPBP by administrative boundary ...')
 
-        sum_by_id(IJEPBP_feat, 'IJEPBP_adm', adm_field, 'IJEPBPfeat')
+        sum_by_id(IJEPBP_feat, 'IJEPBP_adm', 'Admname', 'IJEPBPfeat')
 
         #progress set to 6
         feedback.setCurrentStep(6)
@@ -480,9 +478,9 @@ class distavailabilityAlgorithm(QgsProcessingAlgorithm):
         # initialization fields
         fields = QgsFields()
         fields.append(QgsField('IMGSID', QVariant.String, '', 50))
-        fields.append(QgsField('EnerAvai', QVariant.Int,'', 50))
-        fields.append(QgsField('IJEPBP_Adm', QVariant.Int,'', 50))
-        fields.append(QgsField('IJEPBPfeat', QVariant.Int,'', 50))
+        fields.append(QgsField('EnerAvai', QVariant.Double,'', 50))
+        fields.append(QgsField('IJEPBP_Adm', QVariant.Double,'', 50))
+        fields.append(QgsField('IJEPBPfeat', QVariant.Double,'', 50))
 
         # Output parameter
         (sink, dest_id) = self.parameterAsSink(parameters, self.OUTPUT, context, fields, QgsWkbTypes.Polygon, epsg4326)

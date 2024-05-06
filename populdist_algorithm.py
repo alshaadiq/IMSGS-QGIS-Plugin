@@ -62,6 +62,7 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
     TableWeightRT ='TableWeightRT' # road weights table
     INPUTA ='INPUTA' # admin boundary layer
     INPUTPOP ='INPUTPOP' # population field 
+    INPUTNAME = 'INPUTNAME' # Admin name field
     OUTPUT = 'OUTPUT' # output population grid
 
 
@@ -154,6 +155,16 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
             )
         )
 
+        # Input boundary name on administrative boundary
+        self.addParameter(
+            QgsProcessingParameterField(
+                self.INPUTNAME,
+                self.tr('Select Field that Contains Administrative Boundary Name'),
+                parentLayerParameterName=self.INPUTA,  # Set the parent layer parameter
+                type=QgsProcessingParameterField.Any,
+            )
+        )
+
         # Input population on administrative boundary
         self.addParameter(
             QgsProcessingParameterField(
@@ -185,6 +196,9 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
 
         #input admin field that contain population
         popul_field = self.parameterAsString(parameters, self.INPUTPOP,context)
+
+        #input admin field that contain admin name
+        name_field = self.parameterAsString(parameters, self.INPUTNAME,context)
 
         #initialize progress bar
         feedback = QgsProcessingMultiStepFeedback(18, feedback) 
@@ -480,6 +494,16 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
                                                                      
                                                                      {'aggregate': 'maximum',
                                                                       'delimiter': ',',
+                                                                      'input': f'if("area_admint"=maximum("area_admint"),{name_field},null)',
+                                                                      'length': 50,
+                                                                      'name': 'adm_name',
+                                                                      'precision': 0,
+                                                                      'sub_type': 0,
+                                                                      'type': 10,
+                                                                      'type_name': 'text'},
+
+                                                                    {'aggregate': 'maximum',
+                                                                      'delimiter': ',',
                                                                       'input': f'if("area_admint"=maximum("area_admint"),{popul_field},null)',
                                                                       'length': 10,
                                                                       'name': f'{popul_field}',
@@ -524,7 +548,7 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
                                        'FORMULA':'(WLC_null+WRT_null)',
                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
         
-        sum_by_id(W_grid, 'W_admin', popul_field, 'weight_grid')
+        sum_by_id(W_grid, 'W_admin', name_field, 'weight_grid')
 
         #progress set to 18
         feedback.setCurrentStep(18)
@@ -561,7 +585,7 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
         fields.append(QgsField('WLC', QVariant.Double, '', 50, 5))
         fields.append(QgsField('WGrid', QVariant.Double, '', 50, 5))
         fields.append(QgsField('Wadmin',QVariant.Double,'',50,5))
-        fields.append(QgsField('Pop_perAdmin',QVariant.Int,'',50))
+        fields.append(QgsField('Admname',QVariant.String,'',50))
         fields.append(QgsField('Population', QVariant.Int,'', 50))
 
         epsg4326 = QgsCoordinateReferenceSystem("EPSG:4326")
@@ -575,7 +599,7 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
             area = feat['WLC_null']
             w_grid = feat['weight_grid']
             w_kec = feat['W_admin']
-            kec = feat[f'{popul_field}']
+            kec = feat[f'{name_field}']
             popul = feat['Population']
             
             new_feat = QgsFeature(feat)
