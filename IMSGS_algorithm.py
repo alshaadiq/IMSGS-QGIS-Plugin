@@ -85,7 +85,7 @@ class IMSGSAlgorithm(QgsProcessingAlgorithm):
         return QIcon(os.path.join(os.path.dirname(__file__), 'icons/generategrid.png'))
     
     def helpUrl(self):
-        file = os.path.dirname(__file__) + '/index.html'
+        file = os.path.dirname(__file__) + '/en.html'
         if not os.path.exists(file):
             return ''
         return QUrl.fromLocalFile(file).toString(QUrl.FullyEncoded)    

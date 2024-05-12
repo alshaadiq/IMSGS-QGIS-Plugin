@@ -83,7 +83,7 @@ class calcneedAlgorithm(QgsProcessingAlgorithm):
         return QIcon(os.path.join(os.path.dirname(__file__), 'icons/waterneed.png'))
 
     def helpUrl(self):
-        file = os.path.dirname(__file__) + '/index.html'
+        file = os.path.dirname(__file__) + '/en.html'
         if not os.path.exists(file):
             return ''
         return QUrl.fromLocalFile(file).toString(QUrl.FullyEncoded)
@@ -408,7 +408,7 @@ class distavailability2Algorithm(QgsProcessingAlgorithm):
         return QIcon(os.path.join(os.path.dirname(__file__), 'icons/wateravail.png'))
     
     def helpUrl(self):
-        file = os.path.dirname(__file__) + '/index.html'
+        file = os.path.dirname(__file__) + '/en.html'
         if not os.path.exists(file):
             return ''
         return QUrl.fromLocalFile(file).toString(QUrl.FullyEncoded)
@@ -716,7 +716,7 @@ class carcap2Algorithm(QgsProcessingAlgorithm):
         return QIcon(os.path.join(os.path.dirname(__file__), 'icons/waterstatus.png'))
     
     def helpUrl(self):
-        file = os.path.dirname(__file__) + '/index.html'
+        file = os.path.dirname(__file__) + '/en.html'
         if not os.path.exists(file):
             return ''
         return QUrl.fromLocalFile(file).toString(QUrl.FullyEncoded)
