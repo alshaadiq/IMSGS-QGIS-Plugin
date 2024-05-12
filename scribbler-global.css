@@ -29,7 +29,7 @@ p {
 
 a, a:hover {
   text-decoration: none;
-  color: var(--primary-color);
+  color: #00ADEF;
 }
 
 hr {
@@ -50,6 +50,12 @@ hr {
 }
 
 /* tabs */
+.logopng{
+  width: 3.5%;
+  height: 3.5%;
+  margin-top: 0.8vh;
+}
+
 .tab__container {
   position: relative;
 }
@@ -148,7 +154,7 @@ hr {
 
 .button--secondary:hover {
   border-color: var(--accent-color);
-  color: var(--accent-color);
+  color: #00ADEF;
 }
 
 /* links */
@@ -158,7 +164,7 @@ hr {
 }
 
 .link:hover {
-  color: var(--accent-color);
+  color: #00ADEF;
 }
 
 .link--dark {

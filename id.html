@@ -36,7 +36,7 @@
         </li>
         <li class="menu__item">
           <a href="en.html" class="link link--dark"
-            ><i class="fa fa-home"></i> En</a
+            ><i class="fa fa-globe"></i> EN</a
           >
         </li>
       </ul>
@@ -44,13 +44,15 @@
     <div class="wrapper">
       <aside class="doc__nav">
         <ul>
-          <li class="js-btn">Grid</li>
-          <li class="js-btn">Population Distribution</li>
-          <li class="js-btn">Environmental Carrying Capacity</li>
-        </ul>
+          <h1>Contents:</h1>
+            <li class="js-btn">Grid</li></br>
+            <li class="js-btn">Population Distribution</li></br>
+            <li class="js-btn">Water Environmental Carrying </br> Capacity</li></br>
+            <li class="js-btn">Food Environmental Carrying </br> Capacity</li>
+          </ul>
       </aside>
       <article class="doc__content">
-        <section class="js-section">
+        <section>
           <h2 class="section__title">
             Help – Panduan Penggunaan untuk Plugin QGIS Sistem Grid Skala Ragam Indonesia
           </h2>
@@ -64,13 +66,13 @@
             Membuat lapisan vektor dengan grid yang mencakup area tertentu. Grid bersifat tetap untuk wilayah indonesia dengan pendefinisian titik Xmin, Xmax, Ymin, Ymax berdasarkan sistem referensi World Geodetic System 1984 (WGS84). Resolusi dapat dipilih sesuai kebutuhan dan dapat diekstraksi berdasarkan ukuran layer input. Setiap grid berisi pengenal unik yang membedakan antar grid.
           </p>
           <br />
-          <p>(PARAMETER)</p>
+          <p><strong>(PARAMETER)</strong></p>
           <table>
             <tr>
               <th>Label</th>
-              <th>Name</th>
-              <th>Type</th>
-              <th>Description</th>
+              <th>Nama</th>
+              <th>Tipe</th>
+              <th>Deskripsi</th>
             </tr>
             <tr>
               <td>Input Vector Layer (optional)</td>
@@ -129,13 +131,13 @@
               </td>
             </tr>
           </table>
-          <p>(OUTPUT)</p>
+          <p><strong>(OUTPUT)</strong></p>
           <table>
             <tr>
               <th>Label</th>
-              <th>Name</th>
-              <th>Type</th>
-              <th>Description</th>
+              <th>Nama</th>
+              <th>Tipe</th>
+              <th>Deskripsi</th>
             </tr>
             <tr>
               <td>Output Layer</td>
@@ -151,13 +153,13 @@
           <p>
             Mendapatkan distribusi penduduk untuk setiap grid. Distribusi jumlah populasi bergantung dengan grid,  jenis dan panjang jalan, tipe tutupan lahan dan data batas administrasi yang berisikan informasi jumlah populasi. Pembobotan data jalan dan tutupan lahan dilakukan secara manual/bebas oleh pengguna. Hasil perhitungan distribusi penduduk yang kemudian digunakan untuk menghitung kebutuhan air dan pangan tiap grid.
           </p>
-          <p>(PARAMETER)</p>
+          <p><strong>(PARAMETER)</strong></p>
           <table>
             <tr>
               <th>Label</th>
-              <th>Name</th>
-              <th>Type</th>
-              <th>Description</th>
+              <th>Nama</th>
+              <th>Tipe</th>
+              <th>Deskripsi</th>
             </tr>
             <tr>
               <td>Input IMSGS Grid Layer</td>
@@ -228,13 +230,13 @@
               </td>
             </tr>
           </table>
-          <p>(OUTPUT)</p>
+          <p><strong>(OUTPUT)</strong></p>
           <table>
             <tr>
               <th>Label</th>
-              <th>Name</th>
-              <th>Type</th>
-              <th>Description</th>
+              <th>Nama</th>
+              <th>Tipe</th>
+              <th>Deskripsi</th>
             </tr>
             <tr>
               <td>Output Layer</td>
@@ -271,16 +273,16 @@
           • Generate Water Need and Capacity Difference and Status 
           </p>
           <br />
-          <p>1. Generate Water Needs Distribution</p>
+          <p><strong>1. Generate Water Needs Distribution</strong></p>
           <p>Distribusi kebutuhan air pada tiap grid didasarkan pada faktor tutupan lahan dengan basis jumlah penduduk</p>
           <br />
-          <p>(PARAMETER)</p>
+          <p><strong>(PARAMETER)</strong></p>
           <table>
             <tr>
               <th>Label</th>
-              <th>Name</th>
-              <th>Type</th>
-              <th>Description</th>
+              <th>Nama</th>
+              <th>Tipe</th>
+              <th>Deskripsi</th>
             </tr>
             <tr>
               <td>Input IMSGS Population Layer</td>
@@ -364,13 +366,13 @@
               Pengkodean dapat diubah.</td>
             </tr>
           </table>
-          <p>(OUTPUT)</p>
+          <p><strong>(OUTPUT)</strong></p>
           <table>
             <tr>
               <th>Label</th>
-              <th>Name</th>
-              <th>Type</th>
-              <th>Description</th>
+              <th>Nama</th>
+              <th>Tipe</th>
+              <th>Deskripsi</th>
             </tr>
             <tr>
               <td>Output Layer</td>
@@ -382,16 +384,16 @@
           <hr />
         </section>
     <br />
-          <p>2. Generate Water Availability Distribution</p>
+          <p><strong>2. Generate Water Availability Distribution</strong></p>
           <p>Besar nilai jasa lingkungan hidup ditentukan berdasarkan fungsi kombinasi bobot dan skor tiga parameter, yaitu bentang alam, tutupan lahan, dan tipe vegetasi. Nilai jasa lingkungan hidup tiap daerah akan berbeda berdasarkan penentuan nilai skoring.</p>
           <br />
-          <p>(PARAMETER)</p>
+          <p><strong>(PARAMETER)</strong></p>
           <table>
             <tr>
               <th>Label</th>
-              <th>Name</th>
-              <th>Type</th>
-              <th>Description</th>
+              <th>Nama</th>
+              <th>Tipe</th>
+              <th>Deskripsi</th>
             </tr>
             <tr>
               <td>Input IMSGS Layer</td>
@@ -460,13 +462,13 @@
               Pengkodean dapat diubah.</td>
             </tr>
           </table>
-          <p>(OUTPUT)</p>
+          <p><strong>(OUTPUT)</strong></p>
           <table>
             <tr>
               <th>Label</th>
-              <th>Name</th>
-              <th>Type</th>
-              <th>Description</th>
+              <th>Nama</th>
+              <th>Tipe</th>
+              <th>Deskripsi</th>
             </tr>
             <tr>
               <td>Output Layer</td>
@@ -478,16 +480,16 @@
           <hr />
         </section>
         <br />
-        <p>3. Generate Water Need and Capacity Difference and Status </p>
+        <p><strong>3. Generate Water Need and Capacity Difference and Status </strong></p>
         <p>Analisis seberapa banyak populasi maksimum yang dapat didukung dengan ketersediaan air yang ada. Penentuan ambag batas dilakukan dengan adanya informasi kebutuhan, ketersediaan, dan kebutuhan air untuk hidup layak (KHL) yang berupa konstanta. Hasil ambang batas dilakukan tanpa mempertimbangkan kebutuhan air untuk kegiatan peternakan dan perindustrian.</p>
         <br />
-        <p>(PARAMETER)</p>
+        <p><strong>(PARAMETER)</strong></p>
         <table>
           <tr>
             <th>Label</th>
-            <th>Name</th>
-            <th>Type</th>
-            <th>Description</th>
+            <th>Nama</th>
+            <th>Tipe</th>
+            <th>Deskripsi</th>
           </tr>
           <tr>
             <td>Input IMSGS Water Needs Layer</td>
@@ -546,13 +548,13 @@
             Pengkodean dapat diubah.</td>
           </tr>
         </table>
-        <p>(OUTPUT)</p>
+        <p><strong>(OUTPUT)</strong></p>
         <table>
           <tr>
             <th>Label</th>
-            <th>Name</th>
-            <th>Type</th>
-            <th>Description</th>
+            <th>Nama</th>
+            <th>Tipe</th>
+            <th>Deskripsi</th>
           </tr>
           <tr>
             <td>Output Layer</td>
@@ -580,16 +582,16 @@
           • Generate Energy Need and Capacity Difference and Status  
           </p>
           <br />
-          <p>1. Generate Energy Needs Distribution </p>
+          <p><strong>1. Generate Energy Needs Distribution</strong> </p>
           <p>Kebutuhan distribusi energi bahan pangan ditentukan berdasarkan perhitungan Angka Kecukupan Energi (AKE) penduduk tiap grid selama setahun.</p>
           <br />
-          <p>(PARAMETER)</p>
+          <p><strong>(PARAMETER)</strong></p>
           <table>
             <tr>
               <th>Label</th>
-              <th>Name</th>
-              <th>Type</th>
-              <th>Description</th>
+              <th>Nama</th>
+              <th>Tipe</th>
+              <th>Deskripsi</th>
             </tr>
             <tr>
               <td>Input IMSGS Population Layer</td>
@@ -635,13 +637,13 @@
               Pengkodean dapat diubah.</td>
             </tr>
           </table>
-          <p>(OUTPUT)</p>
+          <p><strong>(OUTPUT)</strong></p>
           <table>
             <tr>
               <th>Label</th>
-              <th>Name</th>
-              <th>Type</th>
-              <th>Description</th>
+              <th>Nama</th>
+              <th>Tipe</th>
+              <th>Deskripsi</th>
             </tr>
             <tr>
               <td>Output Layer</td>
@@ -652,16 +654,16 @@
           </table>
           <hr />
         <br />
-          <p>2. Generate Energy Availability Distribution </p>
+          <p><strong>2. Generate Energy Availability Distribution </strong></p>
           <p>isi</p>
           <br />
-          <p>(PARAMETER)</p>
+          <p><strong>(PARAMETER)</strong></p>
           <table>
             <tr>
               <th>Label</th>
-              <th>Name</th>
-              <th>Type</th>
-              <th>Description</th>
+              <th>Nama</th>
+              <th>Tipe</th>
+              <th>Deskripsi</th>
             </tr>
             <tr>
               <td>Input IMSGS Layer</td>
@@ -716,13 +718,13 @@
               Pengkodean dapat diubah.</td>
             </tr>
           </table>
-          <p>(OUTPUT)</p>
+          <p><strong>(OUTPUT)</strong></p>
           <table>
             <tr>
               <th>Label</th>
-              <th>Name</th>
-              <th>Type</th>
-              <th>Description</th>
+              <th>Nama</th>
+              <th>Tipe</th>
+              <th>Deskripsi</th>
             </tr>
             <tr>
               <td>Output Layer</td>
@@ -733,16 +735,16 @@
           </table>
           <hr />
           <br />
-          <p>3. Generate Energy Need and Availability Distribution and Status </p>
+          <p><strong>3. Generate Energy Need and Availability Distribution and Status </strong></p>
           <p>Analisis seberapa banyak populasi maksimum yang dapat didukung dengan ketersediaan pangan yang ada. Penentuan ambag batas dilakukan dengan adanya informasi kebutuhan, ketersediaan, dan kebutuhan pangan untuk hidup layak (KHL) yang berupa konstanta.</p>  
           <br />
-          <p>(PARAMETER)</p>
+          <p><strong>(PARAMETER)</strong></p>
           <table>
             <tr>
               <th>Label</th>
-              <th>Name</th>
-              <th>Type</th>
-              <th>Description</th>
+              <th>Nama</th>
+              <th>Tipe</th>
+              <th>Deskripsi</th>
             </tr>
             <tr>
               <td>Input IMSGS Energy Needs Layer</td>
@@ -819,13 +821,13 @@
               Pengkodean dapat diubah.</td>
             </tr>
           </table>
-          <p>(OUTPUT)</p>
+          <p><strong><strong>(OUTPUT)</strong></strong></p>
           <table>
             <tr>
               <th>Label</th>
-              <th>Name</th>
-              <th>Type</th>
-              <th>Description</th>
+              <th>Nama</th>
+              <th>Tipe</th>
+              <th>Deskripsi</th>
             </tr>
             <tr>
               <td>Output Layer</td>

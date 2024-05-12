@@ -36,7 +36,7 @@
         </li>
       <a href="id.html">
         <li class="menu__item">
-        <i class="fa fa-home"></i> Id
+        <i class="fa fa-globe"></i> ID
         </li>
       </a>
       </ul>
@@ -44,14 +44,15 @@
     <div class="wrapper">
       <aside class="doc__nav">
         <ul>
-          <li class="js-btn selected">Get Started</li>
-          <li class="js-btn">Grid</li>
-          <li class="js-btn">Population Distribution</li>
-          <li class="js-btn">Environmental Carrying Capacity</li>
+        <h1>Contents:</h1>
+          <li class="js-btn">Grid</li></br>
+          <li class="js-btn">Population Distribution</li></br>
+          <li class="js-btn">Water Environmental Carrying </br> Capacity</li></br>
+          <li class="js-btn">Food Environmental Carrying </br> Capacity</li>
         </ul>
       </aside>
       <article class="doc__content">
-        <section class="js-section">
+        <section>
           <h2 class="section__title">
             Help – User Guide for Indonesian Multi-scaled Grid System QGIS Plugin
           </h2>
@@ -63,16 +64,6 @@
             compliance with the national guidelines of the Ministry of
             Environment and Forestry.
           </p>
-          <h3 class="section__title">Installation</h3>
-          <div class="code__block code__block--notabs">
-            <pre class="code code--block">
-              <code>
-                sudo apt install python3
-                install QGIS
-                masukan ke qgis plugin broks
-              </code>
-            </pre>
-          </div>
         </section>
         <section class="js-section" id="grid">
           <h3 class="section__title">Generate Grid</h3>
@@ -85,7 +76,7 @@
             unique identifier that differentiates between grids.
           </p>
           <br />
-          <p>(PARAMETER)</p>
+          <p><strong>(PARAMETER)</strong></p>
           <table>
             <tr>
               <th>Label</th>
@@ -154,7 +145,7 @@
               </td>
             </tr>
           </table>
-          <p>(OUTPUT)</p>
+          <p><strong>(OUTPUT)</strong></p>
           <table>
             <tr>
               <th>Label</th>
@@ -185,7 +176,7 @@
             distribution calculation are then used to calculate the water and
             food demand for each grid.
           </p>
-          <p>(PARAMETER)</p>
+          <p><strong>(PARAMETER)</strong></p>
           <table>
             <tr>
               <th>Label</th>
@@ -279,7 +270,7 @@
               </td>
             </tr>
           </table>
-          <p>(OUTPUT)</p>
+          <p><strong>(OUTPUT)</strong></p>
           <table>
             <tr>
               <th>Label</th>
@@ -331,7 +322,7 @@
           <p>1. Generate Water Needs Distribution</p>
           <p>The distribution of water needs in each grid is based on land cover factors based on population and accessibility of a location based on the availability of roads.</p>
           <br />
-          <p>(PARAMETER)</p>
+          <p><strong>(PARAMETER)</strong></p>
           <table>
             <tr>
               <th>Label</th>
@@ -427,7 +418,7 @@
               The file encoding can also be changed here.</td>
             </tr>
           </table>
-          <p>(OUTPUT)</p>
+          <p><strong>(OUTPUT)</strong></p>
           <table>
             <tr>
               <th>Label</th>
@@ -450,7 +441,7 @@
           <p>2. Generate Water Availability Distribution</p>
           <p>The value of environmental services is determined as a function of the combination of weights and scores of three parameters, namely landscape, land cover, and vegetation type. The value of environmental services in each region will differ based on the determination of the scoring value.</p>
           <br />
-          <p>(PARAMETER)</p>
+          <p><strong>(PARAMETER)</strong></p>
           <table>
             <tr>
               <th>Label</th>
@@ -529,7 +520,7 @@
               The file encoding can also be changed here.</td>
             </tr>
           </table>
-          <p>(OUTPUT)</p>
+          <p><strong>(OUTPUT)</strong></p>
           <table>
             <tr>
               <th>Label</th>
@@ -552,7 +543,7 @@
         <p>3. Generate Water Need and Capacity Difference and Status </p>
         <p>Analyze how much of the maximum population can be supported with existing water availability. The threshold determination is carried out with information on the need, availability, and need for water for a decent life (KHL) in the form of a constant. Threshold results were conducted without considering water needs for livestock and industrial activities.</p>
         <br />
-        <p>(PARAMETER)</p>
+        <p><strong>(PARAMETER)</strong></p>
         <table>
           <tr>
             <th>Label</th>
@@ -619,7 +610,7 @@
             The file encoding can also be changed here.</td>
           </tr>
         </table>
-        <p>(OUTPUT)</p>
+        <p><strong>(OUTPUT)</strong></p>
         <table>
           <tr>
             <th>Label</th>
@@ -658,7 +649,7 @@
           <p>1. Generate Energy Needs Distribution </p>
           <p>The energy needs distribution is determined based on the calculation of the Energy Adequacy Rate (AKE) of the population of each grid for a year.</p>
           <br />
-          <p>(PARAMETER)</p>
+          <p><strong>(PARAMETER)</strong></p>
           <table>
             <tr>
               <th>Label</th>
@@ -716,7 +707,7 @@
               The file encoding can also be changed here.</td>
             </tr>
           </table>
-          <p>(OUTPUT)</p>
+          <p><strong>(OUTPUT)</strong></p>
           <table>
             <tr>
               <th>Label</th>
@@ -738,7 +729,7 @@
           <p>2. Generate Energy Availability Distribution </p>
           <p>The energy availability distribution is determined with the principle of disagregation with the calculation of distributed Environmental Performance Index.</p>
           <br />
-          <p>(PARAMETER)</p>
+          <p><strong>(PARAMETER)</strong></p>
           <table>
             <tr>
               <th>Label</th>
@@ -801,7 +792,7 @@
               The file encoding can also be changed here.</td>
             </tr>
           </table>
-          <p>(OUTPUT)</p>
+          <p><strong>(OUTPUT)</strong></p>
           <table>
             <tr>
               <th>Label</th>
@@ -821,7 +812,7 @@
           <p>3. Generate Energy Need and Availability Distribution and Status </p>
           <p>Analyze how much of the maximum population can be supported with existing food availability. The threshold determination is carried out with information on the need, availability, and need for food for a decent life (KHL) in the form of a constant.</p>  
           <br />
-          <p>(PARAMETER)</p>
+          <p><strong>(PARAMETER)</strong></p>
           <table>
             <tr>
               <th>Label</th>
@@ -904,7 +895,7 @@
               The file encoding can also be changed here.</td>
             </tr>
           </table>
-          <p>(OUTPUT)</p>
+          <p><strong>(OUTPUT)</strong></p>
           <table>
             <tr>
               <th>Label</th>
