@@ -115,7 +115,7 @@ class calcneedAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.STD_WATER,
-                self.tr("Input Household Water Usage Standard per Year"),
+                self.tr("Input Household Water Usage Standard per Year (m³/year/capita)"),
                 type=QgsProcessingParameterNumber.Double,
                 minValue=1,
                 defaultValue=43.2,
@@ -139,7 +139,7 @@ class calcneedAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.VEG,
-                self.tr('Input Vegetation Layer that Contains Seasonal Crop Intensity per Year (%)'),
+                self.tr('Input Vegetation Layer that Contains Seasonal Crop Intensity per Year'),
                 [QgsProcessing.TypeVectorPolygon],
                 optional=False,
             )
@@ -149,7 +149,7 @@ class calcneedAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterField(
                 self.VEG_INT,
-                self.tr('Select Fields that Contains Seasonal Crop Intensity per Year (%)'),
+                self.tr('Select Fields that Contains Seasonal Crop Intensity per Year'),
                 parentLayerParameterName = self.VEG, # parent grid layer
                 type=QgsProcessingParameterField.Any
             )
@@ -159,7 +159,7 @@ class calcneedAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.STD_VEG,
-                self.tr("Input Vegetation Water Usage Standard per Season"),
+                self.tr("Input Vegetation Water Usage Standard per Season (m³/s/ha)"),
                 type = QgsProcessingParameterNumber.Double,
                 minValue=1,
                 defaultValue = 10368,
@@ -471,7 +471,7 @@ class distavailability2Algorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterField(
                 self.WAS_V,
-                self.tr('Select Field That Contains Total Water Availability'),
+                self.tr('Select Field That Contains Total Water Availability (m³/year)'),
                 parentLayerParameterName = self.WAS, # parent layer 
                 type=QgsProcessingParameterField.Any
             )
@@ -772,7 +772,7 @@ class carcap2Algorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.WN_STD,
-                self.tr("Water Needs Value for Decent Life per Year"),
+                self.tr("Water Needs Value for Decent Life per Year (m³/year/capita)"),
                 type = QgsProcessingParameterNumber.Double,
                 minValue=1,
                 defaultValue = 800,

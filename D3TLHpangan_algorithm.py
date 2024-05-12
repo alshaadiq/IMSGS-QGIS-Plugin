@@ -106,7 +106,7 @@ class calcenergyAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.AKE,
-                self.tr('Input Energy Needs Value'),
+                self.tr('Input Energy Needs Value (kcal)'),
                 defaultValue=2100
             )
         )
@@ -260,7 +260,7 @@ class distavailabilityAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterField(
                 self.enerfield,
-                self.tr('Select Fields that Contains Food Energy Production'),
+                self.tr('Select Fields that Contains Food Energy Production (kcal)'),
                 parentLayerParameterName=self.admlay,  # Set the parent layer parameter
                 type=QgsProcessingParameterField.Any,
             )
@@ -579,7 +579,7 @@ class carcapAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.AKE,
-                self.tr('Input Energy Sufficiency Value'),
+                self.tr('Input Energy Sufficiency Value (kcal)'),
                 defaultValue=2100
             )
         )
