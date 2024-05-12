@@ -79,7 +79,7 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
         return self.tr(self.groupId())
 
     def groupId(self):
-        return 'Population'
+        return 'b. Population'
 
     def tr(self, string):
         return QCoreApplication.translate('Processing', string)

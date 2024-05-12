@@ -71,7 +71,7 @@ class calcneedAlgorithm(QgsProcessingAlgorithm):
         return self.tr(self.groupId())
 
     def groupId(self):
-        return 'Environmental Carrying Capacity (Water)'
+        return 'c. Environmental Carrying Capacity (Water)'
 
     def tr(self, string):
         return QCoreApplication.translate('Processing', string)
@@ -398,7 +398,7 @@ class distavailability2Algorithm(QgsProcessingAlgorithm):
         return self.tr(self.groupId())
 
     def groupId(self):
-        return 'Environmental Carrying Capacity (Water)'
+        return 'c. Environmental Carrying Capacity (Water)'
 
     def tr(self, string):
         return QCoreApplication.translate('Processing', string)
@@ -706,7 +706,7 @@ class carcap2Algorithm(QgsProcessingAlgorithm):
         return self.tr(self.groupId())
 
     def groupId(self):
-        return 'Environmental Carrying Capacity (Water)'
+        return 'c. Environmental Carrying Capacity (Water)'
 
     def tr(self, string):
         return QCoreApplication.translate('Processing', string)

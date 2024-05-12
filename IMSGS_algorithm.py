@@ -73,7 +73,7 @@ class IMSGSAlgorithm(QgsProcessingAlgorithm):
         return self.tr(self.groupId())
 
     def groupId(self):
-        return 'Grid'
+        return 'a. Grid'
 
     def tr(self, string):
         return QCoreApplication.translate('Processing', string)

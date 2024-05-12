@@ -65,7 +65,7 @@ class calcenergyAlgorithm(QgsProcessingAlgorithm):
         return self.tr(self.groupId())
 
     def groupId(self):
-        return 'Environmental Carrying Capacity (Food)'
+        return 'd. Environmental Carrying Capacity (Food)'
 
     def tr(self, string):
         return QCoreApplication.translate('Processing', string)
@@ -211,7 +211,7 @@ class distavailabilityAlgorithm(QgsProcessingAlgorithm):
         return self.tr(self.groupId())
 
     def groupId(self):
-        return 'Environmental Carrying Capacity (Food)'
+        return 'd. Environmental Carrying Capacity (Food)'
 
     def tr(self, string):
         return QCoreApplication.translate('Processing', string)
@@ -520,7 +520,7 @@ class carcapAlgorithm(QgsProcessingAlgorithm):
         return self.tr(self.groupId())
 
     def groupId(self):
-        return 'Environmental Carrying Capacity (Food)'
+        return 'd. Environmental Carrying Capacity (Food)'
 
     def tr(self, string):
         return QCoreApplication.translate('Processing', string)
