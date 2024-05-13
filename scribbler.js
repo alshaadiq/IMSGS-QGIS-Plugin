@@ -109,6 +109,24 @@ window.addEventListener('scroll', function () {
       docNav.classList.remove('fixed');
     }
   }
+  var scrollPosition = window.scrollY;
+
+  // Loop through each section to find which one is currently in view
+  for (var i = 0; i < sections.length; i++) {
+    var section = sections[i];
+    var sectionTop = section.offsetTop;
+    var sectionHeight = section.offsetHeight;
+
+    // Check if the current section is in view
+    if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+      // Remove selected class from all buttons
+      for (var j = 0; j < btns.length; j++) {
+        btns[j].classList.remove('selected');
+      }
+      // Add selected class to the corresponding button
+      btns[i].classList.add('selected');
+    }
+  }
 });
 
 // responsive navigation
