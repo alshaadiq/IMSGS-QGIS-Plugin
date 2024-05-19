@@ -10,7 +10,7 @@ var getAll = function (selector, scope) {
 };
 
 // setup typewriter effect in the terminal demo
-if (document.getElementsByClassName('demo').length > 0) {
+if (document.getElementsByClassName("demo").length > 0) {
   var i = 0;
   var txt = `scribbler
             [Entry mode; press Ctrl+D to save and quit; press Ctrl+C to quit without saving]
@@ -23,9 +23,9 @@ if (document.getElementsByClassName('demo').length > 0) {
             - lots and lots of kiwis 🥝`;
   var speed = 60;
 
-  function typeItOut () {
+  function typeItOut() {
     if (i < txt.length) {
-      document.getElementsByClassName('demo')[0].innerHTML += txt.charAt(i);
+      document.getElementsByClassName("demo")[0].innerHTML += txt.charAt(i);
       i++;
       setTimeout(typeItOut, speed);
     }
@@ -35,50 +35,50 @@ if (document.getElementsByClassName('demo').length > 0) {
 }
 
 // toggle tabs on codeblock
-window.addEventListener("load", function() {
+window.addEventListener("load", function () {
   // get all tab_containers in the document
   var tabContainers = getAll(".tab__container");
 
   // bind click event to each tab container
   for (var i = 0; i < tabContainers.length; i++) {
-    get('.tab__menu', tabContainers[i]).addEventListener("click", tabClick);
+    get(".tab__menu", tabContainers[i]).addEventListener("click", tabClick);
   }
 
   // each click event is scoped to the tab_container
-  function tabClick (event) {
+  function tabClick(event) {
     var scope = event.currentTarget.parentNode;
     var clickedTab = event.target;
-    var tabs = getAll('.tab', scope);
-    var panes = getAll('.tab__pane', scope);
-    var activePane = get(`.${clickedTab.getAttribute('data-tab')}`, scope);
+    var tabs = getAll(".tab", scope);
+    var panes = getAll(".tab__pane", scope);
+    var activePane = get(`.${clickedTab.getAttribute("data-tab")}`, scope);
 
     // remove all active tab classes
     for (var i = 0; i < tabs.length; i++) {
-      tabs[i].classList.remove('active');
+      tabs[i].classList.remove("active");
     }
 
     // remove all active pane classes
     for (var i = 0; i < panes.length; i++) {
-      panes[i].classList.remove('active');
+      panes[i].classList.remove("active");
     }
 
     // apply active classes on desired tab and pane
-    clickedTab.classList.add('active');
-    activePane.classList.add('active');
+    clickedTab.classList.add("active");
+    activePane.classList.add("active");
   }
 });
 
 //in page scrolling for documentaiton page
-var btns = getAll('.js-btn');
-var sections = getAll('.js-section');
+var btns = getAll(".js-btn");
+var sections = getAll(".js-section");
 
 function setActiveLink(event) {
   // remove all active tab classes
   for (var i = 0; i < btns.length; i++) {
-    btns[i].classList.remove('selected');
+    btns[i].classList.remove("selected");
   }
 
-  event.target.classList.add('selected');
+  event.target.classList.add("selected");
 }
 
 function smoothScrollTo(i, event) {
@@ -86,31 +86,31 @@ function smoothScrollTo(i, event) {
   setActiveLink(event);
 
   window.scrollTo({
-    'behavior': 'smooth',
-    'top': element.offsetTop - 20,
-    'left': 0
+    behavior: "auto",
+    top: element.offsetTop - 20,
+    left: 0,
   });
 }
 
 if (btns.length && sections.length > 0) {
-  for (var i = 0; i<btns.length; i++) {
-    btns[i].addEventListener('click', smoothScrollTo.bind(this,i));
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].addEventListener("click", smoothScrollTo.bind(this, i));
   }
 }
 
 // fix menu to page-top once user starts scrolling
-window.addEventListener('scroll', function () {
-  var docNav = get('.doc__nav > ul');
+window.addEventListener("scroll", function () {
+  var docNav = get(".doc__nav > ul");
 
-  if( docNav) {
+  if (docNav) {
     if (window.pageYOffset > 63) {
-      docNav.classList.add('fixed');
+      docNav.classList.add("fixed");
     } else {
-      docNav.classList.remove('fixed');
+      docNav.classList.remove("fixed");
     }
   }
-  var scrollPosition = window.scrollY;
 
+  var scrollPosition = window.scrollY;
   // Loop through each section to find which one is currently in view
   for (var i = 0; i < sections.length; i++) {
     var section = sections[i];
@@ -118,31 +118,33 @@ window.addEventListener('scroll', function () {
     var sectionHeight = section.offsetHeight;
 
     // Check if the current section is in view
-    if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+    if (
+      scrollPosition >= sectionTop - 50 &&
+      scrollPosition < sectionTop + sectionHeight - 50
+    ) {
       // Remove selected class from all buttons
       for (var j = 0; j < btns.length; j++) {
-        btns[j].classList.remove('selected');
+        btns[j].classList.remove("selected");
       }
       // Add selected class to the corresponding button
-      btns[i].classList.add('selected');
+      btns[i].classList.add("selected");
     }
   }
 });
 
 // responsive navigation
-var topNav = get('.menu');
-var icon = get('.toggle');
+var topNav = get(".menu");
+var icon = get(".toggle");
 
-window.addEventListener('load', function(){
+window.addEventListener("load", function () {
   function showNav() {
-    if (topNav.className === 'menu') {
-      topNav.className += ' responsive';
-      icon.className += ' open';
+    if (topNav.className === "menu") {
+      topNav.className += " responsive";
+      icon.className += " open";
     } else {
-      topNav.className = 'menu';
-      icon.classList.remove('open');
+      topNav.className = "menu";
+      icon.classList.remove("open");
     }
   }
-  icon.addEventListener('click', showNav);
+  icon.addEventListener("click", showNav);
 });
-
