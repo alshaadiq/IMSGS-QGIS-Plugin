@@ -115,7 +115,7 @@
             <tr>
               <td>Output Layer</td>
               <td>OUTPUT</td>
-              <td>[vector: any] Default: [Create temporary layer]</td>
+              <td>[vector: Polygon] Default: [Create temporary layer]</td>
               <td>
                 Tentukan hasil layer. Pilih salah satu dari: 
                 <br />
@@ -241,7 +241,7 @@
             <tr>
               <td>Output Layer</td>
               <td>OUTPUT</td>
-              <td>[vector: any]</td>
+              <td>[vector: polygon]</td>
               <td>
                 Layer vektor keluaran dengan empat kolom berupa:
                 <br />
@@ -251,7 +251,13 @@
                 <br />
                 3. WLC : Total Bobot Tutupan Lahan dalam Grid
                 <br />
-                4. Population : Jumlah Populasi dalam Grid
+                4. WGrid : Jumlah bobot setiap grid
+                <br />
+                5. Wadmin : Jumlah bobot setiap batas administrasi
+                <br />
+                6. Admname : Nama batas administrasi setiap grid
+                <br />
+                7. Population : Jumlah Populasi dalam Grid
               </td>
             </tr>
           </table>
@@ -300,7 +306,7 @@
               <td>Memilih kolom layer yang berisikan data populasi pada tiap gridnya</td>
             </tr>
             <tr>
-              <td>Input Household Water Usage Standard per Year</td>
+              <td>Input Household Water Usage Standard per Year (m³/tahun/kapita)</td>
               <td>STD_WATER</td>
               <td>[number] 
                 <br />
@@ -322,10 +328,10 @@
               <td>Tetapan standar kebutuhan air hidup layak, yaitu angka 2 sebagai faktor koreksi. Dapat diisi secara manual/bebas oleh pengguna</td>
             </tr>
             <tr>
-              <td>Input Vegetation Layer that Contains Seasonal Crop Intensity per year (%)</td>
+              <td>Input Vegetation Layer that Contains Seasonal Crop Intensity per year</td>
               <td>VEG</td>
               <td>[vector: polygon]</td>
-              <td>Layer vektor masukan yang berisikan intensitas tanaman musim per tahun dalam persen (%)</td>
+              <td>Layer vektor masukan yang berisikan intensitas tanaman setiap musim per tahun </td>
             </tr>
             <tr>
               <td>Select Field that Contains Seasonal Crop Intensity per year (%)</td>
@@ -335,10 +341,10 @@
                 [list] 
                 <br />
                 Default: None </td>
-              <td>Memilih kolom layer yang berisikan data intensitas tanaman dalam persen (%) musim per tahun</td>
+              <td>Memilih kolom layer yang berisikan data intensitas tanaman setiap musim per tahun</td>
             </tr>
             <tr>
-              <td>Input Vegetation Water Usage Standard per Season</td>
+              <td>Input Vegetation Water Usage Standard per Season (m³/s/ha)</td>
               <td>STD_VEG</td>
               <td>[number] 
                 <br />
@@ -377,7 +383,7 @@
             <tr>
               <td>Output Layer</td>
               <td>OUTPUT</td>
-              <td>[vector: any]</td>
+              <td>[vector: Polygon]</td>
               <td>Layer vektor dengan terdapat kolom berupa distribusi kebutuhan air pada tiap grid</td>
             </tr>
           </table>
@@ -435,7 +441,7 @@
               <td>Memilih kolom layer yang berisikan kolom Daerah Aliran Sungai</td>
             </tr>
             <tr>
-              <td>Select Field that Contains Total Water Availability </td>
+              <td>Select Field that Contains Total Water Availability (m³/tahun)</td>
               <td>WAS_V </td>
               <td>[tablefield: any] 
                 <br />
@@ -473,7 +479,7 @@
             <tr>
               <td>Output Layer</td>
               <td>OUTPUT</td>
-              <td>[vector: any]</td>
+              <td>[vector: Polygon]</td>
               <td>Layer vektor dengan terdapat kolom berupa distribusi ketersediaan air pada tiap grid</td>
             </tr>
           </table>
@@ -559,7 +565,7 @@
           <tr>
             <td>Output Layer</td>
             <td>OUTPUT</td>
-            <td>[vector: any]</td>
+            <td>[vector: Polygon]</td>
             <td>Layer vektor dengan terdapat kolom berupa ambang batas populasi yang dapat didukung dengan kondisi ketersediaan air yang ada</td>
           </tr>
         </table>
