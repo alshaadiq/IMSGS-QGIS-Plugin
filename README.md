@@ -54,6 +54,8 @@ The value of environmental services is determined as a function of the combinati
 
 Analyze how much of the maximum population can be supported with existing water availability. The threshold determination is carried out with information on the need, availability, and need for water for a decent life (KHL) in the form of a constant. Threshold results were conducted without considering water needs for livestock and industrial activities.
 
+![Water](/icons/ToolExample/Water.png)
+
 ## Environmental Carrying Capacity (Food)
 
 <div style="display: flex; align-items: center;">

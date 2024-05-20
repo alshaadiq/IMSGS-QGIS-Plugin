@@ -241,19 +241,19 @@ class distavailabilityAlgorithm(QgsProcessingAlgorithm):
         )
 
         self.addParameter(
-            QgsProcessingParameterFeatureSource(
-                self.admlay,
-                self.tr('Input Administrative Boundary Layer'),
-                [QgsProcessing.TypeVectorPolygon],
+            QgsProcessingParameterField(
+                self.admfield,
+                self.tr('Select Fields that Contains Administrative Name'),
+                parentLayerParameterName=self.grid,  # Set the parent layer parameter
+                type=QgsProcessingParameterField.Any,
             )
         )
 
         self.addParameter(
-            QgsProcessingParameterField(
-                self.admfield,
-                self.tr('Select Fields that Contains Administrative Name'),
-                parentLayerParameterName=self.admlay,  # Set the parent layer parameter
-                type=QgsProcessingParameterField.Any,
+            QgsProcessingParameterFeatureSource(
+                self.admlay,
+                self.tr('Input Administrative Boundary Layer'),
+                [QgsProcessing.TypeVectorPolygon],
             )
         )
 
