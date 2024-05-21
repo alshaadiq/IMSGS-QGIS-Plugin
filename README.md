@@ -78,3 +78,5 @@ The energy availability distribution is determined with the principle of disagre
 </div>
 
 Analyze how much of the maximum population can be supported with existing food availability. The threshold determination is carried out with information on the need, availability, and need for food for a decent life (KHL) in the form of a constant.
+
+![Energy](/icons/ToolExample/Energy.png)
