@@ -252,7 +252,7 @@ class distavailabilityAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.admlay,
-                self.tr('Input Administrative Boundary Layer'),
+                self.tr('Input Administrative Boundary Layer that contains Food Energy Production (kcal)'),
                 [QgsProcessing.TypeVectorPolygon],
             )
         )
@@ -269,7 +269,7 @@ class distavailabilityAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.ESPlay,
-                self.tr('Input Layer that Contains Environmental Performance Index'),
+                self.tr('Input Layer that Contains Environmental Performance Index (IJE Pangan)'),
                 [QgsProcessing.TypeVectorPolygon],
             )
         )
@@ -277,7 +277,7 @@ class distavailabilityAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterField(
                 self.IJEPBPESP,
-                self.tr('Select Fields that Contains Food Ecosystem Performance Index'),
+                self.tr('Select Fields that Contains Environmental Performance Index (IJE Pangan)'),
                 parentLayerParameterName=self.ESPlay,  # Set the parent layer parameter
                 type=QgsProcessingParameterField.Any,
             )

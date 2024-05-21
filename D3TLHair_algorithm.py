@@ -433,7 +433,7 @@ class distavailability2Algorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.IJH,
-                self.tr('Input Layer that Contains Environmental Performance Index'),
+                self.tr('Input Layer that Contains Environmental Performance Index (IJE Air)'),
                 [QgsProcessing.TypeVectorPolygon]
             )
         )
@@ -442,7 +442,7 @@ class distavailability2Algorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterField(
                 self.IJH_V,
-                self.tr('Select Field that Contains Environmental Performance Index'),
+                self.tr('Select Field that Contains Environmental Performance Index (IJE Air)'),
                 parentLayerParameterName = self.IJH, # parent landcover layer
                 type=QgsProcessingParameterField.Any
             )
