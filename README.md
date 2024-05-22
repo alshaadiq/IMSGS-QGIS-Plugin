@@ -1,6 +1,8 @@
 <div style="display: flex; align-items: center;">
-    <img src="/icons/15.png" alt="LOGO!" style="width: 100px; height: 100px; margin-right: 20px;">
-    <h1>Indonesian Multi-scaled Grid System QGIS Plugin</h1>
+    <p align="center"> 
+        <img src="/icons/15.png" alt="LOGO!" style="width: 300px; height: 300px;r">
+        <h1>Indonesian Multi-scaled Grid System QGIS Plugin</h1>
+    </p>
 </div>
 
 ---
