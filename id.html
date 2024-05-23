@@ -89,7 +89,9 @@
             <tr>
               <td>Grid Resolution</td>
               <td>RADIO_PARAM</td>
-              <td>Enumeration Default : 30'' x 30''</td>
+              <td>Enumeration 
+                <br>
+                  Default : 30'' x 30''</td>
               <td>
                 Resolusi sistem grid:
                 <br />
@@ -142,8 +144,11 @@
             <tr>
               <td>Output Layer</td>
               <td>OUTPUT</td>
-              <td>[vector: any]</td>
-              <td>Menghasilkan layer vektor grid.  Setiap grid memiliki pengenal yang unik berdasarkan ukuran resolusi.</td>
+              <td>[vector: Polygon]</td>
+              <td>Menghasilkan layer vektor grid dengan satu kolom : 
+                <br>
+                1. IMSGSID : ID grid
+              </td>
             </tr>
           </table>
           <hr />
@@ -151,7 +156,14 @@
         <section class="js-section" id="pop">
           <h3 class="section__title">Distribute Population of Grid</h3>
           <p>
-            Mendapatkan distribusi penduduk untuk setiap grid. Distribusi jumlah populasi bergantung dengan grid,  jenis dan panjang jalan, tipe tutupan lahan dan data batas administrasi yang berisikan informasi jumlah populasi. Pembobotan data jalan dan tutupan lahan dilakukan secara manual/bebas oleh pengguna. Hasil perhitungan distribusi penduduk yang kemudian digunakan untuk menghitung kebutuhan air dan pangan tiap grid.
+            Mendapatkan distribusi penduduk untuk setiap grid. 
+            Distribusi jumlah populasi bergantung dengan grid,  
+            jenis jalan, tipe tutupan lahan, dan data batas
+            administrasi yang berisikan informasi jumlah populasi. 
+            Pembobotan data jalan dan tutupan lahan dilakukan 
+            secara manual/bebas oleh pengguna. Hasil perhitungan distribusi 
+            penduduk yang kemudian 
+            digunakan untuk menghitung kebutuhan air dan pangan tiap grid.
           </p>
           <p><strong>(PARAMETER)</strong></p>
           <table>
@@ -165,7 +177,9 @@
               <td>Input IMSGS Grid Layer</td>
               <td>INPUT</td>
               <td>[vector: polygon]</td>
-              <td>Layer vektor masukan yang berisikan grid dengan pengenal yang unik setiap gridnya</td>
+              <td>Layer vektor masukan yang berisikan grid dengan pengenal yang 
+                  unik setiap gridnya
+              </td>
             </tr>
             <tr>
               <td>Input Land Cover Layer</td>
@@ -178,7 +192,10 @@
               <td>TableWeightLC</td>
               <td>[tablefield: any] [list]
                 <br/>
-                Default: None</td>
+                Default: None
+                <br>
+                Parent : LC_LAYER
+              </td>
               <td>Memilih kolom layer tutupan lahan yang berisikan bobot jenis tutupan lahan</td>
             </tr>
             <tr>
@@ -192,27 +209,47 @@
               <td>TableWeightRT</td>
               <td>[tablefield: any] [list] 
                 <br/>
-                Default: None </td>
+                Default: None
+                <br> 
+                Parent : RT_LAYER
+               </td>
               <td>Memilih kolom layer jalan yang berisikan bobot jenis jalan</td>
             </tr>
             <tr>
               <td>Input Administrative Boundaries Layer</td>
               <td>INPUTA</td>
               <td>[vector: polygon]</td>
-              <td>Layer batas administrasi masukan yang berisikan bobot pada setiap tipe batas administrasi</td>
+              <td>Layer batas administrasi masukan yang berisikan nama batas administrasi dan jumlah populasi</td>
             </tr>
+            <tr>
+            <td>Select Field that Contains Administrative Boundary Name</td>
+            <td>INPUTNAME</td>
+            <td>[tablefield: any] [list]
+              <br/>
+              Default: None
+              <br/>
+              Parent: INPUTA
+            </td>
+            <td>
+              Memilih kolom layer batas administrasi yang mengandung nama batas administrasi
+            </td>
+           </tr>
             <tr>
               <td>Select Field that Contains Population</td>
               <td>INPUTPOP</td>
-              <td>[tablefield: any] [list]
+              <td>
+                [tablefield: any] [list]
                 <br/>
-                Default: None </td>
+                Default: None 
+                <br>
+                Parent : INPUTA
+              </td>
               <td>Memilih kolom layer batas administrasi yang berisikan jumlah populasi</td>
             </tr>
             <tr>
               <td>Output Layer</td>
               <td>OUTPUT</td>
-              <td>[vector: any] 
+              <td>[vector: Polygon] 
                 <br/>
                 Default: [Create temporary layer] </td>
               <td>
@@ -243,7 +280,7 @@
               <td>OUTPUT</td>
               <td>[vector: polygon]</td>
               <td>
-                Layer vektor keluaran dengan empat kolom berupa:
+                Layer vektor keluaran dengan tujuh kolom berupa:
                 <br />
                 1. IMSGSID : Grid ID 
                 <br />
@@ -270,7 +307,7 @@
             Environmental Carrying Capacity (Water)
           </h3>
           <p>
-           Environmental Carrying Capacity (Water) consists of:
+           Environmental Carrying Capacity (Water) berisikan :
           </br>
           • Generate Water Needs Distribution 
           </br>
@@ -280,7 +317,7 @@
           </p>
           <br />
           <p><strong>1. Generate Water Needs Distribution</strong></p>
-          <p>Distribusi kebutuhan air pada tiap grid didasarkan pada faktor tutupan lahan dengan basis jumlah penduduk</p>
+          <p>Distribusi kebutuhan air pada tiap grid didasarkan pada tutupan lahan dan jumlah populasi</p>
           <br />
           <p><strong>(PARAMETER)</strong></p>
           <table>
@@ -299,9 +336,12 @@
             <tr>
               <td>Select Field that Contains Population</td>
               <td>POPUL_FIELD</td>
-              <td>[tablefield: any] [list] 
+              <td>
+                [tablefield: any] [list] 
                   <br/>
                   Default: None 
+                  <br>
+                  Parent : POPUL_GRID
               </td>
               <td>Memilih kolom layer yang berisikan data populasi pada tiap gridnya</td>
             </tr>
@@ -336,11 +376,15 @@
             <tr>
               <td>Select Field that Contains Seasonal Crop Intensity per year (%)</td>
               <td>VEG_INT</td>
-              <td>[tablefield: any] 
+              <td>
+                [tablefield: any] 
                 <br />
                 [list] 
                 <br />
-                Default: None </td>
+                Default: None 
+                <br>
+                Parent : VEG
+              </td>
               <td>Memilih kolom layer yang berisikan data intensitas tanaman setiap musim per tahun</td>
             </tr>
             <tr>
@@ -356,7 +400,7 @@
             <tr>
               <td>Output Layer</td>
               <td>NEED</td>
-              <td>[vector: any] 
+              <td>[vector: Polygon] 
                 <br />
                 Default: [Create temporary layer] </td>
               <td>Tentukan hasil layer. Pilih salah satu dari: 
@@ -384,14 +428,29 @@
               <td>Output Layer</td>
               <td>OUTPUT</td>
               <td>[vector: Polygon]</td>
-              <td>Layer vektor dengan terdapat kolom berupa distribusi kebutuhan air pada tiap grid</td>
+              <td>
+                Layer vektor keluaran dengan lima kolom berupa:
+                <br />
+                1. IMSGSID : ID Grid
+                <br />
+                2. Population : Populasi setiap grid
+                <br>
+                3. Dgrid : Kebutuhan air rumah tangga setiap grid
+                <br>
+                4. Qgrid : kebutuhan air berbasikan tutupan lahan setiap grid 
+                <br>
+                5. Tgrid : Total kebutuhan air setiap grid
+              </td>
             </tr>
           </table>
           <hr />
         </section>
     <br />
           <p><strong>2. Generate Water Availability Distribution</strong></p>
-          <p>Besar nilai jasa lingkungan hidup ditentukan berdasarkan fungsi kombinasi bobot dan skor tiga parameter, yaitu bentang alam, tutupan lahan, dan tipe vegetasi. Nilai jasa lingkungan hidup tiap daerah akan berbeda berdasarkan penentuan nilai skoring.</p>
+          <p>
+            Distribusi ketersediaan air ditentukan dengan prinsip disagregasi dengan menggunakan 
+            indeks jasa lingkungan (air) sebagai bobot pendistribusian.
+          </p>
           <br />
           <p><strong>(PARAMETER)</strong></p>
           <table>
@@ -417,42 +476,56 @@
             <tr>
               <td>Select Field that Contains Enviromental Performance Index</td>
               <td>IJH_V </td>
-              <td>[[tablefield: any] 
+              <td>
+                [[tablefield: any] 
                 <br />
                 [list] 
                 <br />
-                Default: None  </td>
+                Default: None
+                <br>
+                Parent : IJH 
+               </td>
               <td>Memilih kolom layer yang berisikan kolom Indeks Jasa Lingkungan Hidup (IJLH)</td>
             </tr>
             <tr>
               <td>Input Watershed Area Layer</td>
               <td>WAS </td>
               <td>[vector: polygon] </td>
-              <td>Layer vektor masukan yang berisikan Daerah Aliran Sungai</td>
+              <td>Layer vektor masukan daerah aliran sungai yang berisikan 
+                  nama daerah aliran sungai dan jumlah ketersediaan air.
+              </td>
             </tr>
             <tr>
               <td>Select Field that Contains Watershed Area Name</td>
               <td>WAS_N </td>
-              <td>[tablefield: any] 
+              <td>
+                [tablefield: any] 
                 <br />
                 [list] 
                 <br />
-                Default: None </td>
-              <td>Memilih kolom layer yang berisikan kolom Daerah Aliran Sungai</td>
+                Default: None 
+                <br>
+                Parent : WAS
+              </td>
+              <td>Memilih kolom layer yang berisikan kolom nama daerah aliran sungai</td>
             </tr>
             <tr>
               <td>Select Field that Contains Total Water Availability (m³/tahun)</td>
               <td>WAS_V </td>
-              <td>[tablefield: any] 
+              <td>
+                [tablefield: any] 
                 <br />
                 [list] 
                 <br />
-                Default: None </td>
+                Default: None 
+                <br>
+                Parent : WAS
+              </td>
               <td>Memilih kolom layer yang berisikan ketersediaan air pada layer Daerah Aliran Sungai</td>
             </tr>
               <td>Output Layer</td>
               <td>OUTPUT </td>
-              <td>[vector: any] 
+              <td>[vector: Polygon] 
                 <br />
                 Default: [Create temporary layer] </td>
               <td>Tentukan hasil layer. Pilih salah satu dari:  
@@ -480,14 +553,22 @@
               <td>Output Layer</td>
               <td>OUTPUT</td>
               <td>[vector: Polygon]</td>
-              <td>Layer vektor dengan terdapat kolom berupa distribusi ketersediaan air pada tiap grid</td>
+              <td>Layer vektor keluaran dengan dua kolom berupa:
+                <br>
+                1. IMSGSID : ID Grid
+                <br />
+                2. K_Grid : ketersediaan air setiap grid 
+              </td>
             </tr>
           </table>
           <hr />
         </section>
         <br />
         <p><strong>3. Generate Water Need and Capacity Difference and Status </strong></p>
-        <p>Analisis seberapa banyak populasi maksimum yang dapat didukung dengan ketersediaan air yang ada. Penentuan ambag batas dilakukan dengan adanya informasi kebutuhan, ketersediaan, dan kebutuhan air untuk hidup layak (KHL) yang berupa konstanta. Hasil ambang batas dilakukan tanpa mempertimbangkan kebutuhan air untuk kegiatan peternakan dan perindustrian.</p>
+        <p>
+          Analisis seberapa banyak populasi maksimum yang dapat didukung dengan ketersediaan air yang ada. 
+          Penentuan ambag batas dilakukan dengan adanya informasi kebutuhan, ketersediaan, dan kebutuhan air untuk hidup layak (KHL) yang berupa konstanta. 
+        </p>
         <br />
         <p><strong>(PARAMETER)</strong></p>
         <table>
@@ -506,11 +587,14 @@
           <tr>
             <td>Select Field that Contains Water Needs for Each Grid </td>
             <td>NEED_VAL  </td>
-            <td>[tablefield: any] 
+            <td>
+              [tablefield: any] 
               <br />
               [list] 
               <br />
-              Default: None  
+              Default: None 
+              <br>
+              Parent : NEED 
             </td>
             <td>Memilih kolom layer yang berisikan distribusi kebutuhan air untuk tiap grid</td>
           </tr>
@@ -523,22 +607,31 @@
           <tr>
             <td>Select Field that Contains Water Availability for Each Grid</td>
             <td>AVAIL_VAL </td>
-            <td>[tablefield: any] 
+            <td>
+              [tablefield: any] 
               <br />
               [list] 
               <br />
-              Default: None </td>
+              Default: None 
+              <br>
+              Parent : AVAIL
+            </td>
             <td>Memilih kolom layer yang berisikan distribusi ketersediaan air untuk tiap grid</td>
           </tr>
           <tr>
             <td>Input Water Needs for a Decent Life Value per Year</td>
             <td>WN_STD  </td>
             <td>Default : 800 </td>
-            <td>Masukkan nilai kebutuhan air untuk hidup layak, berupa konstanta dalam satuan m³/kapita/tahun, yaitu faktor koreksi kebutuhan air per kapita untuk hidup layak yang mencakup kebutuhan untuk menghasilkan pangan dan kebutuhan domestik. Dapat diisi secara manual/bebas oleh pengguna</td>
+            <td>
+              Masukkan nilai kebutuhan air untuk hidup layak, 
+              berupa konstanta dalam satuan m³/kapita/tahun, 
+              yaitu faktor koreksi kebutuhan air per kapita untuk hidup layak yang mencakup kebutuhan untuk 
+              menghasilkan pangan dan kebutuhan domestik. Dapat diisi secara manual/bebas oleh pengguna
+            </td>
           </tr>
             <td>Output Layer</td>
             <td>OUTPUT </td>
-            <td>[vector: any] 
+            <td>[vector: Polygon] 
               <br />
               Default: [Create temporary layer] </td>
             <td>Tentukan hasil layer. Pilih salah satu dari:
@@ -566,7 +659,23 @@
             <td>Output Layer</td>
             <td>OUTPUT</td>
             <td>[vector: Polygon]</td>
-            <td>Layer vektor dengan terdapat kolom berupa ambang batas populasi yang dapat didukung dengan kondisi ketersediaan air yang ada</td>
+            <td>
+              Layer vektor keluaran dengan tujuh kolom berupa:
+              <br />
+              1. IMSGSID : ID Grid
+              <br />
+              2. Population : Populasi setiap grid
+              <br>
+              3. AgridW : Ketersedian air setiap grid
+              <br>
+              4. NgridW : Kebutuhan air setiap grid
+              <br>
+              5. Difference : Selisih ketersediaan dan kebutuhan air setiap grid
+              <br>
+              6. Status : Status melampui atau tidaknya suatu grid. 
+              <br>
+              7. Threshold : Maximum populasi pada setiap grid berdasarkan jumlah ketersediaan air.
+            </td>
           </tr>
         </table>
         <hr />
@@ -579,7 +688,7 @@
             Environmental Carrying Capacity (Food)
           </h3>
           <p>
-           Environmental Carrying Capacity (Food) consists of:
+           Environmental Carrying Capacity (Food) bersikan:
           </br>
           • Generate Energy Needs Distribution 
           </br>
@@ -608,11 +717,14 @@
             <tr>
               <td>Select Field that Contains Population</td>
               <td>popfield </td>
-              <td>[tablefield: any] 
+              <td>
+                [tablefield: any] 
                   <br />
                   [list] 
                   <br/>
                   Default: None 
+                  <br>
+                  Parent : popgrid
               </td>
               <td>Memilih kolom layer yang berrisikan data populasi pada tiap gridnya</td>
             </tr>
@@ -627,7 +739,8 @@
             <tr>
               <td>Output Layer</td>
               <td>OUTPUT</td>
-              <td>[vector: any] 
+              <td>
+                [vector: Polygon] 
                 <br />
                 Default: [Create temporary layer] </td>
               <td>Tentukan hasil layer. Pilih salah satu dari:
@@ -654,14 +767,25 @@
             <tr>
               <td>Output Layer</td>
               <td>OUTPUT</td>
-              <td>[vector: any]</td>
-              <td>Layer vektor dengan terdapat kolom berupa distribusi kebutuhan pangan pada tiap grid (AKE grid selama setahun)</td>
+              <td>[vector: Polygon]</td>
+              <td>
+                Layer vektor keluaran dengan tiga kolom berupa:
+                <br>
+                1. IMSGSID : ID Grid
+                <br>
+                2. Population : Populasi setiap grid
+                <br>
+                3. AKEGrid : Kebutuhan energi setiap grid. 
+              </td>
             </tr>
           </table>
           <hr />
         <br />
           <p><strong>2. Generate Energy Availability Distribution </strong></p>
-          <p>Distribusi ketersediaan energi ditentukan dengan prinsip disagregasi dengan perhitungan Indeks Kinerja Lingkungan yang terdistribusi.</p>
+          <p>
+             Distribusi ketersediaan energi ditentukan dengan prinsip disagregasi
+             dengan perhitungan Indeks Kinerja Lingkungan (pangan).
+          </p>
           <br />
           <p><strong>(PARAMETER)</strong></p>
           <table>
@@ -675,36 +799,65 @@
               <td>Input IMSGS Layer</td>
               <td>grid </td>
               <td>[vector: polygon]</td>
-              <td>Layer vektor masukan yang berisikan grid dengan pengenal yang unik setiap gridnya</td>
+              <td>
+                Layer vektor masukan yang berisikan grid dengan pengenal yang unik 
+                dan nama batas administrasi setiap grid 
+              </td>
+            </tr>
+            <tr>
+              <td>Select Field that Contains Administrative Boundary Name</td>
+              <td>admfield </td>
+              <td>
+                [tablefield: any]
+                <br />
+                [list] 
+                <br/>
+                Default: None 
+                <br>
+                Parent : grid
+              </td>
+              <td>
+                Memilih kolom layer yang berisi data nama batas administrasi dari IMSGS layer
+              </td>
             </tr>
             <tr>
               <td>Input Administrative Boundary</td>
               <td>admlay </td>
               <td>[vector: polygon]</td>
-              <td>Lapisan vektor masukan yang berisi data batas administrasi</td>
-            </tr>
-            <tr>
-              <td>Select Field that Contains Administrative Boundary Name</td>
-              <td>admfield </td>
-              <td>[tablefield: any]</td>
-              <td>Memilih kolom layer yang berisi data nama batas administrasi dari layer batas administrasi</td>
+              <td>Lapisan vektor masukan yang berisi produksi pangan</td>
             </tr>
             <tr>
               <td>Select Field that Contains Food Energy Production</td>
               <td>enerfield </td>
-              <td>[tablefield: any]</td>
+              <td>
+                [tablefield: any]
+                <br />
+                [list] 
+                <br/>
+                Default: None 
+                <br>
+                Parent : admlay
+              </td>
               <td>Memilih kolom layer yang berisi data produksi pangan dari layer batas administrasi</td>
             </tr>
             <tr>
               <td>Input Layer that Contains Environmental Performance Index</td>
               <td>ESPlay </td>
               <td>[vector: polygon]</td>
-              <td>Layer vektor masukan yang berisikan indeks jasa lingkungan hidup</td>
+              <td>Layer vektor masukan yang berisikan Indeks Jasa Ekosistem Bahan Pangan</td>
             </tr>
             <tr>
               <td>Select Field that Contains Food Ecosystem Performance Index</td>
               <td>IJEPBPESP </td>
-              <td>[tablefield: any]</td>
+              <td>
+                [tablefield: any]
+                <br />
+                [list] 
+                <br/>
+                Default: None 
+                <br>
+                Parent : ESPlay
+              </td>
               <td>Memilih kolom layer dengan data nilai IJEPBP (Indeks Jasa Ekosistem Bahan Pangan)</td>
             </tr>
             <tr>
@@ -735,14 +888,25 @@
             <tr>
               <td>Output Layer</td>
               <td>OUTPUT</td>
-              <td>[vector: any]</td>
-              <td>Layer vektor dengan terdapat kolom berupa distribusi ketersediaan energi bahan pangan</td>
+              <td>[vector: Polygon]</td>
+              <td>
+                Layer vektor keluaran dengan dua kolom berupa:
+                <br>
+                1. IMSGSID : ID Grid
+                <br>
+                2. EnerAvai : Ketersedian energi setiap grid
+              </td>
             </tr>
           </table>
           <hr />
           <br />
           <p><strong>3. Generate Energy Need and Availability Distribution and Status </strong></p>
-          <p>Analisis seberapa banyak populasi maksimum yang dapat didukung dengan ketersediaan pangan yang ada. Penentuan ambag batas dilakukan dengan adanya informasi kebutuhan, ketersediaan, dan kebutuhan pangan untuk hidup layak (KHL) yang berupa konstanta.</p>  
+          <p>
+            Analisis seberapa banyak populasi maksimum yang dapat didukung dengan ketersediaan pangan yang ada. 
+            Penentuan ambag batas dilakukan dengan adanya informasi kebutuhan, ketersediaan, 
+            dan 
+            Angka Kecukupan Energi (AKE) yang berupa konstanta.
+          </p>  
           <br />
           <p><strong>(PARAMETER)</strong></p>
           <table>
@@ -761,11 +925,15 @@
             <tr>
               <td>Select Field that Contains Energy Needs for Each Grid</td>
               <td>needfield  </td>
-              <td>[tablefield: any] 
+              <td>
+                [tablefield: any] 
               <br />
               [list] 
               <br />
-              Default: None </td>
+              Default: None 
+              <br>
+              Parent : needgrid
+            </td>
               <td>Memilih kolom layer yang berisi data kebutuhan energi tiap grid</td>
             </tr>
             <tr>
@@ -781,24 +949,11 @@
               <br />
               [list] 
               <br />
-              Default: None </td>
+              Default: None 
+              <br>
+              Parent : avagrid
+            </td>
               <td>Memilih kolom layer yang berisi data ketersediaan energi tiap grid</td>
-            </tr>
-            <tr>
-              <td>Input IMSGS Population Layer</td>
-              <td>populgrid </td>
-              <td>[vector: polygon] </td>
-              <td>Layer vektor masukan yang berisikan data populasi tiap grid</td>
-            </tr>
-            <tr>
-              <td>Select Field that Contains Population for Each Grid</td>
-              <td>populfield </td>
-              <td>[tablefield: any] 
-              <br />
-              [list] 
-              <br />
-              Default: None </td>
-              <td>Memilih kolom layer yang berisi data pepulasi tiap grid</td>
             </tr>
             <tr>
               <td>Insert Energy Sufficiency Value</td>
@@ -811,7 +966,7 @@
             <tr>
               <td>Output Layer</td>
               <td>OUTPUT</td>
-              <td>[vector: any] 
+              <td>[vector: Polygon] 
                 <br />
                 Default: [Create temporary layer] </td>
               <td>Tentukan hasil layer. Pilih salah satu dari:  
@@ -838,8 +993,24 @@
             <tr>
               <td>Output Layer</td>
               <td>OUTPUT</td>
-              <td>[vector: any]</td>
-              <td>Layer vektor dengan terdapat kolom berupa ambang batas populasi yang dapat didukung dengan kondisi ketersediaan pangan yang ada</td>
+              <td>[vector: Polygon]</td>
+              <td>
+                Layer vektor keluaran dengan tujuh kolom berupa:
+                <br />
+                1. IMSGSID : ID Grid
+                <br />
+                2. Population : Populasi setiap grid
+                <br>
+                3. AgridF : Ketersedian energi setiap grid
+                <br>
+                4. NgridF : Kebutuhan energi setiap grid
+                <br>
+                5. Difference : Selisih ketersedian dan kebutuhan energi setiap grid
+                <br>
+                6. Status : Status melampui atau tidaknya suatu grid. 
+                <br>
+                7. Threshold :  Maximum populasi pada setiap grid berdasarkan jumlah ketersediaan energi.
+              </td>
             </tr>
           </table>
           <hr />

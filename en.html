@@ -158,8 +158,9 @@
               <td>OUTPUT</td>
               <td>[vector: Polygon]</td>
               <td>
-                Resulting vector grid layer. Each grid has a unique identifier
-                based on the resolution size.
+                Output vector layer with one columns : 
+                <br>
+                1. IMSGSID : Grid ID
               </td>
             </tr>
           </table>
@@ -169,7 +170,7 @@
           <h3 class="section__title">Distribute Population of Grid</h3>
           <p>
             Obtain the population distribution for each grid. The population
-            distribution depends on the grid, road type, road length, land cover
+            distribution depends on the grid, road type, land cover
             type, and administrative boundary data containing population
             information. The weighting of road and land cover data is filled in
             manually/freely by the user. The results of the population
@@ -233,8 +234,22 @@
               <td>INPUTA</td>
               <td>[vector: polygon]</td>
               <td>
-                Administrative boundary layer input that contains weights on
-                each administrative boundary type
+                Administrative boundary layer input that contains administrative boundary name and 
+                population 
+              </td>
+            </tr>
+            <tr>
+              <td>Select Field that Contains Administrative Boundary Name</td>
+              <td>INPUTNAME</td>
+              <td>[tablefield: any] [list]
+                <br/>
+                Default: None 
+                <br/>
+                Parent: INPUTA
+              </td>
+              <td>
+                Selecting the administrative boundary layer column that contains
+                administrative boundary name
               </td>
             </tr>
             <tr>
@@ -320,7 +335,7 @@
           </p>
           <br />
           <p>1. Generate Water Needs Distribution</p>
-          <p>The distribution of water needs in each grid is based on land cover factors based on population and accessibility of a location based on the availability of roads.</p>
+          <p>The distribution of water needs in each grid is based on population and land cover.</p>
           <br />
           <p><strong>(PARAMETER)</strong></p>
           <table>
@@ -342,8 +357,9 @@
               <td>Select Field that Contains Population</td>
               <td>POPUL_FIELD</td>
               <td>[tablefield: any] [list] 
-                  <br/>
-                  Default: None 
+                <br/>
+                Default: None 
+                <br/>Parent: POPUL_GRID
               </td>
               <td>
                 Select the column layer that contains the population data on each grid
@@ -385,8 +401,10 @@
               <td>[tablefield: any] 
                 <br />
                 [list] 
-                <br />
-                Default: None </td>
+                <br/>
+                Default: None 
+                <br/>Parent: VEG
+              </td>
               <td>Selecting a column vegetation layer containing crop intensity data of season per year</td>
             </tr>
             <tr>
@@ -431,7 +449,17 @@
               <td>OUTPUT</td>
               <td>[vector: Polygon]</td>
               <td>
-                Vector layer with columns containing the distribution of water needs in each grid 
+                Output vector layer with five columns which are:
+                <br />
+                1. IMSGSID : Grid ID 
+                <br />
+                2. Population : Population count of each grid 
+                <br>
+                3. Dgrid : Household water needs of each grid
+                <br>
+                4. Qgrid : Water needs based on land cover of each grid
+                <br>
+                5. Tgrid : Total water needs for each grid
               </td>
             </tr>
           </table>
@@ -439,7 +467,8 @@
         </section>
     <br />
           <p>2. Generate Water Availability Distribution</p>
-          <p>The value of environmental services is determined as a function of the combination of weights and scores of three parameters, namely landscape, land cover, and vegetation type. The value of environmental services in each region will differ based on the determination of the scoring value.</p>
+          <p>The water availability distribution is determined with the principle of disagregation 
+            with the calculation of distributed Environmental Performance Index. </p>
           <br />
           <p><strong>(PARAMETER)</strong></p>
           <table>
@@ -463,7 +492,7 @@
               <td>[vector: polygon] 
               </td>
               <td>
-                Input vector layer containing grids with unique identifier for each grid 
+                Input vector layer containing environmental services index column
               </td>
             </tr>
             <tr>
@@ -472,15 +501,18 @@
               <td>[[tablefield: any] 
                 <br />
                 [list] 
-                <br />
-                Default: None  </td>
+                <br /> 
+                Default: None  
+                <br>
+                Parent : IJH
+              </td>
               <td>Select the column layer containing the environmental services index column </td>
             </tr>
             <tr>
               <td>Input Watershed Area Layer</td>
               <td>WAS </td>
               <td>[vector: polygon] </td>
-              <td>Input vector layer containing watershed area </td>
+              <td>Input vector layer containing watershed area name and total water availability</td>
             </tr>
             <tr>
               <td>Select Field that Contains Watershed Area Name</td>
@@ -489,8 +521,11 @@
                 <br />
                 [list] 
                 <br />
-                Default: None </td>
-              <td>Select the column layer containing watershed area </td>
+                Default: None 
+                <br>
+                Parent : WAS
+              </td>
+              <td>Select the column layer containing watershed area name</td>
             </tr>
             <tr>
               <td>Select Field that Contains Total Water Availability (m³/year)</td>
@@ -499,7 +534,10 @@
                 <br />
                 [list] 
                 <br />
-                Default: None </td>
+                Default: None 
+                <br>
+                Parent : WAS
+              </td>
               <td>Select the layer column that contains water availability in the Watershed layer </td>
             </tr>
               <td>Output Layer</td>
@@ -533,7 +571,11 @@
               <td>OUTPUT</td>
               <td>[vector: Polygon]</td>
               <td>
-                Vector layer with columns containing the distribution of water availability in each grid 
+                Output vector layer with two columns which are:
+                <br />
+                1. IMSGSID : Grid ID 
+                <br />
+                2. K_Grid : water availability for each grid
               </td>
             </tr>
           </table>
@@ -541,7 +583,10 @@
         </section>
         <br />
         <p>3. Generate Water Need and Capacity Difference and Status </p>
-        <p>Analyze how much of the maximum population can be supported with existing water availability. The threshold determination is carried out with information on the need, availability, and need for water for a decent life (KHL) in the form of a constant. Threshold results were conducted without considering water needs for livestock and industrial activities.</p>
+        <p>
+          Analyze how much of the maximum population can be supported with existing water availability. 
+          The threshold determination is carried out with information on the need, availability, and need for water for a decent life (KHL) in the form of a constant.
+        </p>
         <br />
         <p><strong>(PARAMETER)</strong></p>
         <table>
@@ -565,6 +610,8 @@
               [list] 
               <br />
               Default: None  
+              <br>
+              Parent : NEED
             </td>
             <td>
               Select the column layer that contains the distribution of water needs for each grid 
@@ -574,7 +621,8 @@
             <td>Input IMSGS Water Availability Layer</td>
             <td>AVAIL  </td>
             <td>[vector: polygon] </td>
-            <td>Input vector layer containing the water availability distribution for each grid. The water availability distribution vector layer for each grid has been generated in 'Generate Water Availability Distribution'. </td>
+            <td>Input vector layer containing the water availability distribution for each grid. 
+              The water availability distribution vector layer for each grid has been generated in 'Generate Water Availability Distribution'. </td>
           </tr>
           <tr>
             <td>Select Field that Contains Water Availability for Each Grid</td>
@@ -583,14 +631,17 @@
               <br />
               [list] 
               <br />
-              Default: None </td>
+              Default: None 
+              <br>
+              Parent : AVAIL
+            </td>
             <td>Select the column layer that contains the distribution of water availability for each grid  </td>
           </tr>
           <tr>
             <td>Input Water Needs for a Decent Life Value per Year</td>
             <td>WN_STD  </td>
             <td>Default : 800 </td>
-            <td>Insert the value of water sufficiency number, in the form of a constant in unit of m³/capita/year, which is a correction factor for the per capita water requirement for living like a kayak that includes the need to produce food and domestic needs. This can be filled automatically or manually </td>
+            <td>Insert the value of water sufficiency number, in the form of a constant in unit of m³/capita/year, This can be filled automatically or manually </td>
           </tr>
             <td>Output Layer</td>
             <td>OUTPUT </td>
@@ -623,7 +674,21 @@
             <td>OUTPUT</td>
             <td>[vector: Polygon]</td>
             <td>
-              Layer vector with a column of population thresholds that can be supported by existing water availability conditions 
+              Output vector layer with seven columns which are:
+              <br />
+              1. IMSGSID : Grid ID 
+              <br />
+              2. Population : Population for each grid
+              <br>
+              3. AgridW : Water availability for each grid
+              <br>
+              4. NgridW : Water needs for each grid 
+              <br>
+              5. Difference : Difference between water availability and needs for each grid 
+              <br>
+              6. Status : Status for each grid either exceed or not.
+              <br>
+              7. Threshold : Maximum population can be supported with existing water availability
             </td>
           </tr>
         </table>
@@ -647,7 +712,7 @@
           </p>
           <br />
           <p>1. Generate Energy Needs Distribution </p>
-          <p>The energy needs distribution is determined based on the calculation of the Energy Adequacy Rate (AKE) of the population of each grid for a year.</p>
+          <p>The energy needs distribution is determined based on the calculation of the Energy Sufficiency Value (AKE) of the population of each grid for a year.</p>
           <br />
           <p><strong>(PARAMETER)</strong></p>
           <table>
@@ -673,6 +738,8 @@
                   [list] 
                   <br/>
                   Default: None 
+                  <br>
+                  Parent : popgrid
               </td>
               <td>
                 Select the column layer that contains the population data on each grid 
@@ -685,7 +752,9 @@
                 <br />
                 Default : 2100 </td>
               <td>
-                The Angka Kebutuhan Energi (AKE) is the amount of food energy needed by an individual to carry out daily activities. The AKE of the average Indonesian population for a year, which is 2,100 kcal/day/capita. Can be filled automatically or manually 
+                Energy Sufficiency Value (AKE) is the amount of food energy needed by an individual to carry out daily activities. 
+                The AKE of the average Indonesian population for a year, which is 2,100 kcal/day/capita. 
+                Can be filled automatically or manually 
               </td>
             </tr>
             <tr>
@@ -720,7 +789,13 @@
               <td>OUTPUT</td>
               <td>[vector: Polygon]</td>
               <td>
-                Vector layer with columns containing the distribution of energy needs in each grid (AKE grid for a year) 
+                Output vector layer with three columns which are:
+                <br>
+                1. IMSGSID : Grid ID 
+                <br>
+                2. Population : Population for each grid
+                <br> 
+                3. AKEGrid : Energy needs for each grid
               </td>
             </tr>
           </table>
@@ -742,38 +817,62 @@
               <td>grid </td>
               <td>[vector: Polygon]</td>
               <td>
-                Input vector layer containing grids with unique identifiers for each grid  
+                Input vector layer containing grids with unique identifiers and administrative boundary name for each grid. 
               </td>
+            </tr>
+            <tr>
+              <td>Select Field that Contains Administrative Boundary Name</td>
+              <td>admfield </td>
+              <td>
+                [tablefield: any]
+                <br />
+                [list] 
+                <br/>
+                Default: None 
+                <br>
+                Parent : grid
+              </td>
+              <td>Select the layer column containing the administrative boundary name from IMSGS Grid layer </td>
             </tr>
             <tr>
               <td>Input Administrative Boundary</td>
               <td>admlay </td>
               <td>[vector: Polygon]</td>
-              <td>Input vector layer containing administrative boundary data </td>
-            </tr>
-            <tr>
-              <td>Select Field that Contains Administrative Boundary Name</td>
-              <td>admfield </td>
-              <td>[tablefield: any]</td>
-              <td>Select the layer column containing the administrative boundary name data from the administrative boundary layer </td>
+              <td>Input administrative boundary layer containing energy production data </td>
             </tr>
             <tr>
               <td>Select Field that Contains Food Energy Production</td>
               <td>enerfield </td>
-              <td>[tablefield: any]</td>
+              <td>
+                [tablefield: any]
+                <br />
+                [list] 
+                <br/>
+                Default: None 
+                <br>
+                Parent : admlay
+              </td>
               <td>Select the layer column containing energy production from the administrative boundary layer </td>
             </tr>
             <tr>
-              <td>Input Layer that Contains Environmental Performance Index</td>
+              <td>Input Layer that Contains Food Environmental Performance Index</td>
               <td>ESPlay </td>
               <td>[vector: Polygon]</td>
-              <td>Input vector layer containing the environmental services performance layer </td>
+              <td>Input vector layer containing the environmental services performance value </td>
             </tr>
             <tr>
-              <td>Select Field that Contains Food Ecosystem Performance Index</td>
+              <td>Select Field that Contains Food environmental Performance Index</td>
               <td>IJEPBPESP </td>
-              <td>[tablefield: any]</td>
-              <td>Select the layer column containing the Food Ecosystem Performance Index (IJEPBP) value</td>
+              <td>
+                [tablefield: any]
+                <br />
+                [list] 
+                <br/>
+                Default: None 
+                <br>
+                Parent : ESPlay
+              </td>
+              <td>Select the layer column containing the Food environmental Performance Index </td>
             </tr>
             <tr>
               <td>Output Layer</td>
@@ -804,13 +903,20 @@
               <td>Output Layer</td>
               <td>OUTPUT</td>
               <td>[vector: Polygon]</td>
-              <td>Vector layer with a column of food energy availability distribution </td>
+              <td>                
+                Output vector layer with two columns which are:
+                <br />
+                1. IMSGSID : Grid ID 
+                <br />
+                2. EnerAvai : Energy availability for each grid </td>
             </tr>
           </table>
           <hr />
           <br />
           <p>3. Generate Energy Need and Availability Distribution and Status </p>
-          <p>Analyze how much of the maximum population can be supported with existing food availability. The threshold determination is carried out with information on the need, availability, and need for food for a decent life (KHL) in the form of a constant.</p>  
+          <p>Analyze how much of the maximum population can be supported with existing food availability. 
+            The threshold determination is carried out with information on the need, availability, 
+            and Energy Sufficiency Value (AKE) in the form of a constant.</p>  
           <br />
           <p><strong>(PARAMETER)</strong></p>
           <table>
@@ -824,49 +930,45 @@
               <td>Input IMSGS Energy Needs Layer</td>
               <td>needgrid </td>
               <td>[vector: polygon] </td>
-              <td>Grid layer input that contains ‘Energy Needs Per Grid’ Field </td>
+              <td>Input vector layer containing the energy needs distribution for each grid. 
+                The energy needs distribution vector layer for each grid has been generated in 
+                'Generate Energy Needs Distribution'. 
+              </td>
             </tr>
             <tr>
               <td>Select Field that Contains Energy Needs for Each Grid</td>
-              <td>needfield  </td>
-              <td>[tablefield: any] 
-              <br />
-              [list] 
-              <br />
-              Default: None </td>
-              <td>‘Energy Needs Per Grid’ Field </td>
+              <td>needfield </td>
+              <td>
+                [tablefield: any] 
+                <br />
+                [list] 
+                <br />
+                Default: None
+                <br>
+                Parent : needgrid
+               </td>
+              <td>Select the column layer that contains the distribution of energy needs for each grid  </td>
             </tr>
             <tr>
               <td>Input IMSGS Energy Availability Layer</td>
               <td>avagrid </td>
               <td>[vector: polygon] </td>
-              <td>Grid layer input that contains ‘Energy Availability Per Grid’ Field </td>
+              <td>Input vector layer containing the energy availability distribution for each grid. 
+                The energy availability distribution vector layer for each grid has been generated in 'Generate Energy Availability Distribution'. </td>
             </tr>
             <tr>
               <td>Select Field that Contains Energy Availability for Each Grid</td>
               <td>avafield</td>
-              <td>[tablefield: any] 
-              <br />
-              [list] 
-              <br />
-              Default: None </td>
-              <td>‘Energy Availability Per Grid’ Field </td>
-            </tr>
-            <tr>
-              <td>Input IMSGS Population Layer</td>
-              <td>populgrid </td>
-              <td>[vector: polygon] </td>
-              <td>Grid layer input that contains ‘Population Per Grid’ Field </td>
-            </tr>
-            <tr>
-              <td>Select Field that Contains Population for Each Grid</td>
-              <td>populfield </td>
-              <td>[tablefield: any] 
-              <br />
-              [list] 
-              <br />
-              Default: None </td>
-              <td>‘Population Per Grid’ Field </td>
+              <td>
+                [tablefield: any] 
+                <br />
+                [list] 
+                <br />
+                Default: None 
+                <br>
+                Parent : avagrid
+              </td>
+              <td>Select the column layer that contains the distribution of energy availability for each grid </td>
             </tr>
             <tr>
               <td>Insert Energy Sufficiency Value</td>
@@ -874,12 +976,15 @@
               <td>[number] 
               <br />
               Default : 2100 </td>
-              <td>The Angka Kebutuhan Energi (AKE) is the amount of food energy needed by an individual to carry out daily activities. The AKE of the average Indonesian population for a year, which is 2,100 kcal/day/capita. This can be filled automatically or manually</td>
+              <td>Energy Sufficiency Value (AKE) is the amount of food energy 
+                needed by an individual to carry out daily activities. 
+                The AKE of the average Indonesian population for a year, which is 2,100 kcal/day/capita. 
+                This can be filled automatically or manually</td>
             </tr>
             <tr>
               <td>Output Layer</td>
               <td>OUTPUT</td>
-              <td>[vector: any] 
+              <td>[vector: Polygon] 
                 <br />
                 Default: [Create temporary layer] </td>
               <td>Specify the output layer. Choose one of the following: 
@@ -906,8 +1011,24 @@
             <tr>
               <td>Output Layer</td>
               <td>OUTPUT</td>
-              <td>[vector: any]</td>
-              <td>Layer vector with a column of population thresholds that can be supported by existing energy availability conditions </td>
+              <td>[vector: Polygon]</td>
+              <td>
+                Output vector layer with seven columns which are:
+                <br />
+                1. IMSGSID : Grid ID 
+                <br />
+                2. Population : Population for each grid
+                <br>
+                3. AgridF : Energy availability for each grid
+                <br>
+                4. NgridF : Energy needs for each grid 
+                <br>
+                5. Difference : Difference between energy availability and needs for each grid 
+                <br>
+                6. Status : Status for each grid either exceed or not.
+                <br>
+                7. Threshold : Maximum population can be supported with existing energy availability
+              </td>
             </tr>
           </table>
           <hr />

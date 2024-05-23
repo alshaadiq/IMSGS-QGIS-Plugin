@@ -489,9 +489,7 @@ class distavailabilityAlgorithm(QgsProcessingAlgorithm):
         # initialization fields
         fields = QgsFields()
         fields.append(QgsField('IMGSID', QVariant.String, '', 50))
-        fields.append(QgsField('EnerAvai', QVariant.Double,'', 50))
-        fields.append(QgsField('IJEPBP_Adm', QVariant.Double,'', 50))
-        fields.append(QgsField('IJEPBPfeat', QVariant.Double,'', 50))
+        fields.append(QgsField('EnerAvai', QVariant.Double,'', 50,5))
 
         # Output parameter
         (sink, dest_id) = self.parameterAsSink(parameters, self.OUTPUT, context, fields, QgsWkbTypes.Polygon, epsg4326)
@@ -499,11 +497,9 @@ class distavailabilityAlgorithm(QgsProcessingAlgorithm):
         for feat in join['OUTPUT'].getFeatures():
             grid_id = feat['IMGSID']
             energy_available = feat['EnerAvai']
-            IJEPBPADM = feat['IJEPBP_Adm']
-            IJEPBPFEATURE = feat['IJEPBPfeat']
 
             new_feat = QgsFeature(feat)
-            new_feat.setAttributes([grid_id,energy_available,IJEPBPADM,IJEPBPFEATURE])
+            new_feat.setAttributes([grid_id,energy_available])
             
             sink.addFeature(new_feat, QgsFeatureSink.FastInsert)
         
@@ -616,7 +612,7 @@ class carcapAlgorithm(QgsProcessingAlgorithm):
         AKE_number = self.parameterAsString(parameters, self.AKE, context)
 
         #initialize progress bar
-        feedback = QgsProcessingMultiStepFeedback(6, feedback)
+        feedback = QgsProcessingMultiStepFeedback(5, feedback)
         
  # ==================== algoritm =====================================  
         

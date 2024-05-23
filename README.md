@@ -29,7 +29,7 @@ Create a vector layer with a grid covering a given extent. The grid is fixed for
     <h2> Distribute Populations to Grid</h2>
 </div>
 
-Obtain the population distribution for each grid. The population distribution depends on the grid, road type, road length, land cover type, and administrative boundary data containing population information. The weighting of road and land cover data is filled in manually/freely by the user. The results of the population distribution calculation are then used to calculate the water and food demand for each grid.
+Obtain the population distribution for each grid. The population distribution depends on the grid, road type, land cover type, and administrative boundary data containing population information. The weighting of road and land cover data is filled in manually/freely by the user. The results of the population distribution calculation are then used to calculate the water and food demand for each grid.
 
 ![Popul](/icons/ToolExample/Popul.png)
 
@@ -40,14 +40,14 @@ Obtain the population distribution for each grid. The population distribution de
     <h3>Generate Water Needs Distribution </h3>
 </div>
 
-The distribution of water needs in each grid is based on land cover factors based on population and accessibility of a location based on the availability of roads.
+The distribution of water needs in each grid is based on population and land cover.
 
 <div style="display: flex; align-items: center;">
     <img src="/icons/wateravail.png" alt="LOGO!" style="width: 100px; height: 100px; margin-right: 20px; scale : 0.75">
     <h3>Generate Water Availability Distribution</h3>
 </div>
 
-The value of environmental services is determined as a function of the combination of weights and scores of three parameters, namely landscape, land cover, and vegetation type. The value of environmental services in each region will differ based on the determination of the scoring value.
+The water availability distribution is determined with the principle of disagregation with the calculation of distributed Environmental Performance Index.
 
 <div style="display: flex; align-items: center;">
     <img src="/icons/waterstatus.png" alt="LOGO!" style="width: 100px; height: 100px; margin-right: 20px; scale : 0.75">

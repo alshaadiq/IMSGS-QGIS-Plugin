@@ -30,7 +30,7 @@ homepage=https://github.com/alshaadiq/IMSGS-QGIS-Plugin.git
 icon=icon.png
 
 ; experimental flag (applies to the single version)
-experimental=True
+experimental=False
 
 ; deprecated flag (applies to the whole plugin, not just a single version)
 deprecated=False
