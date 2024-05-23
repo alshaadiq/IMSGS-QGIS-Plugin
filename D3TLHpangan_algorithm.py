@@ -140,10 +140,14 @@ class calcenergyAlgorithm(QgsProcessingAlgorithm):
         epsg4326 = QgsCoordinateReferenceSystem("EPSG:4326")
 
         
-        pop_rep = processing.run("native:reprojectlayer",
+        pop_repp = processing.run("native:reprojectlayer",
                                         {'INPUT':parameters['popgrid'],
                                         'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
                                         'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})   
+        pop_rep = processing.run("native:fixgeometries", 
+                                {'INPUT':pop_repp['OUTPUT'],
+                                 'METHOD':0,
+                                 'OUTPUT':'TEMPORARY_OUTPUT'})
         #progress set to 1
         feedback.setCurrentStep(1)
         if feedback.isCanceled():
@@ -313,10 +317,15 @@ class distavailabilityAlgorithm(QgsProcessingAlgorithm):
 
         epsg4326 = QgsCoordinateReferenceSystem("EPSG:4326")
 
-        grid_rep = processing.run("native:reprojectlayer",
+        grid_repp = processing.run("native:reprojectlayer",
                                         {'INPUT':parameters['grid'],
                                         'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
                                         'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+        
+        grid_rep = processing.run("native:fixgeometries", 
+                                {'INPUT':grid_repp['OUTPUT'],
+                                 'METHOD':0,
+                                 'OUTPUT':'TEMPORARY_OUTPUT'})
 
  
         adm_rep = processing.run("native:reprojectlayer",
@@ -618,21 +627,26 @@ class carcapAlgorithm(QgsProcessingAlgorithm):
 
         epsg4326 = QgsCoordinateReferenceSystem("EPSG:4326")
 
-        need_rep = processing.run("native:reprojectlayer",
+        need_repp = processing.run("native:reprojectlayer",
                                         {'INPUT':parameters['needgrid'],
                                         'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
                                         'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+        
+        need_rep = processing.run("native:fixgeometries", 
+                                {'INPUT':need_repp['OUTPUT'],
+                                 'METHOD':0,
+                                 'OUTPUT':'TEMPORARY_OUTPUT'})
 
  
-        ava_rep = processing.run("native:reprojectlayer",
+        ava_repp = processing.run("native:reprojectlayer",
                                         {'INPUT':parameters['avagrid'],
                                         'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
                                         'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})  
+        ava_rep = processing.run("native:fixgeometries", 
+                                {'INPUT':ava_repp['OUTPUT'],
+                                 'METHOD':0,
+                                 'OUTPUT':'TEMPORARY_OUTPUT'})
         
-        popul_rep = processing.run("native:reprojectlayer",
-                                        {'INPUT':parameters['populgrid'],
-                                        'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
-                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})   
         
         feedback.setCurrentStep(1)
         if feedback.isCanceled():
@@ -643,7 +657,7 @@ class carcapAlgorithm(QgsProcessingAlgorithm):
         feedback.setProgressText('join attribute table to grid layer ... ')
 
 
-        joinn = processing.run("native:joinattributestable", {'INPUT_2': need_rep['OUTPUT'],
+        join = processing.run("native:joinattributestable", {'INPUT_2': need_rep['OUTPUT'],
                                                       'FIELD_2':'IMGSID',
                                                       'INPUT':ava_rep['OUTPUT'],
                                                       'FIELD':'IMGSID',
@@ -653,15 +667,6 @@ class carcapAlgorithm(QgsProcessingAlgorithm):
                                                       'PREFIX':'',
                                                       'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
 
-        join = processing.run("native:joinattributestable", {'INPUT_2': joinn['OUTPUT'],
-                                                      'FIELD_2':'IMGSID',
-                                                      'INPUT':popul_rep['OUTPUT'],
-                                                      'FIELD':'IMGSID',
-                                                      'FIELDS_TO_COPY':[],
-                                                      'METHOD':1,
-                                                      'DISCARD_NONMATCHING':True,
-                                                      'PREFIX':'',
-                                                      'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
         
         feedback.setCurrentStep(2)
         if feedback.isCanceled():
@@ -710,7 +715,7 @@ class carcapAlgorithm(QgsProcessingAlgorithm):
                                        'FIELD_TYPE':0,
                                        'FIELD_LENGTH':20,
                                        'FIELD_PRECISION':15,
-                                       'FORMULA':f'Thres - {popul_field}',
+                                       'FORMULA':f'Thres - Population',
                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
         
         #progress set to 5

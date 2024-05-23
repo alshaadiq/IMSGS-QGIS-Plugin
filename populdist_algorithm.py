@@ -208,10 +208,15 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
         # transform coordinates to epsg 4326
         feedback.setProgressText('Reproject All layer to EPSG 4326...')
 
-        grid_rep = processing.run("native:reprojectlayer",
+        grid_repp = processing.run("native:reprojectlayer",
                                         {'INPUT':parameters['INPUT'],
                                         'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
                                         'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})  
+        
+        grid_rep = processing.run("native:fixgeometries", 
+                                {'INPUT':grid_repp['OUTPUT'],
+                                 'METHOD':0,
+                                 'OUTPUT':'TEMPORARY_OUTPUT'})
 
         lc_rep = processing.run("native:reprojectlayer",
                                         {'INPUT':parameters['LC_LAYER'],
@@ -231,12 +236,18 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
         rt_fix = processing.run("native:fixgeometries", 
                             {'INPUT':rt_rep['OUTPUT'],
                             'METHOD':0,
-                            'OUTPUT':'TEMPORARY_OUTPUT'})  
+                            'OUTPUT':'TEMPORARY_OUTPUT'}) 
+ 
 
-        admin_rep = processing.run("native:reprojectlayer",
+        admin_repp = processing.run("native:reprojectlayer",
                                         {'INPUT':parameters['INPUTA'],
                                         'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
                                         'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})  
+        
+        admin_rep = processing.run("native:fixgeometries", 
+                                {'INPUT':admin_repp['OUTPUT'],
+                                 'METHOD':0,
+                                 'OUTPUT':'TEMPORARY_OUTPUT'})
                   
         grid_clip = processing.run("native:clip", 
                                 {'INPUT':grid_rep['OUTPUT'],

@@ -150,9 +150,19 @@ class IMSGSAlgorithm(QgsProcessingAlgorithm):
         extract  = self.parameterAsBoolean(parameters, self.extract,context) # extract parameter
 
         #initialize progress bar
-        feedback = QgsProcessingMultiStepFeedback(2, model_feedback)    
+        feedback = QgsProcessingMultiStepFeedback(2, model_feedback)
 
 
+        grid_repp = processing.run("native:reprojectlayer",
+                                        {'INPUT':parameters['INPUT'],
+                                        'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
+                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+        
+        grid_rep = processing.run("native:fixgeometries", 
+                                {'INPUT':grid_repp['OUTPUT'],
+                                 'METHOD':0,
+                                 'OUTPUT':'TEMPORARY_OUTPUT'})
+        
         if source is not None :
 
             # Get the source extent
@@ -242,7 +252,7 @@ class IMSGSAlgorithm(QgsProcessingAlgorithm):
             extract_options = {
                 'INPUT': feature_1,  # path grid shape file
                 'PREDICATE': [0],
-                'INTERSECT': parameters['INPUT'],  # aoi path shape file
+                'INTERSECT': grid_rep['OUTPUT'],  # aoi path shape file
                 'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT,
             }
             # processing extract

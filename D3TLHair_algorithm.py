@@ -203,10 +203,15 @@ class calcneedAlgorithm(QgsProcessingAlgorithm):
        # transform coordinate to epsg 4326
         feedback.setProgressText('Reproject All Layer to EPSG 4326')
 
-        grid_rep = processing.run("native:reprojectlayer",
+        grid_repp = processing.run("native:reprojectlayer",
                                         {'INPUT':parameters['POPUL_GRID'],
                                         'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
                                         'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+        
+        grid_rep = processing.run("native:fixgeometries", 
+                                {'INPUT':grid_repp['OUTPUT'],
+                                 'METHOD':0,
+                                 'OUTPUT':'TEMPORARY_OUTPUT'})
 
         veg_rep = processing.run("native:reprojectlayer",
                                         {'INPUT':parameters['VEG'],
@@ -508,10 +513,15 @@ class distavailability2Algorithm(QgsProcessingAlgorithm):
         epsg4326 = QgsCoordinateReferenceSystem("EPSG:4326")
 
 
-        grid_rep = processing.run("native:reprojectlayer",
+        grid_repp = processing.run("native:reprojectlayer",
                                         {'INPUT':parameters['Grid'],
                                         'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
                                         'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+        
+        grid_rep = processing.run("native:fixgeometries", 
+                                {'INPUT':grid_repp['OUTPUT'],
+                                 'METHOD':0,
+                                 'OUTPUT':'TEMPORARY_OUTPUT'})
 
  
         IJH_rep = processing.run("native:reprojectlayer",
