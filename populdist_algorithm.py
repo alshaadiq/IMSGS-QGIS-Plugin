@@ -585,7 +585,19 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
                                        'FIELD_LENGTH':20,
                                        'FIELD_PRECISION':15,
                                        'FORMULA':'if("popul" is null, 0, "popul")',
-                                       'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})      
+                                       'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+
+        join_5 = processing.run("native:joinattributestable", {'INPUT_2':popul_null['OUTPUT'],
+                                                      'FIELD_2':'IMGSID',
+                                                      'INPUT':grid_rep['OUTPUT'],
+                                                      'FIELD':'IMGSID',
+                                                      'FIELDS_TO_COPY':[],
+                                                      'METHOD':1,
+                                                      'DISCARD_NONMATCHING':False,
+                                                      'PREFIX':'',
+                                                      'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+
+
 
         # ==================== output parameter =====================================
 
@@ -604,7 +616,7 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
         # Output parameter
         (sink, dest_id) = self.parameterAsSink(parameters, self.OUTPUT, context, fields, QgsWkbTypes.Polygon, epsg4326)
  
-        for feat in popul_null['OUTPUT'].getFeatures():
+        for feat in join_5['OUTPUT'].getFeatures():
             grid_id = feat['IMGSID']
             length = feat['WRT_null']
             area = feat['WLC_null']

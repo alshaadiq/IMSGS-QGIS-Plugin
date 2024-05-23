@@ -218,10 +218,10 @@ class calcneedAlgorithm(QgsProcessingAlgorithm):
                                         'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
                                         'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})  
         
-        veg_fix =  processing.run("native:reprojectlayer",
+        veg_fix = processing.run("native:fixgeometries", 
                                 {'INPUT':veg_rep['OUTPUT'],
-                                'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
-                                'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+                                 'METHOD':0,
+                                 'OUTPUT':'TEMPORARY_OUTPUT'}) 
 
 
         #progress set to 1
@@ -883,7 +883,7 @@ class carcap2Algorithm(QgsProcessingAlgorithm):
         fields.append(QgsField('AgridW', QVariant.Double, '', 50, 5))
         fields.append(QgsField('NGridW', QVariant.Double, '', 50, 5)) 
         fields.append(QgsField("Difference", QVariant.Double, '', 50,5))
-        fields.append(QgsField('Statues', QVariant.String, '', 50))
+        fields.append(QgsField('Status', QVariant.String, '', 50))
         fields.append(QgsField('Threshold', QVariant.Int,'', 50))
 
         # Output parameter

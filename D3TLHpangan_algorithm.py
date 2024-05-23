@@ -139,11 +139,11 @@ class calcenergyAlgorithm(QgsProcessingAlgorithm):
 
         epsg4326 = QgsCoordinateReferenceSystem("EPSG:4326")
 
-        
         pop_repp = processing.run("native:reprojectlayer",
                                         {'INPUT':parameters['popgrid'],
                                         'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
                                         'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})   
+        
         pop_rep = processing.run("native:fixgeometries", 
                                 {'INPUT':pop_repp['OUTPUT'],
                                  'METHOD':0,
@@ -637,11 +637,11 @@ class carcapAlgorithm(QgsProcessingAlgorithm):
                                  'METHOD':0,
                                  'OUTPUT':'TEMPORARY_OUTPUT'})
 
- 
         ava_repp = processing.run("native:reprojectlayer",
                                         {'INPUT':parameters['avagrid'],
                                         'TARGET_CRS':QgsCoordinateReferenceSystem('EPSG:4326'),
                                         'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})  
+        
         ava_rep = processing.run("native:fixgeometries", 
                                 {'INPUT':ava_repp['OUTPUT'],
                                  'METHOD':0,
@@ -698,7 +698,7 @@ class carcapAlgorithm(QgsProcessingAlgorithm):
                                        'FIELD_TYPE':0,
                                        'FIELD_LENGTH':20,
                                        'FIELD_PRECISION':15,
-                                       'FORMULA':f'{ava_field} / (365 * {AKE_number}) ',
+                                       'FORMULA':f'({ava_field}/({AKE_number}*365))',
                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
         
         #progress set to 4
@@ -706,57 +706,38 @@ class carcapAlgorithm(QgsProcessingAlgorithm):
         if feedback.isCanceled():
             return {}
 
-#calculate difference
-        feedback.setProgressText('Calculate carrying capacity status ... ')
-
-        status = processing.run("native:fieldcalculator", 
-                                      {'INPUT':threshold['OUTPUT'],
-                                       'FIELD_NAME':'Status',
-                                       'FIELD_TYPE':0,
-                                       'FIELD_LENGTH':20,
-                                       'FIELD_PRECISION':15,
-                                       'FORMULA':f'Thres - Population',
-                                       'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
-        
-        #progress set to 5
-        feedback.setCurrentStep(5)
-        if feedback.isCanceled():
-            return {}
-
 # Status string
         stat = processing.run("native:fieldcalculator", 
-                                      {'INPUT':status['OUTPUT'],
+                                      {'INPUT':threshold['OUTPUT'],
                                        'FIELD_NAME':'Stats',
                                        'FIELD_TYPE':2,
                                        'FIELD_LENGTH':10,
                                        'FIELD_PRECISION':0,
                                        'FORMULA':"if(diff<=0, title('Not'),title('Exceed'))",
                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
-        #progress set to 6
-        feedback.setCurrentStep(6)
+        #progress set to 5
+        feedback.setCurrentStep(5)
         if feedback.isCanceled():
             return {}
-
-
-
-
 
 # ==================== output parameter =====================================  
 
         # initialization fields
         fields = QgsFields()
         fields.append(QgsField('IMGSID', QVariant.String, '', 50))
-        fields.append(QgsField('AgridF', QVariant.Double, '', 50))
-        fields.append(QgsField('NgridF', QVariant.Double, '', 50))
-        fields.append(QgsField('Difference', QVariant.Double, '', 50))
+        fields.append(QgsField('Population', QVariant.Int,'', 50))
+        fields.append(QgsField('AgridF', QVariant.Double, '', 50,5))
+        fields.append(QgsField('NgridF', QVariant.Double, '', 50,5))
+        fields.append(QgsField('Difference', QVariant.Double, '', 50,5))
         fields.append(QgsField('Status', QVariant.String,'', 50))
-        fields.append(QgsField('Threshold', QVariant.Double, '', 50))
+        fields.append(QgsField('Threshold', QVariant.Int, '', 50))
 
         # Output parameter
         (sink, dest_id) = self.parameterAsSink(parameters, self.OUTPUT, context, fields, QgsWkbTypes.Polygon, epsg4326)
 
         for feat in stat['OUTPUT'].getFeatures():
             IMGSID = feat['IMGSID']
+            popul = feat['Population']
             Agridf = feat[f'{ava_field}']
             Ngridf = feat[f'{need_field}']
             Diff = feat['Diff']
@@ -765,7 +746,7 @@ class carcapAlgorithm(QgsProcessingAlgorithm):
             
 
             new_feat = QgsFeature(feat)
-            new_feat.setAttributes([IMGSID,Agridf,Ngridf,Diff,Stat,Thres])
+            new_feat.setAttributes([IMGSID,popul,Agridf,Ngridf,Diff,Stat,Thres])
             
             sink.addFeature(new_feat, QgsFeatureSink.FastInsert)
         
