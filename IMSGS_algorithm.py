@@ -107,7 +107,7 @@ class IMSGSAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterString(
                 self.boundingbox,  # The parameter name
                 self.tr('Geometry Extent [WGS84]'),  # The parameter label
-                defaultValue='Xmin, Xmax, Ymin, Ymax',  # Optional: Set a default value
+                defaultValue='λmin, λmax, φmin, φmax',  # Optional: Set a default value
                 optional = True
             )
         )

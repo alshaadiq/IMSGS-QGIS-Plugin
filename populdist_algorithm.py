@@ -201,12 +201,12 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
         name_field = self.parameterAsString(parameters, self.INPUTNAME,context)
 
         #initialize progress bar
-        feedback = QgsProcessingMultiStepFeedback(18, feedback) 
+        feedback = QgsProcessingMultiStepFeedback(29, feedback) 
 
 # ==================== algoritm =====================================  
 
-        # transform coordinates to epsg 4326
-        feedback.setProgressText('Reproject All layer to EPSG 4326...')
+        # transform coordinates to epsg 4326, reproject, and fix
+        feedback.setProgressText('Preparing data processing ...')
 
         grid_repp = processing.run("native:reprojectlayer",
                                         {'INPUT':parameters['INPUT'],
@@ -216,7 +216,7 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
         grid_rep = processing.run("native:fixgeometries", 
                                 {'INPUT':grid_repp['OUTPUT'],
                                  'METHOD':0,
-                                 'OUTPUT':'TEMPORARY_OUTPUT'})
+                                 'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
 
         lc_rep = processing.run("native:reprojectlayer",
                                         {'INPUT':parameters['LC_LAYER'],
@@ -226,7 +226,7 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
         lc_fix = processing.run("native:fixgeometries", 
                                 {'INPUT':lc_rep['OUTPUT'],
                                  'METHOD':0,
-                                 'OUTPUT':'TEMPORARY_OUTPUT'})  
+                                 'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})  
         
         rt_rep = processing.run("native:reprojectlayer",
                                         {'INPUT':parameters['RT_LAYER'],
@@ -236,7 +236,7 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
         rt_fix = processing.run("native:fixgeometries", 
                             {'INPUT':rt_rep['OUTPUT'],
                             'METHOD':0,
-                            'OUTPUT':'TEMPORARY_OUTPUT'}) 
+                            'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT}) 
  
 
         admin_repp = processing.run("native:reprojectlayer",
@@ -247,24 +247,22 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
         admin_rep = processing.run("native:fixgeometries", 
                                 {'INPUT':admin_repp['OUTPUT'],
                                  'METHOD':0,
-                                 'OUTPUT':'TEMPORARY_OUTPUT'})
+                                 'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
                   
         grid_clip = processing.run("native:clip", 
                                 {'INPUT':grid_rep['OUTPUT'],
                                  'OVERLAY':admin_rep['OUTPUT'],
-                                 'OUTPUT':'TEMPORARY_OUTPUT'})  
-
-
+                                 'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+        
         #progress set to 1
         feedback.setCurrentStep(1)
         if feedback.isCanceled():
             return{}
-        
-        # Intersect road
-        feedback.setProgressText('Intersect Road with Grid Layer...')
 
-        intr_road = processing.run("native:intersection", 
-                                  {'INPUT':rt_fix['OUTPUT'], 
+        feedback.setProgressText('Intersect Administrative Boundary with Grid Layer...')
+
+        intr_admn = processing.run("native:intersection", 
+                                  {'INPUT':admin_rep['OUTPUT'], 
                                    'OVERLAY':grid_clip['OUTPUT'],
                                    'INPUT_FIELDS':[],
                                    'OVERLAY_FIELDS':[],
@@ -277,205 +275,10 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
         if feedback.isCanceled():
             return {}
         
-        # calculate length for each feature in road layer
-        feedback.setProgressText('Calulate Length for each feature in road layer...')
-
-        feat_length = processing.run("native:fieldcalculator", 
-                                {'INPUT':intr_road['OUTPUT'],
-                                'FIELD_NAME':'length_feat',
-                                'FIELD_TYPE':0,
-                                'FIELD_LENGTH':30,
-                                'FIELD_PRECISION':20,
-                                'FORMULA':'$length',
-                                'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
-        
-        #progress set to 3
-        feedback.setCurrentStep(3)
-        if feedback.isCanceled():
-            return {}
-        
-        #calculate sum length by id
-        feedback.setProgressText('Calculate Total Length Feature for each grid ...')
-
-        sum_by_id(feat_length, 'Grid_length', 'IMGSID', 'length_feat' )
-    
-        # Set progress to 4
-        feedback.setCurrentStep(4)
-        if feedback.isCanceled():
-            return{}
-        
-        # calculate feature weight for each grid
-        feedback.setProgressText('Calculate Feature Weight for each grid ...')
-
-        w_rt_f =  processing.run("native:fieldcalculator", 
-                                      {'INPUT':feat_length['OUTPUT'],
-                                       'FIELD_NAME':'Wrt_f',
-                                       'FIELD_TYPE':0,
-                                       'FIELD_LENGTH':30,
-                                       'FIELD_PRECISION':20,
-                                       'FORMULA':f'(length_feat/Grid_length) * {rt_weight} ',
-                                       'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
-        #progress set to 5
-        feedback.setCurrentStep(5)
-        if feedback.isCanceled():
-            return {}
-        
-        #calculate sum by id road
-        feedback.setProgressText('Sum by ID Road Layer ...')
-
-        sum_by_id(w_rt_f, 'WRT', 'IMGSID', 'Wrt_f')
-
-        #progress set to 6
-        feedback.setCurrentStep(6)
-        if feedback.isCanceled():
-            return {}
-        
-        # join value to grid
-        feedback.setProgressText('Join Value by Field Road Layer...')
-
-        join = processing.run("native:joinattributestable", {'INPUT_2':w_rt_f['OUTPUT'],
-                                                      'FIELD_2':'IMGSID',
-                                                      'INPUT':grid_clip['OUTPUT'],
-                                                      'FIELD':'IMGSID',
-                                                      'FIELDS_TO_COPY':[],
-                                                      'METHOD':1,
-                                                      'DISCARD_NONMATCHING':False,
-                                                      'PREFIX':'',
-                                                      'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
-        
-        RT_null =processing.run("native:fieldcalculator", 
-                                      {'INPUT':join['OUTPUT'],
-                                       'FIELD_NAME':'WRT_null',
-                                       'FIELD_TYPE':0,
-                                       'FIELD_LENGTH':20,
-                                       'FIELD_PRECISION':15,
-                                       'FORMULA':'if("WRT" is null, 0, "WRT")',
-                                       'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
-        
-        #progress set to 7
-        feedback.setCurrentStep(7)
-        if feedback.isCanceled():
-            return {}
-        
-        # Intersect land cover
-        feedback.setProgressText('Intersect Land Cover with Grid Layer...')
-
-        intr_Lc = processing.run("native:intersection", 
-                                  {'INPUT':lc_fix['OUTPUT'], 
-                                   'OVERLAY':grid_clip['OUTPUT'],
-                                   'INPUT_FIELDS':[],
-                                   'OVERLAY_FIELDS':[],
-                                   'OVERLAY_FIELDS_PREFIX':'',
-                                   'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT,
-                                   'GRID_SIZE':None})
-        
-        #progress set to 8
-        feedback.setCurrentStep(8)
-        if feedback.isCanceled():
-            return {}
-        
-        # calculate area for each feature in road layer
-        feedback.setProgressText('Calulate Area for each feature in road layer...')
-
-        feat_area = processing.run("native:fieldcalculator", 
-                                {'INPUT':intr_Lc['OUTPUT'],
-                                'FIELD_NAME':'area_feat',
-                                'FIELD_TYPE':0,
-                                'FIELD_LENGTH':30,
-                                'FIELD_PRECISION':20,
-                                'FORMULA':'$area',
-                                'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
-        
-        #progress set to 9
-        feedback.setCurrentStep(9)
-        if feedback.isCanceled():
-            return {}
-        
-        #calculate sum area by id
-        feedback.setProgressText('Calculate Total Area Feature for each grid ...')
-
-        sum_by_id(feat_area, 'Grid_area', 'IMGSID', 'area_feat')
-
-        #progress set to 10
-        feedback.setCurrentStep(10)
-        if feedback.isCanceled():
-            return {}
-        
-        # calculate feature weight for each grid
-        feedback.setProgressText('Calculate Feature Weight for each grid ...')
-
-        w_lc_f =  processing.run("native:fieldcalculator", 
-                                      {'INPUT':feat_area['OUTPUT'],
-                                       'FIELD_NAME':'Wlc_f',
-                                       'FIELD_TYPE':0,
-                                       'FIELD_LENGTH':30,
-                                       'FIELD_PRECISION':20,
-                                       'FORMULA':f'(area_feat/Grid_area) * {lc_weight} ',
-                                       'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
-        #progress set to 11
-        feedback.setCurrentStep(11)
-        if feedback.isCanceled():
-            return {}
-        
-        #calculate sum by id road
-        feedback.setProgressText('Sum by ID Landcover Layer ...')
-
-        sum_by_id(w_lc_f, 'WLC', 'IMGSID', 'Wlc_f')
-
-        #progress set to 12
-        feedback.setCurrentStep(12)
-        if feedback.isCanceled():
-            return {}
-        
-        # join value to grid
-        feedback.setProgressText('Join Value by Field LandCover Layer...')
-
-        join_2 = processing.run("native:joinattributestable", {'INPUT_2':w_lc_f['OUTPUT'],
-                                                      'FIELD_2':'IMGSID',
-                                                      'INPUT':RT_null['OUTPUT'],
-                                                      'FIELD':'IMGSID',
-                                                      'FIELDS_TO_COPY':[],
-                                                      'METHOD':1,
-                                                      'DISCARD_NONMATCHING':False,
-                                                      'PREFIX':'',
-                                                      'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
-        
-        Lc_null =processing.run("native:fieldcalculator", 
-                                      {'INPUT':join_2['OUTPUT'],
-                                       'FIELD_NAME':'WLC_null',
-                                       'FIELD_TYPE':0,
-                                       'FIELD_LENGTH':20,
-                                       'FIELD_PRECISION':15,
-                                       'FORMULA':'if("WLC" is null, 0, "WLC")',
-                                       'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT}) 
-        
-        #progress set to 13
-        feedback.setCurrentStep(13)
-        if feedback.isCanceled():
-            return {}
-        
-        # join value to grid
-        feedback.setProgressText('Intersect Administrative Boundary with Grid Layer...')
-
-        intr_Agg = processing.run("native:intersection", 
-                                  {'INPUT':admin_rep['OUTPUT'], 
-                                   'OVERLAY':grid_clip['OUTPUT'],
-                                   'INPUT_FIELDS':[],
-                                   'OVERLAY_FIELDS':[],
-                                   'OVERLAY_FIELDS_PREFIX':'',
-                                   'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT,
-                                   'GRID_SIZE':None})
-        
-        #progress set to 14
-        feedback.setCurrentStep(14)
-        if feedback.isCanceled():
-            return {}
-        
-        # join value to grid
         feedback.setProgressText('Calculate Administrative Area...')
         
-        Area_calc =processing.run("native:fieldcalculator", 
-                                      {'INPUT':intr_Agg['OUTPUT'],
+        admin_area =processing.run("native:fieldcalculator", 
+                                      {'INPUT':intr_admn['OUTPUT'],
                                        'FIELD_NAME':'area_admint',
                                        'FIELD_TYPE':0,
                                        'FIELD_LENGTH':20,
@@ -483,15 +286,14 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
                                        'FORMULA':'$area',
                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT}) 
 
-        #progress set to 15
-        feedback.setCurrentStep(15)
+        #progress set to 3
+        feedback.setCurrentStep(3)
         if feedback.isCanceled():
             return {}
         
-        # join value to grid
         feedback.setProgressText('Aggregate Administrative Boundary...')        
 
-        join_3  = processing.run("native:aggregate", {'INPUT':Area_calc['OUTPUT'],
+        agg_admin  = processing.run("native:aggregate", {'INPUT':admin_area['OUTPUT'],
                                                       'GROUP_BY':'"IMGSID"',
                                                       'AGGREGATES':[{'aggregate': 'concatenate_unique',
                                                                      'delimiter': ',',
@@ -516,7 +318,7 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
                                                                     {'aggregate': 'maximum',
                                                                       'delimiter': ',',
                                                                       'input': f'if("area_admint"=maximum("area_admint"),{popul_field},null)',
-                                                                      'length': 10,
+                                                                      'length': 50,
                                                                       'name': f'{popul_field}',
                                                                       'precision': 0,
                                                                       'sub_type': 0,
@@ -524,15 +326,296 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
                                                                       'type_name': 'int8'}],
                                                       'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
         
-        #progress set to 16
-        feedback.setCurrentStep(16)
+        #progress set to 4
+        feedback.setCurrentStep(4)
+        if feedback.isCanceled():
+            return {}
+        
+        feedback.setProgressText('Join Adminstrative Boundary with Grid Layer...') 
+
+        join = processing.run("native:joinattributestable", {'INPUT_2':agg_admin['OUTPUT'],
+                                                      'FIELD_2':'IMGSID',
+                                                      'INPUT':grid_clip['OUTPUT'],
+                                                      'FIELD':'IMGSID',
+                                                      'FIELDS_TO_COPY':[],
+                                                      'METHOD':1,
+                                                      'DISCARD_NONMATCHING':False,
+                                                      'PREFIX':'',
+                                                      'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+
+        #progress set to 5
+        feedback.setCurrentStep(5)
+        if feedback.isCanceled():
+            return {}
+        
+        feedback.setProgressText('Split Grid by Administrative Boundary...')    
+
+        split_grid = processing.run("native:splitvectorlayer", 
+                        {'INPUT':join['OUTPUT'],
+                        'FIELD':f'{popul_field}',
+                        'PREFIX_FIELD':True,
+                        'FILE_TYPE':0,
+                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+        
+        #progress set to 6
+        feedback.setCurrentStep(6)
+        if feedback.isCanceled():
+            return {}
+        
+        feedback.setProgressText('Split Landcover...')    
+
+        Lc_split = processing.run("native:multiparttosingleparts", 
+                                     {'INPUT':lc_fix['OUTPUT'],
+                                      'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+
+        #progress set to 7
+        feedback.setCurrentStep(7)
+        if feedback.isCanceled():
+            return {}
+        
+        partial_lc = []
+
+        feedback.setProgressText('Intersect Landcover with Grid ...')    
+
+        for i in os.listdir(split_grid['OUTPUT']) :
+            current_file = os.path.join(split_grid['OUTPUT'],i)
+
+            processing.run("native:selectbylocation", 
+                           {'INPUT':Lc_split['OUTPUT'],
+                            'PREDICATE':[0],
+                            'INTERSECT':current_file,
+                            'METHOD':0})
+
+            extract_lc = processing.run("native:saveselectedfeatures", 
+                                     {'INPUT':Lc_split['OUTPUT'],
+                                      'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+
+            intr_lc_part = processing.run("native:intersection", 
+                                  {'INPUT':extract_lc['OUTPUT'], 
+                                   'OVERLAY':current_file,
+                                   'INPUT_FIELDS':[],
+                                   'OVERLAY_FIELDS':[],
+                                   'OVERLAY_FIELDS_PREFIX':'',
+                                   'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT,
+                                   'GRID_SIZE':None})
+            
+            partial_lc.append(intr_lc_part['OUTPUT'])  
+
+        #progress set to 8
+        feedback.setCurrentStep(8)
+        if feedback.isCanceled():
+            return {}
+
+        feedback.setProgressText('Merging Intersect Layer ...')    
+
+        intr_Lc = processing.run("native:mergevectorlayers", 
+                                   {'LAYERS':partial_lc,
+                                    'CRS':None,
+                                    'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+        
+        #progress set to 9
+        feedback.setCurrentStep(9)
+        if feedback.isCanceled():
+            return {}
+
+        feedback.setProgressText('Calculating Landcover Area Feature for Each Grid  ...')  
+
+        feat_area = processing.run("native:fieldcalculator", 
+                                {'INPUT':intr_Lc['OUTPUT'],
+                                'FIELD_NAME':'area_feat',
+                                'FIELD_TYPE':0,
+                                'FIELD_LENGTH':30,
+                                'FIELD_PRECISION':20,
+                                'FORMULA':'$area',
+                                'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+        
+        #progress set to 10
+        feedback.setCurrentStep(10)
+        if feedback.isCanceled():
+            return {}
+        
+        #calculate sum area by id
+        feedback.setProgressText('Calculate Landcover Total Area Feature for each grid ...')
+
+        sum_by_id(feat_area, 'Grid_area', 'IMGSID', 'area_feat')
+
+        #progress set to 11
+        feedback.setCurrentStep(11)
+        if feedback.isCanceled():
+            return {}
+        
+        # calculate feature weight for each grid
+        feedback.setProgressText('Calculate Feature Weight for each grid ...')
+
+        w_lc_f =  processing.run("native:fieldcalculator", 
+                                      {'INPUT':feat_area['OUTPUT'],
+                                       'FIELD_NAME':'Wlc_f',
+                                       'FIELD_TYPE':0,
+                                       'FIELD_LENGTH':30,
+                                       'FIELD_PRECISION':20,
+                                       'FORMULA':f'(area_feat/Grid_area) * {lc_weight} ',
+                                       'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+        #progress set to 12
+        feedback.setCurrentStep(12)
+        if feedback.isCanceled():
+            return {}
+        
+        feedback.setProgressText('Sum by ID Landcover Layer ...')
+
+        sum_by_id(w_lc_f, 'WLC', 'IMGSID', 'Wlc_f')
+
+        #progress set to 13
+        feedback.setCurrentStep(13)
         if feedback.isCanceled():
             return {}
         
         # join value to grid
-        feedback.setProgressText('Join Adminstrative Boundary with Grid Layer...') 
+        feedback.setProgressText('Join Attribute Table between LandCover and Grid ...')
 
-        join_4 = processing.run("native:joinattributestable", {'INPUT_2':join_3['OUTPUT'],
+        join_2 = processing.run("native:joinattributestable", {'INPUT_2':w_lc_f['OUTPUT'],
+                                                      'FIELD_2':'IMGSID',
+                                                      'INPUT':join['OUTPUT'],
+                                                      'FIELD':'IMGSID',
+                                                      'FIELDS_TO_COPY':[],
+                                                      'METHOD':1,
+                                                      'DISCARD_NONMATCHING':False,
+                                                      'PREFIX':'',
+                                                      'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+        
+        #progress set to 14
+        feedback.setCurrentStep(14)
+        if feedback.isCanceled():
+            return {}
+
+        feedback.setProgressText('Removing Null Value ...')
+        
+        Lc_null =processing.run("native:fieldcalculator", 
+                                      {'INPUT':join_2['OUTPUT'],
+                                       'FIELD_NAME':'WLC_null',
+                                       'FIELD_TYPE':0,
+                                       'FIELD_LENGTH':20,
+                                       'FIELD_PRECISION':15,
+                                       'FORMULA':'if("WLC" is null, 0, "WLC")',
+                                       'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT}) 
+        
+        #progress set to 15
+        feedback.setCurrentStep(15)
+        if feedback.isCanceled():
+            return {}
+        
+        feedback.setProgressText('Split Road Layer ...')
+
+        Rt_split = processing.run("native:multiparttosingleparts", 
+                                     {'INPUT':rt_fix['OUTPUT'],
+                                      'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+
+        #progress set to 16
+        feedback.setCurrentStep(16)
+        if feedback.isCanceled():
+            return {}
+
+        partial_rt = []
+
+        feedback.setProgressText('Intersect Road Layer with Grid ...')    
+
+        for i in os.listdir(split_grid['OUTPUT']) :
+            current_file = os.path.join(split_grid['OUTPUT'],i)
+
+            processing.run("native:selectbylocation", 
+                           {'INPUT':Rt_split['OUTPUT'],
+                            'PREDICATE':[0],
+                            'INTERSECT':current_file,
+                            'METHOD':0})
+
+            extract_rt = processing.run("native:saveselectedfeatures", 
+                                     {'INPUT':Rt_split['OUTPUT'],
+                                      'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+
+            intr_rt_part = processing.run("native:intersection", 
+                                  {'INPUT':extract_rt['OUTPUT'], 
+                                   'OVERLAY':current_file,
+                                   'INPUT_FIELDS':[],
+                                   'OVERLAY_FIELDS':[],
+                                   'OVERLAY_FIELDS_PREFIX':'',
+                                   'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT,
+                                   'GRID_SIZE':None})
+            
+            partial_rt.append(intr_rt_part['OUTPUT'])  
+
+        #progress set to 17
+        feedback.setCurrentStep(17)
+        if feedback.isCanceled():
+            return {}
+
+        feedback.setProgressText('Merging Intersect Layer ...')    
+
+        intr_road = processing.run("native:mergevectorlayers", 
+                                   {'LAYERS':partial_rt,
+                                    'CRS':None,
+                                    'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+        
+        #progress set to 18
+        feedback.setCurrentStep(18)
+        if feedback.isCanceled():
+            return {}
+
+        # calculate length for each feature in road layer
+        feedback.setProgressText('Calulate Length for each Feature in Road Layer...')
+
+        feat_length = processing.run("native:fieldcalculator", 
+                                {'INPUT':intr_road['OUTPUT'],
+                                'FIELD_NAME':'length_feat',
+                                'FIELD_TYPE':0,
+                                'FIELD_LENGTH':30,
+                                'FIELD_PRECISION':20,
+                                'FORMULA':'$length',
+                                'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+        
+        #progress set to 19
+        feedback.setCurrentStep(19)
+        if feedback.isCanceled():
+            return {}
+        
+        #calculate sum length by id
+        feedback.setProgressText('Calculate Total Length Feature for Each Grid ...')
+
+        sum_by_id(feat_length, 'Grid_length', 'IMGSID', 'length_feat' )
+    
+        # Set progress to 20
+        feedback.setCurrentStep(20)
+        if feedback.isCanceled():
+            return{}
+        
+        # calculate feature weight for each grid
+        feedback.setProgressText('Calculate Feature Weight for Each Grid ...')
+
+        w_rt_f =  processing.run("native:fieldcalculator", 
+                                      {'INPUT':feat_length['OUTPUT'],
+                                       'FIELD_NAME':'Wrt_f',
+                                       'FIELD_TYPE':0,
+                                       'FIELD_LENGTH':30,
+                                       'FIELD_PRECISION':20,
+                                       'FORMULA':f'(length_feat/Grid_length) * {rt_weight} ',
+                                       'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+        #progress set to 21
+        feedback.setCurrentStep(21)
+        if feedback.isCanceled():
+            return {}
+        
+        #calculate sum by id road
+        feedback.setProgressText('Sum by ID Road Layer ...')
+
+        sum_by_id(w_rt_f, 'WRT', 'IMGSID', 'Wrt_f')
+
+        #progress set to 22
+        feedback.setCurrentStep(22)
+        if feedback.isCanceled():
+            return {}
+        
+        #join value to grid
+        feedback.setProgressText('Join Attribute Table between Grid and  Road Layer...')
+
+        join_3 = processing.run("native:joinattributestable", {'INPUT_2':w_rt_f['OUTPUT'],
                                                       'FIELD_2':'IMGSID',
                                                       'INPUT':Lc_null['OUTPUT'],
                                                       'FIELD':'IMGSID',
@@ -541,17 +624,33 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
                                                       'DISCARD_NONMATCHING':False,
                                                       'PREFIX':'',
                                                       'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+        
+        #progress set to 23
+        feedback.setCurrentStep(23)
+        if feedback.isCanceled():
+            return {}
 
-        #progress set to 17
-        feedback.setCurrentStep(17)
+        #join value to grid
+        feedback.setProgressText('Removing Null Value ...')
+        
+        RT_null =processing.run("native:fieldcalculator", 
+                                      {'INPUT':join_3['OUTPUT'],
+                                       'FIELD_NAME':'WRT_null',
+                                       'FIELD_TYPE':0,
+                                       'FIELD_LENGTH':20,
+                                       'FIELD_PRECISION':15,
+                                       'FORMULA':'if("WRT" is null, 0, "WRT")',
+                                       'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+        
+        #progress set to 24
+        feedback.setCurrentStep(24)
         if feedback.isCanceled():
             return {}
         
-        # join value to grid
         feedback.setProgressText('Calculate Grid Weight And Weight Admin...') 
         
         W_grid = processing.run("native:fieldcalculator", 
-                                      {'INPUT':join_4['OUTPUT'],
+                                      {'INPUT':RT_null['OUTPUT'],
                                        'FIELD_NAME':'weight_grid',
                                        'FIELD_TYPE':0,
                                        'FIELD_LENGTH':20,
@@ -559,14 +658,20 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
                                        'FORMULA':'(WLC_null+WRT_null)',
                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
         
+        #progress set to 25
+        feedback.setCurrentStep(25)
+        if feedback.isCanceled():
+            return {}
+
+        feedback.setProgressText('Calculate Sum by Admin Name ...') 
+        
         sum_by_id(W_grid, 'W_admin', 'Admname', 'weight_grid')
 
-        #progress set to 18
-        feedback.setCurrentStep(18)
+        #progress set to 26
+        feedback.setCurrentStep(26)
         if feedback.isCanceled():
             return {}
         
-        # join value to grid
         feedback.setProgressText('Calculate Population for each Grid...') 
 
         popul_grid = processing.run("native:fieldcalculator", 
@@ -577,6 +682,13 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
                                 'FIELD_PRECISION':15,
                                 'FORMULA':f'(weight_grid/W_admin)*{popul_field}',
                                 'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+        
+        #progress set to 27
+        feedback.setCurrentStep(27)
+        if feedback.isCanceled():
+            return {}
+
+        feedback.setProgressText('Removing Null Population ...') 
 
         popul_null =processing.run("native:fieldcalculator", 
                                       {'INPUT':popul_grid['OUTPUT'],
@@ -586,8 +698,14 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
                                        'FIELD_PRECISION':15,
                                        'FORMULA':'if("popul" is null, 0, "popul")',
                                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+        #progress set to 28
+        feedback.setCurrentStep(28)
+        if feedback.isCanceled():
+            return {}
+        
+        feedback.setProgressText('Join Attribute Table to Origin Grid Layer ...') 
 
-        join_5 = processing.run("native:joinattributestable", {'INPUT_2':popul_null['OUTPUT'],
+        join_4 = processing.run("native:joinattributestable", {'INPUT_2':popul_null['OUTPUT'],
                                                       'FIELD_2':'IMGSID',
                                                       'INPUT':grid_rep['OUTPUT'],
                                                       'FIELD':'IMGSID',
@@ -596,8 +714,11 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
                                                       'DISCARD_NONMATCHING':False,
                                                       'PREFIX':'',
                                                       'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
-
-
+        
+        #progress set to 29
+        feedback.setCurrentStep(29)
+        if feedback.isCanceled():
+            return {}
 
         # ==================== output parameter =====================================
 
@@ -616,17 +737,17 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
         # Output parameter
         (sink, dest_id) = self.parameterAsSink(parameters, self.OUTPUT, context, fields, QgsWkbTypes.Polygon, epsg4326)
  
-        for feat in join_5['OUTPUT'].getFeatures():
+        for feat in join_4['OUTPUT'].getFeatures():
             grid_id = feat['IMGSID']
             length = feat['WRT_null']
-            area = feat['WLC_null']
+            area = feat[f'{lc_weight}']
             w_grid = feat['weight_grid']
             w_kec = feat['W_admin']
             kec = feat['Admname']
             popul = feat['Population']
             
             new_feat = QgsFeature(feat)
-            new_feat.setAttributes([grid_id,length,area,w_grid,w_kec,kec,popul])
+            new_feat.setAttributes([grid_id,length, area, w_grid, w_kec, kec, popul])
             
             sink.addFeature(new_feat, QgsFeatureSink.FastInsert)
         
