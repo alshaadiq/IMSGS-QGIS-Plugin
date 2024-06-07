@@ -250,15 +250,48 @@ class calcneedAlgorithm(QgsProcessingAlgorithm):
         # Intersect land cover
         feedback.setProgressText('Intersect Vegetation with Grid Layer...')
 
-        intr_veg = processing.run("native:intersection", 
-                                  {'INPUT':veg_fix['OUTPUT'], 
-                                   'OVERLAY': grid_rep['OUTPUT'],
+        split_grid = processing.run("native:splitvectorlayer", 
+                        {'INPUT':grid_rep['OUTPUT'],
+                        'FIELD':'Admname',
+                        'PREFIX_FIELD':True,
+                        'FILE_TYPE':0,
+                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+        
+        Lc_split = processing.run("native:multiparttosingleparts", 
+                                     {'INPUT':veg_fix['OUTPUT'],
+                                      'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+
+        partial_lc = []
+
+        for i in os.listdir(split_grid['OUTPUT']) :
+            current_file = os.path.join(split_grid['OUTPUT'],i)
+
+            processing.run("native:selectbylocation", 
+                           {'INPUT':Lc_split['OUTPUT'],
+                            'PREDICATE':[0],
+                            'INTERSECT':current_file,
+                            'METHOD':0})
+
+            extract_lc = processing.run("native:saveselectedfeatures", 
+                                     {'INPUT':Lc_split['OUTPUT'],
+                                      'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+
+            intr_lc_part = processing.run("native:intersection", 
+                                  {'INPUT':extract_lc['OUTPUT'], 
+                                   'OVERLAY':current_file,
                                    'INPUT_FIELDS':[],
                                    'OVERLAY_FIELDS':[],
                                    'OVERLAY_FIELDS_PREFIX':'',
                                    'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT,
                                    'GRID_SIZE':None})
+            
+            partial_lc.append(intr_lc_part['OUTPUT']) 
 
+        intr_veg = processing.run("native:mergevectorlayers", 
+                                   {'LAYERS':partial_lc,
+                                    'CRS':None,
+                                    'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+        
         #progress set to 3
         feedback.setCurrentStep(3)
         if feedback.isCanceled():

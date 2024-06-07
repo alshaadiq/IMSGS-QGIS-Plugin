@@ -237,7 +237,6 @@ class PopulDistAlgorithm(QgsProcessingAlgorithm):
                             {'INPUT':rt_rep['OUTPUT'],
                             'METHOD':0,
                             'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT}) 
- 
 
         admin_repp = processing.run("native:reprojectlayer",
                                         {'INPUT':parameters['INPUTA'],
