@@ -41,7 +41,8 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingMultiStepFeedback,
                        QgsProcessingParameterField,
                        QgsProcessingParameterNumber,
-                       QgsFeature
+                       QgsFeature,
+                       QgsFeatureRequest
                        )
 from qgis.PyQt.QtCore import *
 import os
@@ -575,8 +576,36 @@ class distavailability2Algorithm(QgsProcessingAlgorithm):
         WAS_FIX = processing.run("native:fixgeometries", 
                                 {'INPUT':WAS_rep['OUTPUT'],
                                  'METHOD':0,
-                                 'OUTPUT':'TEMPORARY_OUTPUT'})   
+                                 'OUTPUT':'TEMPORARY_OUTPUT'})
 
+        # preparing intersection
+        chunk_size = 5000
+        split_field = QgsField("Split", QVariant.Double, len=20, prec=5)
+        grid_rep['OUTPUT'].dataProvider().addAttributes([split_field])
+        grid_rep['OUTPUT'].updateFields()
+
+        # Loop through features and manage chunk size manually
+        feature_count = 0
+        split_id = 1
+        for feature in grid_rep['OUTPUT'].getFeatures():
+            if feature_count >= chunk_size:
+                split_id += 1
+                feature_count = 0  # Reset feature count for the next chunk
+            feature['Split'] = split_id
+            feature_count += 1
+
+        split_grid = processing.run("native:splitvectorlayer", 
+            {'INPUT':grid_rep['OUTPUT'],
+            'FIELD':'Split',
+            'PREFIX_FIELD':True,
+            'FILE_TYPE':0,
+            'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+
+        ijh_split = processing.run("native:multiparttosingleparts", 
+                                     {'INPUT':IJH_FIX['OUTPUT'],
+                                      'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+                
+        partial_lc = []
 
         #progress set to 1
         feedback.setCurrentStep(1)
@@ -587,13 +616,43 @@ class distavailability2Algorithm(QgsProcessingAlgorithm):
 
         feedback.setProgressText('Intersect all layer ....')
 
-        intr = processing.run("native:multiintersection", 
-                       {'INPUT':IJH_FIX['OUTPUT'],
-                        'OVERLAYS':[grid_rep['OUTPUT'],
-                                    WAS_FIX['OUTPUT']],
-                        'OVERLAY_FIELDS_PREFIX':'',
-                        'OUTPUT':'TEMPORARY_OUTPUT'})
-        
+        for i in os.listdir(split_grid['OUTPUT']):
+            current_file = os.path.join(split_grid['OUTPUT'],i)
+
+            processing.run("native:selectbylocation", 
+                           {'INPUT':ijh_split['OUTPUT'],
+                            'PREDICATE':[0],
+                            'INTERSECT':current_file,
+                            'METHOD':0})
+
+            extract_ijh = processing.run("native:saveselectedfeatures", 
+                                     {'INPUT':ijh_split['OUTPUT'],
+                                      'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+            
+            processing.run("native:selectbylocation", 
+                           {'INPUT':WAS_FIX['OUTPUT'],
+                            'PREDICATE':[0],
+                            'INTERSECT':current_file,
+                            'METHOD':0})
+            
+            extract_was = processing.run("native:saveselectedfeatures", 
+                                     {'INPUT':WAS_FIX['OUTPUT'],
+                                      'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})           
+
+            intr_part = processing.run("native:multiintersection", 
+                        {'INPUT':extract_was['OUTPUT'],
+                            'OVERLAYS':[current_file,
+                                        extract_ijh['OUTPUT']],
+                            'OVERLAY_FIELDS_PREFIX':'',
+                            'OUTPUT':'TEMPORARY_OUTPUT'})
+            
+            partial_lc.append(intr_part['OUTPUT'])
+
+        intr= processing.run("native:mergevectorlayers", 
+                            {'LAYERS':partial_lc,
+                            'CRS':None,
+                            'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT})
+            
         feedback.setCurrentStep(2)
         if feedback.isCanceled():
             return {}
