@@ -499,16 +499,6 @@ class distavailability2Algorithm(QgsProcessingAlgorithm):
         #input field that contain total water availability
         self.addParameter(
             QgsProcessingParameterField(
-                self.WAS_N,
-                self.tr('Select Field That Contains Watershed Area Name'),
-                parentLayerParameterName = self.WAS, # parent layer 
-                type=QgsProcessingParameterField.Any
-            )
-        )
-
-        #input field that contain total water availability
-        self.addParameter(
-            QgsProcessingParameterField(
                 self.WAS_V,
                 self.tr('Select Field That Contains Total Water Availability (m³/year)'),
                 parentLayerParameterName = self.WAS, # parent layer 
@@ -529,9 +519,6 @@ class distavailability2Algorithm(QgsProcessingAlgorithm):
         
         # enviromental services performance layer 
         IJH_Value = self.parameterAsString(parameters, self.IJH_V,context)
-
-        # watershed area name 
-        WAS_Name = self.parameterAsString(parameters,self.WAS_N,context)
 
         #field that contain water availability 
         WAS_Value = self.parameterAsString(parameters, self.WAS_V, context)
@@ -580,19 +567,23 @@ class distavailability2Algorithm(QgsProcessingAlgorithm):
 
         # preparing intersection
         chunk_size = 5000
-        split_field = QgsField("Split", QVariant.Double, len=20, prec=5)
+        split_field = QgsField("Split", QVariant.Int, len=20)
         grid_rep['OUTPUT'].dataProvider().addAttributes([split_field])
         grid_rep['OUTPUT'].updateFields()
+        total_index = grid_rep['OUTPUT'].fields().indexFromName("Split")
 
         # Loop through features and manage chunk size manually
         feature_count = 0
         split_id = 1
+        attribute_map={}
+
         for feature in grid_rep['OUTPUT'].getFeatures():
             if feature_count >= chunk_size:
                 split_id += 1
                 feature_count = 0  # Reset feature count for the next chunk
-            feature['Split'] = split_id
+            attribute_map[feature.id()] = {total_index: split_id}
             feature_count += 1
+        grid_rep['OUTPUT'].dataProvider().changeAttributeValues(attribute_map)
 
         split_grid = processing.run("native:splitvectorlayer", 
             {'INPUT':grid_rep['OUTPUT'],
@@ -705,7 +696,7 @@ class distavailability2Algorithm(QgsProcessingAlgorithm):
 
         feedback.setProgressText('Calculate enviromental services performance for each water shed...')
 
-        sum_by_id(IJH_layer, 'WAS_IJH', WAS_Name, 'IJH_feat')
+        sum_by_id(IJH_layer, 'WAS_IJH', WAS_Value, 'IJH_feat')
 
         feedback.setCurrentStep(6)
         if feedback.isCanceled():
@@ -782,7 +773,6 @@ class distavailability2Algorithm(QgsProcessingAlgorithm):
             grid_id = feat['IMGSID']
             k = feat['K_grid_N']
             
-
             new_feat = QgsFeature(feat)
             new_feat.setAttributes([grid_id,k])
             

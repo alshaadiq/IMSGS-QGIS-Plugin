@@ -44,7 +44,7 @@
     <div class="wrapper">
       <aside class="doc__nav">
         <ul>
-          <h1>Contents:</h1>
+          <h1>Muatan:</h1>
             <li class="js-btn">Grid</li></br>
             <li class="js-btn">Population Distribution</li></br>
             <li class="js-btn">Water Environmental Carrying </br> Capacity</li></br>
@@ -54,7 +54,7 @@
       <article class="doc__content">
         <section>
           <h2 class="section__title">
-            Help – Panduan Penggunaan untuk Plugin QGIS Sistem Grid Skala Ragam Indonesia
+            Bantuan – Panduan Penggunaan untuk Plugin QGIS Sistem Grid Skala Ragam Indonesia
           </h2>
           <p class="desc1">
             IMSGS adalah sebuah plugin QGIS yang menyediakan dukungan komprehensif untuk menghitung, memetakan, dan menganalisis dalam kerangka kerja yang berbasis data. Tujuan utama dari IMSGS adalah untuk menyediakan pengotomasian penentuan Daya Dukung dan Daya Tampung Lingkungan Hidup Indonesia dengan mematuhi pedoman nasional Kementerian Lingkungan Hidup dan Kehutanan.
@@ -63,7 +63,7 @@
         <section class="js-section" id="grid">
           <h3 class="section__title">Generate Grid</h3>
           <p>
-            Membuat lapisan vektor dengan grid yang mencakup area tertentu. Grid bersifat tetap untuk wilayah indonesia dengan pendefinisian titik Xmin, Xmax, Ymin, Ymax berdasarkan sistem referensi World Geodetic System 1984 (WGS84). Resolusi dapat dipilih sesuai kebutuhan dan dapat diekstraksi berdasarkan ukuran layer input. Setiap grid berisi pengenal unik yang membedakan antar grid.
+            Membuat lapisan vektor dengan grid yang mencakup area tertentu. Grid bersifat tetap untuk wilayah indonesia dengan pendefinisian titik λmin, λmax, φmin, φmax berdasarkan sistem referensi World Geodetic System 1984 (WGS84). Resolusi dapat dipilih sesuai kebutuhan dan dapat diekstraksi berdasarkan ukuran layer input. Setiap grid berisi pengenal unik yang membedakan antar grid.
           </p>
           <br />
           <p><strong>(PARAMETER)</strong></p>
@@ -84,7 +84,7 @@
               <td>Geometry Extent [WGS 84] (optional)</td>
               <td>STRING_PARAM</td>
               <td>String</td>
-              <td>Menspesifikasikan batas Xmin, Xmaks, Ymin, Ymaks sesuai dengan sistem referensi World Geodetic System 1984 (WGS84)</td>
+              <td>Menspesifikasikan batas λmin, λmax, φmin, φmax sesuai dengan sistem referensi World Geodetic System 1984 (WGS84)</td>
             </tr>
             <tr>
               <td>Grid Resolution</td>
@@ -496,20 +496,6 @@
               </td>
             </tr>
             <tr>
-              <td>Select Field that Contains Watershed Area Name</td>
-              <td>WAS_N </td>
-              <td>
-                [tablefield: any] 
-                <br />
-                [list] 
-                <br />
-                Default: None 
-                <br>
-                Parent : WAS
-              </td>
-              <td>Memilih kolom layer yang berisikan kolom nama daerah aliran sungai</td>
-            </tr>
-            <tr>
               <td>Select Field that Contains Total Water Availability (m³/tahun)</td>
               <td>WAS_V </td>
               <td>
@@ -805,6 +791,12 @@
               </td>
             </tr>
             <tr>
+              <td>Input Administrative Boundary</td>
+              <td>admlay </td>
+              <td>[vector: polygon]</td>
+              <td>Lapisan vektor masukan yang berisi produksi pangan</td>
+            </tr>
+            <tr>
               <td>Select Field that Contains Administrative Boundary Name</td>
               <td>admfield </td>
               <td>
@@ -814,17 +806,11 @@
                 <br/>
                 Default: None 
                 <br>
-                Parent : grid
+                Parent : admlay
               </td>
               <td>
-                Memilih kolom layer yang berisi data nama batas administrasi dari IMSGS layer
+                Memilih kolom layer yang berisi data nama batas administrasi dari layer batas administrasi
               </td>
-            </tr>
-            <tr>
-              <td>Input Administrative Boundary</td>
-              <td>admlay </td>
-              <td>[vector: polygon]</td>
-              <td>Lapisan vektor masukan yang berisi produksi pangan</td>
             </tr>
             <tr>
               <td>Select Field that Contains Food Energy Production</td>

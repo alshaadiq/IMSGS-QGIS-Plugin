@@ -3,27 +3,35 @@
 
 [general]
 name=Indonesian Multi-scaled Grid System
-author=Irwanto, Rania Altairatri Evelina Brawijaya, Mutia Hendriani Putri, Muhammad Usman Alshaadiq
+author=Dr. Akhmad Riqqi, M.Si., Dr. Albertus Deliar, S.T., M.T., Ir. Agung Budi Harto, M.Sc., Ph.D., Dr. Riantini Virtriana, S.T., M.T., Irwanto, Muhammad Usman Alshaadiq, Mutia Hendriani Putri, Rania Altairatri Evelina Brawijaya
 email=15120068@mahasiswa.itb.ac.id
 qgisMinimumVersion=3.0
-description=This plugin generates grid based on IMSGS standart.
-about=This plugin generates grid and its ID based on IMSGS standart, with user input scale and extent.
-version=0.1
+description=This plugin automate the determination of Indonesia's Environmental Support and Capacity.
+about=IMSGS is a QGIS plugin that provides comprehensive support for calculating, mapping, and analyzing in a data-driven framework. The main objective of IMSGS is to provide automation of the determination of Indonesia's Environmental Support and Capacity in compliance with the national guidelines of the Ministry of Environment and Forestry.
+version=1.1
 tracker=https://github.com/alshaadiq/IMSGS-QGIS-Plugin/issues
 repository=https://github.com/alshaadiq/IMSGS-QGIS-Plugin.git
 ; End of mandatory metadata
 
 ; start of optional metadata
 category=Analysis
-changelog=0.09 - First stable release
-    0.08 - All features implemented
-    0.07 - First testing release
+changelog=1.1 2024-06-14
+      * Make algorithm more faster
+      * Change on indonesia help page
+    1.0 2024-05-23:
+      * change the calculation algorithm
+      * change the tools name
+    0.2 2024-05-21:
+      * Add feature help button.
+      * Improve algorithm in tools ‘Population’, ‘Environmental Carrying Capacity(Water)’, ‘Environmental Carrying Capacity (Food )’. 
+      * Change input parameter name
+    0.1 2024-04-01: First testing release
 
 ; Tags are in comma separated value format, spaces are allowed within the
 ; tag name.
 ; Tags should be in English language. Please also check for existing tags and
 ; synonyms before creating a new one.
-tags=phyton
+tags=Grid, Population, Environmental, Carrying Capacity, Water, Food 
 
 ; these metadata can be empty, they will eventually become mandatory.
 homepage=https://github.com/alshaadiq/IMSGS-QGIS-Plugin.git
@@ -37,14 +45,6 @@ deprecated=False
 
 hasProcessingProvider=yes
 ; Uncomment the following line and add your changelog:
-
-; Since QGIS 3.8, a comma separated list of plugins to be installed
-; (or upgraded) can be specified.
-; The example below will try to install (or upgrade) "MyOtherPlugin" version 1.12
-; and any version of "YetAnotherPlugin".
-; Both "MyOtherPlugin" and "YetAnotherPlugin" names come from their own metadata's
-; name field
-plugin_dependencies=MyOtherPlugin==1.12,YetAnotherPlugin
 
 ; If the plugin can run on QGIS Server.
 server=False

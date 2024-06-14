@@ -69,8 +69,8 @@
           <h3 class="section__title">Generate Grid</h3>
           <p>
             Create a vector layer with a grid covering a given extent. The grid
-            is fixed for the Indonesian region by defining Xmin, Xmax, Ymin,
-            Ymax points based on the World Geodetic System 1984 (WGS84)
+            is fixed for the Indonesian region by defining λmin, λmax, φmin, φmax 
+            points based on the World Geodetic System 1984 (WGS84)
             reference system. The resolution can be chosen as required and can
             be extracted by the size of the input layer. Every grid contains a
             unique identifier that differentiates between grids.
@@ -94,7 +94,7 @@
               <td>Geometry Extent [WGS 84] (optional)</td>
               <td>STRING_PARAM</td>
               <td>String</td>
-              <td>Specify Xmin, Xmax, Ymin, Ymax points based on the World Geodetic System 1984 (WGS84) reference system</td>
+              <td>Specify λmin, λmax, φmin, φmax points based on the World Geodetic System 1984 (WGS84) reference system</td>
             </tr>
             <tr>
               <td>Grid Resolution</td>
@@ -515,19 +515,6 @@
               <td>Input vector layer containing watershed area name and total water availability</td>
             </tr>
             <tr>
-              <td>Select Field that Contains Watershed Area Name</td>
-              <td>WAS_N </td>
-              <td>[tablefield: any] 
-                <br />
-                [list] 
-                <br />
-                Default: None 
-                <br>
-                Parent : WAS
-              </td>
-              <td>Select the column layer containing watershed area name</td>
-            </tr>
-            <tr>
               <td>Select Field that Contains Total Water Availability (m³/year)</td>
               <td>WAS_V </td>
               <td>[tablefield: any] 
@@ -821,6 +808,12 @@
               </td>
             </tr>
             <tr>
+              <td>Input Administrative Boundary</td>
+              <td>admlay </td>
+              <td>[vector: Polygon]</td>
+              <td>Input administrative boundary layer containing energy production data </td>
+            </tr>
+            <tr>
               <td>Select Field that Contains Administrative Boundary Name</td>
               <td>admfield </td>
               <td>
@@ -830,15 +823,9 @@
                 <br/>
                 Default: None 
                 <br>
-                Parent : grid
+                Parent :admlay
               </td>
-              <td>Select the layer column containing the administrative boundary name from IMSGS Grid layer </td>
-            </tr>
-            <tr>
-              <td>Input Administrative Boundary</td>
-              <td>admlay </td>
-              <td>[vector: Polygon]</td>
-              <td>Input administrative boundary layer containing energy production data </td>
+              <td>Select the layer column containing the administrative boundary name from Administrative Boundary layer </td>
             </tr>
             <tr>
               <td>Select Field that Contains Food Energy Production</td>
